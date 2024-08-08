@@ -1,8 +1,12 @@
 package com.example.linkmate.user.service;
+import java.util.Optional;
+
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.linkmate.user.dto.UserUpdateDto;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
 import com.example.linkmate.user.utils.JwtUtil;
@@ -19,22 +23,10 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    
+
+   
     public User registerUser(User user){
-        if (user.getUsername() == null || user.getUsername().isEmpty()) {
-            throw new IllegalArgumentException("Username is required");
-        }
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            throw new IllegalArgumentException("Email is required");
-        }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password is required");
-        }
-        if (user.getFirstName() == null || user.getFirstName().isEmpty()) {
-            throw new IllegalArgumentException("First name is required");
-        }
-        if (user.getLastName() == null || user.getLastName().isEmpty()) {
-            throw new IllegalArgumentException("Last name is required");
-        }
         user.setUsername(user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setFirstName(user.getFirstName());
@@ -46,14 +38,39 @@ public class UserService {
         return savedUser;
     }
 
-    public User authenticateUser(User user){
-       User foundUser=userRepository.findByUsername(user.getUsername());
-        if(foundUser != null && passwordEncoder.matches(user.getPassword(),foundUser.getPassword())){
-            String token = jwtUtil.generateToken(foundUser.getUsername());
-            foundUser.setToken(token);
-            return foundUser;
+    public User authenticateUser(User user) {
+        Optional<User> foundUserOptional = userRepository.findByUsername(user.getUsername());
+        if (foundUserOptional.isPresent()) {
+            User foundUser = foundUserOptional.get();
+            if (passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
+                String token = jwtUtil.generateToken(foundUser.getUsername());
+                foundUser.setToken(token);
+                return foundUser;
+            }
         }
         throw new RuntimeException("Invalid username or password");
     }
+
+    public Optional<User> findByEmail(String email) {
+    return userRepository.findByEmail(email);
+}
+
+public Optional<User> findByUserName(String username) {
+    return userRepository.findByUsername(username);
+}
+
+public User getUserById(ObjectId userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User updateUserDetails(ObjectId userId,UserUpdateDto userUpdateDto){
+      User existingUser = getUserById(userId);
+      if(existingUser == null){
+    throw new RuntimeException("Invalid username or password");
+      }
+        existingUser.setHeadline(userUpdateDto.getHeadline());
+        return userRepository.save(existingUser);
+    }
+
 
 }
