@@ -1,0 +1,9 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "strict": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/**/*", "app.d.ts", "search"]
+}
