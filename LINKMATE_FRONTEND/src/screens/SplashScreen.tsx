@@ -4,17 +4,18 @@ import { useCustomTheme } from '../config/Theme';
 import {
 	responsiveHeight,
 	responsiveWidth,
-	responsiveFontSize,
 } from 'react-native-responsive-dimensions';
 import {  globalStyles } from '../StylesSheet';
+import { useSelector } from 'react-redux';
+import { selectToken } from '../redux/slices/authSlice';
 export default function SplashScreen({ navigation }) {
-	// const token = useSelector((state: RootState) => selectToken(state))
+	const token = useSelector((state: RootState) => selectToken(state))
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	useEffect(() => {
 		  setTimeout(() => {
-				const initialRouteName = 1==2 ? "BottomNavigation" : "Login"
+				const initialRouteName = token ? 'BottomNavigation' : 'Login';
 				navigation.replace(initialRouteName)
 			}, 1000)
 	}, []);

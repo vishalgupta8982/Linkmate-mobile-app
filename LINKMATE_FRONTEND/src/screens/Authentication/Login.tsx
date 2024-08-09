@@ -18,11 +18,30 @@ import AppTextField from '../../components/AppTextField';
 import { AppButton } from '../../components/AppButton';
 import { fonts } from '../../config/Fonts';
 import { useCustomTheme } from '../../config/Theme';
+import { useState } from 'react';
+import { SignUpPayload } from '../../types/Payload/SignUpPayload';
+import { userLogin } from '../../api/apis';
+import { LoginPayload } from '../../types/Payload/LoginPayload';
 export default function Login({ navigation }) {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
+	 const handleLogin=async()=>{
+		 const payload: LoginPayload = {
+				email: email.trim(),
+				password: password.trim(),
+			};
+		try{
+			const response = await userLogin(payload);
+			console.log(response)
+
+		}catch(err){
+			console.error(err)
+		}
+	 }
 	return (
 		<View style={styles.mainCont}>
 			<ScrollView>
@@ -38,17 +57,24 @@ export default function Login({ navigation }) {
 				</View>
 				<View style={styles.textFieledCont}>
 					<Text style={globalStylesSheet.head}>Login</Text>
-					<AppTextField label="Email" readOnly={false} />
+					<AppTextField
+						label="Email"
+						value={email}
+						readOnly={false}
+						onChangeText={setEmail}  
+					/>
 					<AppTextField
 						label="Password"
 						readOnly={false}
 						secureTextEntry={true}
+						value={password}
+						onChangeText={setPassword} 
 					/>
-					<AppButton title="Login" />
+					<AppButton title="Login" onPress={handleLogin} />
 					<View style={styles.registerCont}>
 						<Text style={styles.not}>Don't have a account? </Text>
-						<TouchableOpacity onPress={() => navigation.navigate('Otp')}>
-							<Text style={styles.register}>Register here</Text>
+						<TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+							<Text style={styles.register}>Register</Text>
 						</TouchableOpacity>
 					</View>
 				</View>

@@ -6,6 +6,7 @@ import { useCustomTheme } from '../config/Theme';
 import SignUp from '../screens/Authentication/SignUp';
 import Login from '../screens/Authentication/Login';
 import Otp from '../screens/Authentication/Otp';
+import BottomNavigation from './BottomNavigation';
 export type RootStackParamList = {};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -43,6 +44,7 @@ function MainStackNav({ navigation }) {
 				<Stack.Screen name='SignUp' component={SignUp} />
 				<Stack.Screen name='Login' component={Login} />
 				<Stack.Screen name='Otp' component={Otp} />
+				<Stack.Screen name='BottomNavigation' component={BottomNavigation} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

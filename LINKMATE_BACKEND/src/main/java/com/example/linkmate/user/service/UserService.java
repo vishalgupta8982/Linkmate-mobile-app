@@ -39,7 +39,7 @@ public class UserService {
     }
 
     public User authenticateUser(User user) {
-        Optional<User> foundUserOptional = userRepository.findByUsername(user.getUsername());
+        Optional<User> foundUserOptional = userRepository.findByEmail(user.getEmail());
         if (foundUserOptional.isPresent()) {
             User foundUser = foundUserOptional.get();
             if (passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
@@ -48,7 +48,7 @@ public class UserService {
                 return foundUser;
             }
         }
-        throw new RuntimeException("Invalid username or password");
+        throw new RuntimeException("Invalid email or password");
     }
 
     public Optional<User> findByEmail(String email) {

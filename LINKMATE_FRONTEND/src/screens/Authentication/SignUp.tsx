@@ -43,9 +43,9 @@ export default function SignUp({ navigation }) {
 					<AppTextField label="Password" secureTextEntry={true} />
 					<AppButton title="Signup" />
 					<View style={styles.registerCont}>
-						<Text style={styles.not}>Don't have a account? </Text>
+						<Text style={styles.not}>Already have a account? </Text>
 						<TouchableOpacity onPress={() => navigation.navigate('Login')}>
-							<Text style={styles.register}>Login here</Text>
+							<Text style={styles.register}>Login</Text>
 						</TouchableOpacity>
 					</View>
 				</View>
