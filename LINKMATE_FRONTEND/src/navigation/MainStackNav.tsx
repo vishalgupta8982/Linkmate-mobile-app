@@ -1,8 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SplashScreen from '../screens/SplashScreen/SplashScreen';
+import SplashScreen from '../screens/SplashScreen';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { useCustomTheme } from '../config/Theme';
+import SignUp from '../screens/Authentication/SignUp';
+import Login from '../screens/Authentication/Login';
+import Otp from '../screens/Authentication/Otp';
 export type RootStackParamList = {};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,6 +40,9 @@ function MainStackNav({ navigation }) {
 				initialRouteName={'Splash'}
 			>
 				<Stack.Screen name='Splash' component={SplashScreen} />
+				<Stack.Screen name='SignUp' component={SignUp} />
+				<Stack.Screen name='Login' component={Login} />
+				<Stack.Screen name='Otp' component={Otp} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

@@ -20,6 +20,7 @@ import com.example.linkmate.user.dto.UserUpdateDto;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.service.OtpService;
 import com.example.linkmate.user.service.UserService;
+import com.example.linkmate.user.utils.GenerateUniqueUserName;
 import com.example.linkmate.user.utils.JwtUtil;
 
 @RestController
@@ -34,6 +35,9 @@ public class UserController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private GenerateUniqueUserName generateUniqueUserName;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
@@ -52,13 +56,8 @@ public class UserController {
         if (!isOtpValid) {
             return ResponseEntity.status(400).body("Invalid OTP");
         }
-
-        
-        user.setUsername(user.getUsername());
-        user.setEmail(user.getEmail());
-        user.setPassword(user.getPassword());
-        user.setFirstName(user.getFirstName());
-        user.setLastName(user.getLastName());
+        String username = generateUniqueUserName.generateUniqueUsername(user.getFirstName(), user.getLastName());
+        user.setUsername(username);
         User registeredUser = userService.registerUser(user);
         return ResponseEntity.ok(registeredUser);
     }

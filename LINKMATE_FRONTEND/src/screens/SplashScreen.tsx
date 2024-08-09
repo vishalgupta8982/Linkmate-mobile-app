@@ -1,26 +1,35 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import React, { useEffect} from 'react';
-import { useCustomTheme } from '../../config/Theme';
-import { fonts } from '../../config/Fonts';
-
+import { useCustomTheme } from '../config/Theme';
+import {
+	responsiveHeight,
+	responsiveWidth,
+	responsiveFontSize,
+} from 'react-native-responsive-dimensions';
+import {  globalStyles } from '../StylesSheet';
 export default function SplashScreen({ navigation }) {
 	// const token = useSelector((state: RootState) => selectToken(state))
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	useEffect(() => {
-		//   setTimeout(() => {
-		//     // const initialRouteName = token ? "BottomNavigation" : "SignUpScreen"
-		//     // navigation.replace(initialRouteName)
-		//   }, 100000)
+		  setTimeout(() => {
+				const initialRouteName = 1==2 ? "BottomNavigation" : "Login"
+				navigation.replace(initialRouteName)
+			}, 1000)
 	}, []);
+	const globalStylesSheet = globalStyles(colors);
 	return (
 		<View style={[styles.mainCont, { backgroundColor: colors.BACKGROUND }]}>
 			<View style={[styles.design]} />
 			<View style={styles.contentCont}>
-				<Text style={[styles.appName, { color: colors.TEXT }]}>
+				<Image
+					style={styles.logo}
+					source={require('../assets/Images/logo.png')}
+				/>
+				<Text style={[styles.appName, globalStylesSheet.link]}>
 					Link
-					<Text style={[styles.appName, { color: colors.PRIMARY }]}>mate</Text>
+					<Text style={[styles.appName, globalStylesSheet.mate]}>mate</Text>
 				</Text>
 			</View>
 			<View style={[styles.bottomDesign]} />
@@ -46,13 +55,13 @@ const getStyles = (colors) =>
 			height: '95%',
 			justifyContent: 'center',
 			alignItems: 'center',
-			flexDirection: 'row',
-			alignContent: 'center',
+		},
+		logo: {
+			height: responsiveHeight(25),
+			width: responsiveWidth(40),
 		},
 		appName: {
 			fontSize: 30,
-			letterSpacing: 4,
-			fontFamily: fonts.Inter_Medium,
 		},
 		bottomDesign: {
 			width: '50%',
