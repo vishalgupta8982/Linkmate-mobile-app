@@ -1,3 +1,4 @@
+com\example\linkmate\user\utils\GenerateUniqueUserName.class
 com\example\linkmate\user\controller\UserController.class
 com\example\linkmate\user\dto\UserUpdateDto.class
 com\example\linkmate\user\Config\MailConfig.class

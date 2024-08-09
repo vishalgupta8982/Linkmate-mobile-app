@@ -12,4 +12,5 @@ E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\user\
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\user\service\CustomUserDetailsService.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\user\service\OtpService.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\user\service\UserService.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\user\utils\GenerateUniqueUserName.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\user\utils\JwtUtil.java
