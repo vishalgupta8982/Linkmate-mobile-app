@@ -1,6 +1,8 @@
 package com.example.linkmate.user.utils;
 
 import java.util.Date;
+
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
@@ -24,7 +26,7 @@ public class JwtUtil {
 
     public String generateToken(String username) {
         Date now = new Date();
-        long expirationInMs = expiration * 24 * 60 * 60 * 1000L;
+        long expirationInMs = expiration * 24 * 60 * 60 * 1000L; 
         Date expiryDate = new Date(now.getTime() + expirationInMs);
 
         return Jwts.builder()
@@ -51,5 +53,19 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
+    }
+
+    public ObjectId getUserIdFromToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            String userIdStr = claims.get("userId", String.class);
+            return new ObjectId(userIdStr);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid token ");
+        }
     }
 }

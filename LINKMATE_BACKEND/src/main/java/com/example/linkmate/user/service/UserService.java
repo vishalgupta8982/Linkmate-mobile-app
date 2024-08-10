@@ -3,9 +3,13 @@ import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.linkmate.core.Exception.UserNotFoundException;
+import com.example.linkmate.core.Exception.UsernameAlreadyExistsException;
 import com.example.linkmate.user.dto.UserUpdateDto;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
@@ -63,14 +67,48 @@ public User getUserById(ObjectId userId) {
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public User updateUserDetails(ObjectId userId,UserUpdateDto userUpdateDto){
-      User existingUser = getUserById(userId);
-      if(existingUser == null){
-    throw new RuntimeException("Invalid username or password");
-      }
-        existingUser.setHeadline(userUpdateDto.getHeadline());
-        return userRepository.save(existingUser);
+   public User updateUserDetails(String username, UserUpdateDto userUpdateDto) {
+    // Retrieve the existing user
+    User existingUser = findByUserName(username)
+                          .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+    if (userUpdateDto.getUsername() != null) {
+        if (findByUserName(userUpdateDto.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException("Username '" + userUpdateDto.getUsername() + "' already exists.");
+        }
+        existingUser.setUsername(userUpdateDto.getUsername());
     }
+
+    if (userUpdateDto.getEmail() != null) {
+        existingUser.setEmail(userUpdateDto.getEmail());
+    }
+
+    if (userUpdateDto.getPassword() != null) {
+        existingUser.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
+    }
+
+    if (userUpdateDto.getFirstName() != null) {
+        existingUser.setFirstName(userUpdateDto.getFirstName());
+    }
+
+    if (userUpdateDto.getLastName() != null) {
+        existingUser.setLastName(userUpdateDto.getLastName());
+    }
+
+    if (userUpdateDto.getHeadline() != null) {
+        existingUser.setHeadline(userUpdateDto.getHeadline());
+    }
+
+    if (userUpdateDto.getLocation() != null) {
+        existingUser.setLocation(userUpdateDto.getLocation());
+    }
+
+    if (userUpdateDto.getProfilePicture() != null) {
+        existingUser.setProfilePicture(userUpdateDto.getProfilePicture());
+    }
+    return userRepository.save(existingUser);
+}
+
 
 
 }

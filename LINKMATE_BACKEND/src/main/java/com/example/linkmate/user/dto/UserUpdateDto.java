@@ -6,6 +6,12 @@ import lombok.Data;
 
 @Data
 public class UserUpdateDto {
-    private ObjectId userId;
+    private String username;
+    private String email;
+    private String password;
+    private String firstName;
+    private String lastName;
     private String headline;
+    private String location;
+    private String profilePicture;
 }

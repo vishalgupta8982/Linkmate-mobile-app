@@ -22,43 +22,68 @@ import { useEffect } from 'react';
 import { RootStackParamList } from '../../navigation/MainStackNav';
 import { useRef } from 'react';
 import { OtpPayload } from '../../types/Payload/OtpPayload';
-import { verifyOtp } from '../../api/apis';
+import { userRegister, verifyOtp } from '../../api/apis';
 import { setToken } from '../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import Loader from '../../components/Loader';
 import { AppButton } from '../../components/AppButton';
+import { SignUpPayload } from '../../types/Payload/SignUpPayload';
 type Tprops = NativeStackScreenProps<RootStackParamList, 'Otp'>;
 export default function Otp({ navigation, route }: Tprops) {
 	const theme = useCustomTheme();
-	const dispatch=useDispatch()
+	const dispatch = useDispatch();
 	const { colors } = theme;
-	const { email,firstName,lastName,password } = route.params;
+	const { email, firstName, lastName, password } = route.params;
 	const styles = getStyles(colors);
 	const [timer, setTimer] = useState(30);
 	const [otp, setOtp] = useState('');
-	 const [loading, setLoading] = useState(false);
-	 const submitOtp = async () => {
-			setLoading(true);
-			const payload: OtpPayload = {
-				email: email,
-				otp: otp,
-				firstName:firstName.trim(),
-				lastName:lastName.trim(),
-				password:password
-			};
-			try {
-				const response = await verifyOtp(payload);
-				if (response?.data?.token) {
-					dispatch(setToken(response.data.token));
-					Toast.show('Account created successfull', Toast.SHORT);
-					navigation.replace('BottomNavigation');
-				}
-			} catch (err) {
-				Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
-			} finally {
-				setLoading(false);
-			}
+	const [loading, setLoading] = useState(false);
+	const submitOtp = async () => {
+		setLoading(true);
+		const payload: OtpPayload = {
+			email: email,
+			otp: otp,
+			firstName: firstName.trim(),
+			lastName: lastName.trim(),
+			password: password,
 		};
+		try {
+			const response = await verifyOtp(payload);
+			if (response?.data?.token) {
+				dispatch(setToken(response.data.token));
+				Toast.show('Account created successfull', Toast.SHORT);
+				navigation.replace('BottomNavigation');
+			}
+		} catch (err) {
+			Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+		} finally {
+			setLoading(false);
+		}
+	};
+	const resendCode = async () => {
+		setLoading(true);
+		if (password.length < 8) {
+			Toast.show('Password must be a 8 character', Toast.SHORT);
+			setLoading(false);
+			return;
+		}
+		const payload: SignUpPayload = {
+			firstName: firstName.trim(),
+			lastName: lastName.trim(),
+			email: email.trim(),
+			password: password.trim(),
+		};
+		try {
+			const response = await userRegister(payload);
+			if (response) {
+				Toast.show('Resend code successfully', Toast.SHORT);
+			}
+		} catch (err) {
+			Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+		} finally {
+			setLoading(false);
+		}
+	};
 	useEffect(() => {
 		if (timer > 0) {
 			const intervalId = setInterval(() => {
@@ -70,6 +95,7 @@ export default function Otp({ navigation, route }: Tprops) {
 	}, [timer]);
 	const handleResendCode = () => {
 		setTimer(30);
+		resendCode();
 	};
 	const otpRef = useRef(null);
 
