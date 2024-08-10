@@ -7,7 +7,9 @@ import SignUp from '../screens/Authentication/SignUp';
 import Login from '../screens/Authentication/Login';
 import Otp from '../screens/Authentication/Otp';
 import BottomNavigation from './BottomNavigation';
-export type RootStackParamList = {};
+export type RootStackParamList = {
+	Otp:{email:string,firstName:string,lastName:string,password:string}
+};
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

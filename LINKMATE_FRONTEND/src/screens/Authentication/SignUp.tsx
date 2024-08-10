@@ -17,14 +17,58 @@ import { globalStyles } from '../../StylesSheet';
 import AppTextField from '../../components/AppTextField';
 import { AppButton } from '../../components/AppButton';
 import { fonts } from '../../config/Fonts';
+import { useState } from 'react';
+import Toast from 'react-native-simple-toast';
+import { SignUpPayload } from '../../types/Payload/SignUpPayload';
+import { userRegister } from '../../api/apis';
+import Loader from '../../components/Loader';
 export default function SignUp({ navigation }) {
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
+	const[firstName,setFirstName]=useState('')
+	const[lastName,setLastName]=useState('')
+	const[email,setEmail]=useState('')
+	const[password,setPassword]=useState('')
+	 const[loading,setLoading]=useState(false)
+	const handleSignUp=async()=>{
+		setLoading(true);
+		if(password.length<8){
+			Toast.show('Password must be a 8 character', Toast.SHORT);
+			setLoading(false);
+			return
+		}
+const payload: SignUpPayload= {
+	firstName:firstName.trim(),
+	lastName:lastName.trim(),
+	email: email.trim(),
+	password: password.trim()}
+	if (
+		payload.firstName.length < 1 ||
+		payload.lastName.length < 1 ||
+		payload.email.length < 1 
+	) {
+		Toast.show('All fields are required', Toast.SHORT);
+		setLoading(false);
+		return;
+	}
+	try {
+				const response = await userRegister(payload);
+
+				if (response) {
+					Toast.show('OTP sent successfully', Toast.SHORT);
+					navigation.replace('Otp',{email,firstName,lastName,password});
+				}
+			} catch (err) {
+				Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+			} finally {
+				setLoading(false);
+			}
+}; 
 	return (
-		<View style={styles.mainCont}>
-			<ScrollView>
+		<ScrollView   >
+			<View style={styles.mainCont}>
 				<View>
 					<Image
 						style={styles.logo}
@@ -34,23 +78,28 @@ export default function SignUp({ navigation }) {
 						Link
 						<Text style={[styles.appName, globalStylesSheet.mate]}>mate</Text>
 					</Text>
+					{loading && <Loader />}
 				</View>
 				<View style={styles.textFieledCont}>
 					<Text style={globalStylesSheet.head}>Signup</Text>
-					<AppTextField label="First Name" />
-					<AppTextField label="Last Name" />
-					<AppTextField label="Email" />
-					<AppTextField label="Password" secureTextEntry={true} />
-					<AppButton title="Signup" />
+					<AppTextField onChangeText={setFirstName} label="First Name" />
+					<AppTextField onChangeText={setLastName} label="Last Name" />
+					<AppTextField onChangeText={setEmail} label="Email" />
+					<AppTextField
+						onChangeText={setPassword}
+						label="Password"
+						secureTextEntry={true}
+					/>
+					<AppButton onPress={handleSignUp} title="Signup" />
 					<View style={styles.registerCont}>
 						<Text style={styles.not}>Already have a account? </Text>
-						<TouchableOpacity onPress={() => navigation.navigate('Login')}>
+						<TouchableOpacity onPress={() => navigation.replace('Login')}>
 							<Text style={styles.register}>Login</Text>
 						</TouchableOpacity>
 					</View>
 				</View>
-			</ScrollView>
-		</View>
+			</View>
+		</ScrollView>
 	);
 }
 const getStyles = (colors) =>
@@ -59,6 +108,7 @@ const getStyles = (colors) =>
 			flex: 1,
 			backgroundColor: colors.BACKGROUND,
 			padding: responsiveWidth(5),
+			height:responsiveHeight(100)
 		},
 
 		logo: {

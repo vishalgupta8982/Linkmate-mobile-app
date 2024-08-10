@@ -21,30 +21,55 @@ import { useCustomTheme } from '../../config/Theme';
 import { useState } from 'react';
 import { SignUpPayload } from '../../types/Payload/SignUpPayload';
 import { userLogin } from '../../api/apis';
+import Toast from 'react-native-simple-toast';
 import { LoginPayload } from '../../types/Payload/LoginPayload';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectToken, setToken } from '../../redux/slices/authSlice';
+import Loader from '../../components/Loader';
+import { RootState } from '../../redux/store';
+ 
 export default function Login({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [loading, setLoading] = useState(false);
 	const theme = useCustomTheme();
+	const dispatch = useDispatch();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
-	 const handleLogin=async()=>{
-		 const payload: LoginPayload = {
+	 const handleLogin = async () => {
+			setLoading(true);
+
+			const payload: LoginPayload = {
 				email: email.trim(),
 				password: password.trim(),
 			};
-		try{
-			const response = await userLogin(payload);
-			console.log(response)
 
-		}catch(err){
-			console.error(err)
-		}
-	 }
+			// if (payload.password.length < 8) {
+			//  Toast.show('Password must be a 8 character', Toast.SHORT);
+			// 	setLoading(false);
+			// 	return;
+			// }
+
+			try {
+				const response = await userLogin(payload);
+
+				if (response?.data?.token) {
+					dispatch(setToken(response.data.token));
+					Toast.show('Login successfull', Toast.SHORT);
+					navigation.replace('BottomNavigation');
+				}
+			} catch (err) {
+				Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+			} finally {
+				setLoading(false);
+			}
+		};
+
 	return (
 		<View style={styles.mainCont}>
 			<ScrollView>
+				{loading && <Loader />}
 				<View>
 					<Image
 						style={styles.logo}
@@ -61,19 +86,19 @@ export default function Login({ navigation }) {
 						label="Email"
 						value={email}
 						readOnly={false}
-						onChangeText={setEmail}  
+						onChangeText={setEmail}
 					/>
 					<AppTextField
 						label="Password"
 						readOnly={false}
 						secureTextEntry={true}
 						value={password}
-						onChangeText={setPassword} 
+						onChangeText={setPassword}
 					/>
 					<AppButton title="Login" onPress={handleLogin} />
 					<View style={styles.registerCont}>
 						<Text style={styles.not}>Don't have a account? </Text>
-						<TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+						<TouchableOpacity onPress={() => navigation.replace('SignUp')}>
 							<Text style={styles.register}>Register</Text>
 						</TouchableOpacity>
 					</View>

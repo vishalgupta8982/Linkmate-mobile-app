@@ -27,11 +27,14 @@ axiosInstance.interceptors.request.use(
 const apiCall = async <T>(apiFunc: () => Promise<any>): Promise<T> => {
 	try {
 		const response = await apiFunc();
-		return response.data;
+		return response;
 	} catch (error) {
 		let errorMessage = 'An unexpected error occurred';
 		if (axios.isAxiosError(error)) {
-			errorMessage = error.response?.data?.message || error.message;
+			  errorMessage =
+					error.response?.data?.message ||
+					error.response?.data ||
+					error.message;
 			console.error('Axios error:', errorMessage);
 		} else {
 			console.error('Unexpected error:', error);

@@ -43,7 +43,7 @@ public class UserController {
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         Optional<User> existingUser = userService.findByEmail(user.getEmail());
     if (existingUser.isPresent()) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already in use");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exist");
     }
         String otp = otpService.generateOtp(user.getEmail(),user);
         return ResponseEntity.ok("OTP sent to email");

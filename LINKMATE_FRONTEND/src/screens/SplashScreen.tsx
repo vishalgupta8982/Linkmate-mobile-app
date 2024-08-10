@@ -8,8 +8,10 @@ import {
 import {  globalStyles } from '../StylesSheet';
 import { useSelector } from 'react-redux';
 import { selectToken } from '../redux/slices/authSlice';
+import { RootState } from '../redux/store';
 export default function SplashScreen({ navigation }) {
 	const token = useSelector((state: RootState) => selectToken(state))
+	console.log(token)
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);

@@ -20,4 +20,5 @@ export const globalStyles = (colors) =>
             fontSize:responsiveFontSize(4),
             marginBottom:responsiveHeight(2)
 		},
+		 
 	});

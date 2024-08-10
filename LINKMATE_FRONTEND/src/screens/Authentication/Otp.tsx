@@ -4,6 +4,7 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 	ScrollView,
+	ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import {
@@ -15,14 +16,49 @@ import { useCustomTheme } from '../../config/Theme';
 import { fonts } from '../../config/Fonts';
 import { useState } from 'react';
 import { OtpInput } from 'react-native-otp-entry';
+import Toast from 'react-native-simple-toast';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
-export default function Otp() {
+import { RootStackParamList } from '../../navigation/MainStackNav';
+import { useRef } from 'react';
+import { OtpPayload } from '../../types/Payload/OtpPayload';
+import { verifyOtp } from '../../api/apis';
+import { setToken } from '../../redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import Loader from '../../components/Loader';
+import { AppButton } from '../../components/AppButton';
+type Tprops = NativeStackScreenProps<RootStackParamList, 'Otp'>;
+export default function Otp({ navigation, route }: Tprops) {
 	const theme = useCustomTheme();
+	const dispatch=useDispatch()
 	const { colors } = theme;
+	const { email,firstName,lastName,password } = route.params;
 	const styles = getStyles(colors);
 	const [timer, setTimer] = useState(30);
 	const [otp, setOtp] = useState('');
-
+	 const [loading, setLoading] = useState(false);
+	 const submitOtp = async () => {
+			setLoading(true);
+			const payload: OtpPayload = {
+				email: email,
+				otp: otp,
+				firstName:firstName.trim(),
+				lastName:lastName.trim(),
+				password:password
+			};
+			try {
+				const response = await verifyOtp(payload);
+				if (response?.data?.token) {
+					dispatch(setToken(response.data.token));
+					Toast.show('Account created successfull', Toast.SHORT);
+					navigation.replace('BottomNavigation');
+				}
+			} catch (err) {
+				Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+			} finally {
+				setLoading(false);
+			}
+		};
 	useEffect(() => {
 		if (timer > 0) {
 			const intervalId = setInterval(() => {
@@ -32,22 +68,31 @@ export default function Otp() {
 			return () => clearInterval(intervalId);
 		}
 	}, [timer]);
-  const handleResendCode = () => {
+	const handleResendCode = () => {
 		setTimer(30);
 	};
+	const otpRef = useRef(null);
+
+	useEffect(() => {
+		if (otpRef.current) {
+			otpRef.current.setValue(otp);
+		}
+	}, [otp]);
 	return (
 		<ScrollView style={[styles.container]}>
 			<View style={styles.textCont}>
+				{loading && <Loader />}
 				<Text style={[styles.verificationText]}>Verification code</Text>
-				<Text style={[styles.smallText]}>Enter the code we've sent to +91</Text>
-
+				<Text style={[styles.smallText]}>
+					Enter the code we've sent to {email}
+				</Text>
 				<OtpInput
 					color={colors.TEXT}
 					numberOfDigits={4}
 					focusColor={colors.PRIMARY}
 					focusStickBlinkingDuration={400}
-					/*ref={otpRef}
-					onTextChange={(text) => setOtp(text)}*/
+					ref={otpRef}
+					onTextChange={(text) => setOtp(text)}
 					theme={{
 						pinCodeContainerStyle: styles.pinCodeContainer,
 						pinCodeTextStyle: styles.pinCodeText,
@@ -63,7 +108,7 @@ export default function Otp() {
 								otp.length === 4 ? colors.PRIMARY : colors.APP_PRIMARY_LIGHT,
 						},
 					]}
-					/*Press={handleSubmit}*/
+					onPress={submitOtp}
 					disabled={otp.length !== 4}
 				>
 					<Text style={[styles.buttonText]}>VERIFY OTP</Text>
@@ -88,9 +133,11 @@ const getStyles = (colors) =>
 			paddingHorizontal: 20,
 			paddingVertical: 30,
 			backgroundColor: colors.BACKGROUND,
+			height: responsiveHeight(100),
 		},
 		textCont: {
 			padding: 2,
+			height: responsiveHeight(100),
 		},
 		verificationText: {
 			paddingVertical: 2,
