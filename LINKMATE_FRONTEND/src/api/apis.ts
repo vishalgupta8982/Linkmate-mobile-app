@@ -3,7 +3,7 @@ import { SignUpPayload } from "../types/Payload/SignUpPayload";
 import { verifyOtpResponse } from "../types/Response/VerifyOtpResponse";
 import { get, post } from "./instance";
 import { LoginPayload } from "../types/Payload/LoginPayload";
-import { OtpPayload } from "../types/Payload/OtpPayload";
+import { OtpPayload } from "../types/Payload/OtpPayload"
 
 export const userLogin = async (payload:LoginPayload): Promise<verifyOtpResponse> => {
    const url = '/users/login';
