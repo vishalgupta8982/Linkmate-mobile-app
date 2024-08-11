@@ -1,6 +1,11 @@
 package com.example.linkmate.user.dto;
 
-import org.bson.types.ObjectId;
+import java.util.ArrayList;
+import java.util.List;
+
+
+import com.example.linkmate.user.model.Education;
+import com.example.linkmate.user.model.Experience;
 
 import lombok.Data;
 
@@ -11,7 +16,12 @@ public class UserUpdateDto {
     private String password;
     private String firstName;
     private String lastName;
+    private String profilePicture;
     private String headline;
     private String location;
-    private String profilePicture;
+    private String about;
+    private List<String> connections = new ArrayList<>();
+    private List<Experience> experiences = new ArrayList<>();
+    private List<Education> educations = new ArrayList<>();
+    private List<String> skills = new ArrayList<>();
 }

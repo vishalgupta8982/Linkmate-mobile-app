@@ -1,13 +1,18 @@
 package com.example.linkmate.user.model;
-import java.util.Date;
+
+
+import org.springframework.data.annotation.Id;
+
 import lombok.*;
 
 @Data
 public class Education {
+    @Id
+    private String educationId;
     private String institution;
     private String degree;
-    private Date startDate;
-    private Date endDate;
+    private String startDate;
+    private String endDate;
     private String description;
 
 }
