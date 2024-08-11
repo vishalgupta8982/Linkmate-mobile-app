@@ -17,4 +17,5 @@ com\example\linkmate\user\model\Experience.class
 com\example\linkmate\user\model\User.class
 com\example\linkmate\user\service\CustomUserDetailsService.class
 com\example\linkmate\filter\JwtRequestFilter.class
+com\example\linkmate\LinkmateApplication.class
 com\example\linkmate\user\service\UserService.class
