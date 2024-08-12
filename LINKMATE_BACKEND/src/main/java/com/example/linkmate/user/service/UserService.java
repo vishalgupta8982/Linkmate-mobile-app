@@ -100,6 +100,9 @@ public class UserService {
         Optional.ofNullable(userUpdateDto.getHeadline()).ifPresent(existingUser::setHeadline);
         Optional.ofNullable(userUpdateDto.getLocation()).ifPresent(existingUser::setLocation);
         Optional.ofNullable(userUpdateDto.getAbout()).ifPresent(existingUser::setAbout);
+        if (userUpdateDto.getProfilePicture() == null) {
+            existingUser.setProfilePicture(userUpdateDto.getProfilePicture()); 
+        }
 
         return userRepository.save(existingUser);
     }

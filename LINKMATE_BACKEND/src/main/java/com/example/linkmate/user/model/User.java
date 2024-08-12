@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.data.annotation.Transient;
 import lombok.Data;
@@ -27,10 +29,11 @@ public class User {
     private String username;
 
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String firstName;
     private String lastName;
-    private String profilePicture="https://acdsinc.org/wp-content/uploads/2015/12/dummy-profile-pic.png";
+    private String profilePicture;
     private String headline;
     private String location;
     private String about;
