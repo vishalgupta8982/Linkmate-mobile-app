@@ -3,6 +3,7 @@ import { store } from '../redux/store';
 import { selectToken } from '../redux/slices/authSlice';
 
 const baseURL = 'https://linkmate.onrender.com/';
+// const baseURL = 'http://192.168.21.101:8083';
 console.log('Backend URL:', baseURL);
 
 const axiosInstance = axios.create({
@@ -27,7 +28,7 @@ axiosInstance.interceptors.request.use(
 const apiCall = async <T>(apiFunc: () => Promise<any>): Promise<T> => {
 	try {
 		const response = await apiFunc();
-		return response;
+		return response.data;
 	} catch (error) {
 		let errorMessage = 'An unexpected error occurred';
 		if (axios.isAxiosError(error)) {

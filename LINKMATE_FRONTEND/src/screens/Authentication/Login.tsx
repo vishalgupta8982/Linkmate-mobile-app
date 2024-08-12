@@ -27,13 +27,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectToken, setToken } from '../../redux/slices/authSlice';
 import Loader from '../../components/Loader';
 import { RootState } from '../../redux/store';
- 
+import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 export default function Login({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
-	const theme = useCustomTheme();
 	const dispatch = useDispatch();
+	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
@@ -44,18 +44,17 @@ export default function Login({ navigation }) {
 				email: email.trim(),
 				password: password.trim(),
 			};
-
-			// if (payload.password.length < 8) {
-			//  Toast.show('Password must be a 8 character', Toast.SHORT);
-			// 	setLoading(false);
-			// 	return;
-			// }
+			if (payload.password.length < 8) {
+			 Toast.show('Password must be a 8 character', Toast.SHORT);
+				setLoading(false);
+				return;
+			}
 
 			try {
 				const response = await userLogin(payload);
 
-				if (response?.data?.token) {
-					dispatch(setToken(response.data.token));
+				if (response?.token) {
+					dispatch(setToken(response.token));
 					Toast.show('Login successfull', Toast.SHORT);
 					navigation.replace('BottomNavigation');
 				}

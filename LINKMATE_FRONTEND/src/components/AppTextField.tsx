@@ -49,11 +49,11 @@ const AppTextField = ({ label, value, onChangeText, readOnly, ...props }) => {
 		}),
 		top: animatedIsFocused.interpolate({
 			inputRange: [0, 1],
-			outputRange: [18, 0],
+			outputRange: [32, 5],
 		}),
 		fontSize: animatedIsFocused.interpolate({
 			inputRange: [0, 1],
-			outputRange: [16, 12],
+			outputRange: [14, 12],
 		}),
 		color: animatedIsFocused.interpolate({
 			inputRange: [0, 1],
@@ -63,7 +63,7 @@ const AppTextField = ({ label, value, onChangeText, readOnly, ...props }) => {
 
 	return (
 		<View style={styles.container}>
-			<TouchableWithoutFeedback   onPress={handleFocus}>
+			<TouchableWithoutFeedback onPress={handleFocus}>
 				<Animated.Text style={labelStyle}>{label}</Animated.Text>
 			</TouchableWithoutFeedback>
 			<TextInput
@@ -71,6 +71,8 @@ const AppTextField = ({ label, value, onChangeText, readOnly, ...props }) => {
 				style={styles.input}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
+				scrollEnabled={true}
+				horizontal={true}
 				onChangeText={handleChangeText}
 				readOnly={readOnly}
 				value={inputValue}

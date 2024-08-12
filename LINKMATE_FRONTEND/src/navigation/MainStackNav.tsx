@@ -7,8 +7,12 @@ import SignUp from '../screens/Authentication/SignUp';
 import Login from '../screens/Authentication/Login';
 import Otp from '../screens/Authentication/Otp';
 import BottomNavigation from './BottomNavigation';
+import EditProfile from '../screens/Profile/EditProfile';
+import ViewProfile from '../screens/Profile/ViewProfile';
 export type RootStackParamList = {
-	Otp:{email:string,firstName:string,lastName:string,password:string}
+	Otp:{email:string,firstName:string,lastName:string,password:string},
+	profile:undefined;
+	viewProfile:{image:string}
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -42,11 +46,13 @@ function MainStackNav({ navigation }) {
 				screenOptions={{ headerShown: false }}
 				initialRouteName={'Splash'}
 			>
-				<Stack.Screen name='Splash' component={SplashScreen} />
-				<Stack.Screen name='SignUp' component={SignUp} />
-				<Stack.Screen name='Login' component={Login} />
-				<Stack.Screen name='Otp' component={Otp} />
-				<Stack.Screen name='BottomNavigation' component={BottomNavigation} />
+				<Stack.Screen name="Splash" component={SplashScreen} />
+				<Stack.Screen name="SignUp" component={SignUp} />
+				<Stack.Screen name="Login" component={Login} />
+				<Stack.Screen name="Otp" component={Otp} />
+				<Stack.Screen name="EditProfile" component={EditProfile} />
+				<Stack.Screen name="viewProfile" component={ViewProfile} />
+				<Stack.Screen name="BottomNavigation" component={BottomNavigation} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	);

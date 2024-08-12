@@ -42,24 +42,24 @@ export const lightTheme: Theme = {
   },
 };
 export const darkTheme: Theme = {
-  dark: true,
-  colors: {
-    PRIMARY: '#1abaff',
-    LIGHT_PRIMARY: '#80D9FF',
-    LIGHTER_PRIMARY: '#bcebff',
-    SECONDARY: '#00354d',
-    SKELETON: '#1abaff',
-    LIGHT_MAIN_BACKGROUND: '#003247',
-    APP_PRIMARY: '#41392F',
-    APP_SECONDARY: '#F7F1E7',
-    APP_PRIMARY_LIGHT: '#A7A3A0',
-    BACKGROUND: '#001924',
-    DARK_BACKGROUND: '#003247',
-    MAIN_BACKGROUND: '#000a0e',
-    TEXT: '#fff',
-    DARK_PRIMARY: '#00121a',
-    WHITE: '#FFF',
-  },
+	dark: true,
+	colors: {
+		PRIMARY: '#1abaff',
+		LIGHT_PRIMARY: '#80D9FF',
+		LIGHTER_PRIMARY: '#bcebff',
+		SECONDARY: '#00354d',
+		SKELETON: '#1abaff',
+		LIGHT_MAIN_BACKGROUND: '#003247',
+		APP_PRIMARY: '#41392F',
+		APP_SECONDARY: '#F7F1E7',
+		APP_PRIMARY_LIGHT: '#A7A3A0',
+		BACKGROUND: '#001924',
+		DARK_BACKGROUND: '#003247',
+		MAIN_BACKGROUND: '#000a0e',
+		TEXT: '#E2DFD2',
+		DARK_PRIMARY: '#00121a',
+		WHITE: '#FFF',
+	},
 };
 
 export const useCustomTheme = (): Theme => {
