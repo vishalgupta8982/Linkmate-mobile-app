@@ -219,8 +219,8 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
             
-            userService.deleteEducationById(currentUsername, educationId);
-            return ResponseEntity.ok("Education with ID " + educationId + " deleted successfully.");
+            User user =userService.deleteEducationById(currentUsername, educationId);
+            return ResponseEntity.ok(user);
         } catch (UserNotFoundException | NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -236,8 +236,8 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
             
-            userService.deleteExperienceById(currentUsername, experienceId);
-            return ResponseEntity.ok("Experience with ID " + experienceId + " deleted successfully.");
+            User user=userService.deleteExperienceById(currentUsername, experienceId);
+            return ResponseEntity.ok(user);
         } catch ( NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -252,8 +252,8 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
 
-            userService.deleteSkillByName(currentUsername, skill);
-            return ResponseEntity.ok("Skill '" + skill + "' deleted successfully.");
+            User user =userService.deleteSkillByName(currentUsername, skill);
+            return ResponseEntity.ok(user);
         } catch ( NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

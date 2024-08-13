@@ -15,6 +15,7 @@ interface ThemeColors {
   TEXT: string
   WHITE: string
   SECONDARY: string
+  RED: string
 }
 interface Theme {
   dark: boolean
@@ -39,6 +40,7 @@ export const lightTheme: Theme = {
     TEXT: '#000000',
     DARK_PRIMARY: '#00121a',
     WHITE: '#FFF',
+    RED:'#ff474c'
   },
 };
 export const darkTheme: Theme = {
@@ -59,6 +61,7 @@ export const darkTheme: Theme = {
 		TEXT: '#E2DFD2',
 		DARK_PRIMARY: '#00121a',
 		WHITE: '#FFF',
+		RED: '#ff474c',
 	},
 };
 

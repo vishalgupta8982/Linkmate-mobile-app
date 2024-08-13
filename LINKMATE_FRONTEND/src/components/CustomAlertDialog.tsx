@@ -1,12 +1,10 @@
 import React from 'react';
-import { Button, AlertDialog, Center } from 'native-base';
-import { fonts } from '../config/Fonts';
-import { StyleSheet, Text } from 'react-native';
+import { Modal, View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useCustomTheme } from '../config/Theme';
 import { width } from '../config/Dimension';
- 
+import { TouchableWithoutFeedback } from 'react-native';
 
-const CustomAlertDialog = ({
+const CustomModalDialog = ({
 	isOpen,
 	onClose,
 	title,
@@ -17,71 +15,79 @@ const CustomAlertDialog = ({
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
-	const cancelRef = React.useRef(null);
+
 	return (
-		<Center>
-			<AlertDialog
-				leastDestructiveRef={cancelRef}
-				isOpen={isOpen}
-				onClose={onClose}
-			>
-				<AlertDialog.Content style={styles.mainCont}>
-					<AlertDialog.Header style={styles.bg} borderBottomWidth={0}>
+		<Modal
+			visible={isOpen}
+			transparent={true}
+			animationType="fade"
+			onRequestClose={onClose}
+		>
+			<View style={styles.overlay}>
+				<View style={styles.mainCont}>
+					<View style={styles.header}>
 						<Text style={styles.title}>{title}</Text>
-					</AlertDialog.Header>
-					<AlertDialog.Body style={styles.bg} borderBottomWidth={0}>
+					</View>
+					<View style={styles.body}>
 						<Text style={styles.message}>{message}</Text>
-					</AlertDialog.Body>
-					<AlertDialog.Footer style={styles.bg} borderTopWidth={0}>
-						<Button.Group space={0}>
-							<Button
-								variant="unstyled"
-								colorScheme="coolGray"
-								onPress={onClose}
-								ref={cancelRef}
-								_text={{ fontSize: 'md', color: '#ff0000', fontWeight: '500' }}
-							>
+					</View>
+					<View style={styles.footer}>
+						<TouchableWithoutFeedback onPress={onClose}>
+							<Text style={[styles.buttonText, { color: '#ff0000' }]}>
 								Cancel
-							</Button>
-							<Button
-								variant="unstyled"
-								onPress={onConfirm}
-								_text={{
-									fontSize: 'md',
-									color: colors.PRIMARY,
-									fontWeight: '500',
-								}}
-							>
+							</Text>
+						</TouchableWithoutFeedback>
+						<TouchableWithoutFeedback onPress={onConfirm}>
+							<Text style={[styles.buttonText, { color: colors.PRIMARY }]}>
 								{ButtonText}
-							</Button>
-						</Button.Group>
-					</AlertDialog.Footer>
-				</AlertDialog.Content>
-			</AlertDialog>
-		</Center>
+							</Text>
+						</TouchableWithoutFeedback>
+					</View>
+				</View>
+			</View>
+		</Modal>
 	);
 };
 
 const getStyles = (colors) =>
 	StyleSheet.create({
+		overlay: {
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+			backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dim background
+		},
 		mainCont: {
 			width: width - 60,
-			borderRadius: 0,
+			borderRadius: 10,
+			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
+			padding: 20,
+		},
+		header: {
+			marginBottom: 10,
 		},
 		title: {
 			fontSize: 18,
 			color: colors.TEXT,
-			marginBottom: -10,
 			fontWeight: '500',
+		},
+		body: {
+			marginBottom: 20,
 		},
 		message: {
 			fontSize: 14,
 			color: colors.LIGHT_TEXT,
-			marginVertical: -15,
 		},
-		bg: {
-			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
+		footer: {
+			flexDirection: 'row',
+			justifyContent: 'flex-end',
+			marginTop: 10,
+		},
+		buttonText: {
+			fontSize: 16,
+			fontWeight: '500',
+			marginHorizontal: 10,
 		},
 	});
 
-export default CustomAlertDialog;
+export default CustomModalDialog;

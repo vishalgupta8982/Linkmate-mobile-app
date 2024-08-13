@@ -1,5 +1,6 @@
 package com.example.linkmate.user.service;
 
+import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cloudinary.Cloudinary;
+import com.example.linkmate.core.Exception.NotFoundException;
 import com.example.linkmate.core.Exception.UserNotFoundException;
 import com.example.linkmate.core.Exception.UsernameAlreadyExistsException;
 import com.example.linkmate.user.dto.UserUpdateDto;
@@ -201,37 +203,51 @@ public class UserService {
     }
 
     // service for delete education
-    public void deleteEducationById(String username, String educationId) {
+    public User deleteEducationById(String username, String educationId) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<Education> educations = existingUser.getEducations();
         if (educations != null) {
-            educations.removeIf(education -> education.getEducationId().equals(educationId));
+            
+            boolean educationRemoved = educations
+                    .removeIf(education -> education.getEducationId().equals(educationId));
+
+            if (!educationRemoved) {
+                throw new NotFoundException("Education with ID " + educationId + " not found.");
+            }
             existingUser.setEducations(educations);
             userRepository.save(existingUser);
+            return existingUser;
         } else {
-            throw new RuntimeException("Education with ID " + educationId + " not found.");
+            throw new NotFoundException("Education with ID " + educationId + " not found.");
         }
     }
 
     // service for delete experience
-    public void deleteExperienceById(String username, String experienceId) {
+    public User deleteExperienceById(String username, String experienceId) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<Experience> experiences = existingUser.getExperiences();
         if (experiences != null) {
-            experiences.removeIf(experience -> experience.getExperienceId().equals(experienceId));
+            boolean experienceRemoved = experiences
+                    .removeIf(experience -> experience.getExperienceId().equals(experienceId));
+
+            if (!experienceRemoved) {
+                throw new NotFoundException("Experience with ID " + experienceId + " not found.");
+            }
+
             existingUser.setExperiences(experiences);
             userRepository.save(existingUser);
+            return existingUser;
         } else {
-            throw new RuntimeException("Experience with ID " + experienceId + " not found.");
+            throw new NotFoundException("Experience list is empty or not initialized.");
         }
     }
 
     // service for delete skills
-    public void deleteSkillByName(String username, String skillName) {
+    public User deleteSkillByName(String username, String skillName) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -240,9 +256,13 @@ public class UserService {
             if (skills.remove(skillName)) {
                 existingUser.setSkills(skills);
                 userRepository.save(existingUser);
+                return existingUser;
             } else {
                 throw new RuntimeException("Skill '" + skillName + "' not found.");
             }
+        } else {
+            throw new RuntimeException("Skill list is empty or not initialized.");
         }
     }
+
 }

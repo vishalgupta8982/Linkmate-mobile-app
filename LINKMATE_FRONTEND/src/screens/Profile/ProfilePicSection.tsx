@@ -4,10 +4,12 @@ import {
 	StyleSheet,
 	TouchableWithoutFeedback,
 	TouchableOpacity,
+	ScrollView,
+	Image
 } from 'react-native';
 import React from 'react';
 import { useCustomTheme } from '../../config/Theme';
-import { Avatar } from 'native-base';
+ 
 import {
 	responsiveFontSize,
 	responsiveHeight,
@@ -25,19 +27,15 @@ export default function ProfilePicSection({ navigation, data }) {
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.profile}>
-				<Avatar
-					bg={colors.PRIMARY}
-					alignSelf="left"
-					size="xl"
+				<Image
+					 style={styles.pic}
 					source={{
 						uri:
 							data?.profilePicture.length > 0
 								? data?.profilePicture
 								: null,
 					}}
-				>
-					{data.firstName[0].toUpperCase() + data.lastName[0].toUpperCase()}
-				</Avatar>
+				/>
 				<View style={styles.countMainCont}>
 					<View style={styles.count}>
 						<Text style={styles.countText}>0</Text>
@@ -76,6 +74,7 @@ export default function ProfilePicSection({ navigation, data }) {
 				</Text>
 			</View>
 		</View>
+		 
 	);
 }
 const getStyles = (colors) =>
@@ -86,6 +85,11 @@ const getStyles = (colors) =>
 		profile: {
 			flexDirection: 'row',
 			alignItems: 'center',
+		},
+		pic:{
+			width:100,
+			height:100,
+			borderRadius:50
 		},
 		countMainCont: {
 			flexDirection: 'row',

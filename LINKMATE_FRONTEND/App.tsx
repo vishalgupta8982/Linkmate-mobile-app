@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import React, { FunctionComponent } from 'react';
-import { NativeBaseProvider} from 'native-base';
+ 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import MainStackNav from './src/navigation/MainStackNav';
 import { Provider } from 'react-redux';
@@ -12,11 +12,9 @@ const App: FunctionComponent = () => {
 	return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <NativeBaseProvider>
           <SafeAreaProvider>
             <MainStackNav />
           </SafeAreaProvider>
-        </NativeBaseProvider>
       </PersistGate>
     </Provider>
   )

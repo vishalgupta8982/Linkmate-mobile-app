@@ -1,4 +1,3 @@
-import { Actionsheet, Avatar } from 'native-base';
 import {
 	View,
 	Text,
@@ -36,7 +35,7 @@ export default function EditProfile({ navigation }) {
 	const styles = getStyles(colors);
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const [loader, setLoader] = useState(false);
-	const [openAS, setOpenAS] = useState(false);
+	const [isImageModalVisible, setImageModalVisible] = useState(false);
 	const [firstName, setFirstName] = useState(userData?.firstName);
 	const [lastName, setLastName] = useState(userData?.lastName);
 	const [userName, setUserName] = useState(userData?.username);
@@ -45,8 +44,9 @@ export default function EditProfile({ navigation }) {
 	const [headline, setHeadline] = useState(userData?.headline);
 	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
 	const [isModalVisible, setModalVisible] = useState(false);
+
 	const chooseImage = () => {
-		setOpenAS(false);
+		setImageModalVisible(false);
 		ImagePicker.openPicker({
 			cropping: false,
 			compressImageMaxWidth: 800,
@@ -58,6 +58,7 @@ export default function EditProfile({ navigation }) {
 			})
 			.catch((e) => console.log(e));
 	};
+
 	const handleUpdate = async () => {
 		setLoader(true);
 		if (firstName.length < 1) {
@@ -78,7 +79,7 @@ export default function EditProfile({ navigation }) {
 			lastName: lastName,
 			location: location,
 			headline: headline,
-			about:about
+			about: about,
 		};
 		Object.entries(fieldsToUpdate).forEach(([key, value]) => {
 			if (userData?.[key] !== value) {
@@ -99,12 +100,13 @@ export default function EditProfile({ navigation }) {
 			console.error(err);
 		}
 	};
+
 	const deleteProfile = async () => {
 		setLoader(true);
 		const payload: UpdatePayload = {
 			profilePicture: '',
 		};
-		setOpenAS(false);
+		setImageModalVisible(false);
 		if (userData?.profilePicture == '') {
 			setLoader(false);
 			Toast.show('Profile not exist', Toast.SHORT);
@@ -121,6 +123,7 @@ export default function EditProfile({ navigation }) {
 			console.error(err);
 		}
 	};
+
 	const uploadImg = async (uri) => {
 		setLoader(true);
 		try {
@@ -134,6 +137,7 @@ export default function EditProfile({ navigation }) {
 			console.error(err);
 		}
 	};
+
 	useEffect(() => {
 		if (
 			firstName !== userData?.firstName ||
@@ -171,24 +175,19 @@ export default function EditProfile({ navigation }) {
 								image: userData?.profilePicture,
 							});
 						}
-					}}  
+					}}
 				>
-					<Avatar
-						alignSelf={'center'}
-						size={'2xl'}
+					<Image
+						style={styles.pic}
 						source={{
 							uri:
 								userData?.profilePicture.length > 0
 									? userData?.profilePicture
-									: null,
+									: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8XHcngVONWqKATB8hOuO0GhItmIXIfGflTKqMuLSt6dV73i3caFKmfLcGUGUI5oC1658&usqp=CAU',
 						}}
-						bg={colors.PRIMARY}
-					>
-						{userData?.firstName?.charAt(0).toUpperCase() +
-							userData?.lastName?.charAt(0).toUpperCase()}
-					</Avatar>
+					/>
 				</TouchableWithoutFeedback>
-				<TouchableOpacity onPress={() => setOpenAS(!openAS)}>
+				<TouchableOpacity onPress={() => setImageModalVisible(true)}>
 					<Text style={styles.editText}>Edit Picture</Text>
 				</TouchableOpacity>
 				<AppTextField
@@ -211,45 +210,39 @@ export default function EditProfile({ navigation }) {
 					value={headline}
 					onChangeText={setHeadline}
 				/>
-				<AppTextField label="About" value={about} onChangeText={setAbout} />
 				<AppTextField
 					label="Location"
 					value={location}
 					onChangeText={setLocation}
 				/>
-				<Actionsheet
-					isOpen={openAS}
-					onClose={() => setOpenAS(!openAS)}
-					size="full"
-				>
-					<Actionsheet.Content bg={colors.BACKGROUND}>
-						<Actionsheet.Item
-							onPress={() => chooseImage('photo')}
-							bg={colors.BACKGROUND}
-							_pressed={{ bg: colors.MAIN_BACKGROUND }}
-							startIcon={
-								<AntDesign name="picture" color={colors.TEXT} size={22} />
-							}
-						>
-							<Text fontFamily={fonts.Inter_Medium} color={colors.TEXT}>
-								New Picture
-							</Text>
-						</Actionsheet.Item>
-						<Actionsheet.Item
-							bg={colors.BACKGROUND}
-							onPress={deleteProfile}
-							_pressed={{ bg: colors.MAIN_BACKGROUND }}
-							startIcon={
-								<AntDesign name="delete" color={'#FF474C'} size={22} />
-							}
-						>
-							<Text fontFamily={fonts.Inter_Medium} color="#ff0000">
-								Remove Picture
-							</Text>
-						</Actionsheet.Item>
-					</Actionsheet.Content>
-				</Actionsheet>
+				<AppTextField
+					label="About"
+					value={about}
+					onChangeText={setAbout}
+				/>
 			</View>
+			<Modal
+				transparent={true}
+				animationType="slide"
+				visible={isImageModalVisible}
+				onRequestClose={() => setImageModalVisible(false)}
+			>
+				<TouchableWithoutFeedback onPress={() => setImageModalVisible(false)}>
+					<View style={styles.modalOverlay} />
+				</TouchableWithoutFeedback>
+				<View style={styles.modalContainer}>
+					<TouchableOpacity style={styles.modalButton} onPress={chooseImage}>
+						<AntDesign name="picture" size={20} color={colors.TEXT} />
+						<Text style={styles.modalButtonText}>New Picture</Text>
+					</TouchableOpacity>
+					<TouchableOpacity style={styles.modalButton} onPress={deleteProfile}>
+						<AntDesign name="delete" size={20} color="#FF474C" />
+						<Text style={[styles.modalButtonText, { color: '#FF474C' }]}>
+							Remove Picture
+						</Text>
+					</TouchableOpacity>
+				</View>
+			</Modal>
 			<CustomAlertDialog
 				isOpen={alertDialogVisible}
 				onClose={() => setAlertDialogVisible(false)}
@@ -272,10 +265,41 @@ const getStyles = (colors) =>
 		contentCont: {
 			padding: 15,
 		},
+		pic: {
+			width: 120,
+			height: 120,
+			borderRadius: 60,
+			alignSelf: 'center',
+			marginVertical: 20,
+		},
 		editText: {
-			fontFamily: fonts.Inter_Medium,
 			color: colors.PRIMARY,
+			fontSize: 14,
 			textAlign: 'center',
 			marginVertical: 10,
+		},
+		modalOverlay: {
+			flex: 1,
+			backgroundColor: 'rgba(0,0,0,0.3)',
+		},
+		modalContainer: {
+			backgroundColor: colors.BACKGROUND,
+			borderTopLeftRadius: 15,
+			borderTopRightRadius: 15,
+			paddingVertical: 20,
+			paddingHorizontal: 25,
+			position: 'absolute',
+			bottom: 0,
+			width: '100%',
+		},
+		modalButton: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			marginVertical: 10,
+		},
+		modalButtonText: {
+			marginLeft: 10,
+			fontSize: 14,
+			color: colors.APP_PRIMARY,
 		},
 	});

@@ -7,11 +7,11 @@ import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import { useEffect } from 'react';
 
 export default function Home() {
-	 
 	const dispatch = useDispatch();
 	const fetchUserDetails = async () => {
 		try {
 			const response = await userDetails();
+			console.log(response)
 			dispatch(setUserDetails(response));
 		} catch (err) {
 			console.error(err);
@@ -28,3 +28,5 @@ export default function Home() {
 		</View>
 	);
 }
+  
+ 

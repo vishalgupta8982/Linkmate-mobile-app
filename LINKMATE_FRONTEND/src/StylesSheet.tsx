@@ -17,8 +17,28 @@ export const globalStyles = (colors) =>
 		head: {
 			fontFamily: fonts.Inter_Medium,
 			color: colors.TEXT,
-            fontSize:responsiveFontSize(4),
-            marginBottom:responsiveHeight(2)
+			fontSize: responsiveFontSize(4),
+			marginBottom: responsiveHeight(2),
 		},
-		 
+		smallHead: {
+			fontFamily: fonts.Inter_Medium,
+			color: colors.TEXT,
+			fontSize: responsiveFontSize(2.6),
+		},
+		smallerHead: {
+			fontFamily: fonts.Inter_Medium,
+			color: colors.TEXT,
+			fontSize: responsiveFontSize(2.2),
+		},
+		smallestHead: {
+			fontFamily: fonts.Inter_Medium,
+			color: colors.TEXT,
+			fontSize: responsiveFontSize(1.8),
+		},
+		description: {
+			fontFamily: fonts.Inter_Medium,
+			color: colors.APP_PRIMARY_light,
+			fontSize: responsiveFontSize(1.8),
+			marginTop:7
+		},
 	});

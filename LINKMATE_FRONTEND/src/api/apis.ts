@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SignUpPayload } from '../types/Payload/SignUpPayload';
 import { verifyOtpResponse } from '../types/Response/VerifyOtpResponse';
-import { get, post, put } from './instance';
+import { del, get, post, put } from './instance';
 import { LoginPayload } from '../types/Payload/LoginPayload';
 import { OtpPayload } from '../types/Payload/OtpPayload';
 import { User } from '../types/compoundTypes';
@@ -53,3 +53,8 @@ export const updateProfilePicture = async (payload) => {
 
 	return await put<User>(url, formData, config);
 };
+
+export const deleteExperience=async(id:string)=>{
+	const url = `/users/delete/experience?experienceId=${id}`;
+	return await del<User>(url);
+}
