@@ -4,7 +4,7 @@ import { useCustomTheme } from '../config/Theme';
 import { width } from '../config/Dimension';
 import { TouchableWithoutFeedback } from 'react-native';
 
-const CustomModalDialog = ({
+const CustomAlertDialog = ({
 	isOpen,
 	onClose,
 	title,
@@ -90,4 +90,4 @@ const getStyles = (colors) =>
 		},
 	});
 
-export default CustomModalDialog;
+export default CustomAlertDialog;

@@ -53,7 +53,7 @@ const Profile: React.FC = ({ navigation }) => {
 						{ backgroundColor: colors.PRIMARY },
 					]}
 					activeColor={colors.PRIMARY}
-					inactiveColor="#fff"
+					inactiveColor={colors.TEXT}
 					style={styles.bg}
 				/>
 			)}

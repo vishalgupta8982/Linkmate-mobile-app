@@ -33,6 +33,8 @@ import com.example.linkmate.user.service.UserService;
 import com.example.linkmate.user.utils.GenerateUniqueUserName;
 import com.example.linkmate.user.utils.JwtUtil;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -175,7 +177,7 @@ public class UserController {
     // api for update experience
     @PutMapping("/update/experience")
     public ResponseEntity<?> updateExperience(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @RequestBody List<Experience> experiences) {
+            @Valid @RequestBody List<@Valid Experience> experiences) {
         try {
             String jwtToken = token.replace("Bearer ", "");
             String username = jwtUtil.getUserNameFromToken(jwtToken);

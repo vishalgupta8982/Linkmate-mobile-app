@@ -6,6 +6,8 @@ import { LoginPayload } from '../types/Payload/LoginPayload';
 import { OtpPayload } from '../types/Payload/OtpPayload';
 import { User } from '../types/compoundTypes';
 import { UpdatePayload } from '../types/Payload/updatePayload';
+import { EducationPayload } from '../types/Payload/EducationPayload';
+import { ExperiencePayload } from '../types/Payload/ExperiencePayload';
 
 export const userLogin = async (
 	payload: LoginPayload
@@ -58,3 +60,24 @@ export const deleteExperience=async(id:string)=>{
 	const url = `/users/delete/experience?experienceId=${id}`;
 	return await del<User>(url);
 }
+export const deleteEducation=async(id:string)=>{
+	const url = `/users/delete/education?educationId=${id}`;
+	return await del<User>(url);
+}
+export const deleteSkill = async (skill: string) => {
+	const url = `/users/delete/skill?skill=${skill}`;
+	return await del<User>(url);
+};
+export const addSkill = async (skill: string[]) => {
+	const url = '/users/update/skills';
+	return await put<User>(url,skill);
+};
+export const addEducation = async (payload:EducationPayload ) => {
+	console.log(payload)
+	const url = '/users/update/education';
+	return await put<User>(url,[payload]);
+};
+export const addExperience = async (payload:ExperiencePayload) => {
+	const url = '/users/update/experience';
+	return await put<User>(url,payload);
+};

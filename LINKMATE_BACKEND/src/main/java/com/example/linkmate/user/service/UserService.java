@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -67,7 +66,7 @@ public class UserService {
         }
         throw new RuntimeException("Invalid email or password");
     }
-    
+
     // service for find user by email
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -128,7 +127,7 @@ public class UserService {
             if (education.getEducationId() == null) {
                 // New education entry: generate a new ID and add it
                 education.setEducationId(new ObjectId().toString());
-                existingEducations.add(education);
+                existingEducations.add(0, education);
             } else {
                 // Existing education entry: find and update it
                 Optional<Education> existingEducationOpt = existingEducations.stream()
@@ -161,7 +160,7 @@ public class UserService {
             if (experience.getExperienceId() == null) {
                 // New experience entry: generate a new ID and add it
                 experience.setExperienceId(new ObjectId().toString());
-                existingExperiences.add(experience);
+                existingExperiences.add(0, experience);
             } else {
                 // Existing experience entry: find and update it
                 Optional<Experience> existingExperienceOpt = existingExperiences.stream()
@@ -209,7 +208,7 @@ public class UserService {
 
         List<Education> educations = existingUser.getEducations();
         if (educations != null) {
-            
+
             boolean educationRemoved = educations
                     .removeIf(education -> education.getEducationId().equals(educationId));
 

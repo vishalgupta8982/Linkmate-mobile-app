@@ -144,7 +144,8 @@ export default function EditProfile({ navigation }) {
 			lastName !== userData?.lastName ||
 			headline !== userData?.headline ||
 			location !== userData?.location ||
-			userName !== userData?.username
+			userName !== userData?.username || 
+			about !== userData?.about
 		) {
 			const backAction = () => {
 				setAlertDialogVisible(true);
@@ -158,7 +159,7 @@ export default function EditProfile({ navigation }) {
 				backHandler.remove();
 			};
 		}
-	}, [firstName, lastName, headline, location, userName, userData]);
+	}, [firstName, lastName, headline, location, userName, userData,about]);
 
 	return (
 		<ScrollView style={styles.mainCont}>

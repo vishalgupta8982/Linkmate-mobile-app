@@ -7,13 +7,14 @@ import {
 	StyleSheet,
 } from 'react-native';
 import { useCustomTheme } from '../config/Theme';
+import {  responsiveWidth } from 'react-native-responsive-dimensions';
 import { width } from '../config/Dimension';
  
 
-const AppTextField = ({ label, value, onChangeText, readOnly, ...props }) => {
+const AppTextField = ({ label, value, onChangeText,Width, readOnly, ...props }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
-	const styles = getStyles(colors);
+	const styles = getStyles(colors,width);
 	const [isFocused, setIsFocused] = useState(false);
 	const [inputValue, setInputValue] = useState(value || '');
 	const animatedIsFocused = useRef(new Animated.Value(value ? 1 : 0)).current;
@@ -68,7 +69,7 @@ const AppTextField = ({ label, value, onChangeText, readOnly, ...props }) => {
 			</TouchableWithoutFeedback>
 			<TextInput
 				{...props}
-				style={styles.input}
+				style={[styles.input,{width:Width?responsiveWidth(Width):width-40}]}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
 				scrollEnabled={true}
@@ -82,7 +83,7 @@ const AppTextField = ({ label, value, onChangeText, readOnly, ...props }) => {
 	);
 };
 
-const getStyles = (colors) =>
+const getStyles = (colors,width) =>
 	StyleSheet.create({
 		input: {
 			height: 40,
@@ -90,7 +91,6 @@ const getStyles = (colors) =>
 			color: colors.TEXT,
 			borderBottomWidth: 1,
 			borderBottomColor: colors.PRIMARY,
-			width: width - 40,
 		},
 		label:{
             marginTop:20

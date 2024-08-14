@@ -63,13 +63,13 @@ export default function ProfilePicSection({ navigation, data }) {
 						<MaterialCommunityIcon
 							name="account-edit-outline"
 							size={18}
-							color={colors.TEXT}
+							color={colors.WHITE}
 						/>
 						Edit profile
 					</Text>
 				</TouchableOpacity>
 				<Text style={styles.button}>
-					<MaterialCommunityIcon name="share" size={18} color={colors.TEXT} />{' '}
+					<MaterialCommunityIcon name="share" size={18} color={colors.WHITE} />{' '}
 					Share profile
 				</Text>
 			</View>
@@ -127,7 +127,7 @@ const getStyles = (colors) =>
 		},
 		locationText: {
 			fontSize: responsiveFontSize(1.9),
-			color: colors.APP_PRIMARY_LIGHT,
+			color: colors.APP_PRIMARY,
 			fontFamily: fonts.Inter_Regular,
 			lineHeight: responsiveFontSize(2),
 			marginTop: 5,
@@ -141,7 +141,7 @@ const getStyles = (colors) =>
 		button: {
 			backgroundColor: colors.PRIMARY,
 			padding: 7,
-			color: colors.TEXT,
+			color: colors.WHITE,
 			fontFamily: fonts.Inter_Medium,
 			fontSize: 14,
 			width: responsiveWidth(45),
