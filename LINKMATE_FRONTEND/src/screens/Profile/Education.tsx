@@ -6,6 +6,7 @@ import {
 	Modal,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
+	ScrollView,
 } from 'react-native';
 import { useCustomTheme } from '../../config/Theme';
 import { globalStyles } from '../../StylesSheet';
@@ -19,12 +20,16 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import { addEducation, deleteEducation } from '../../api/apis';
 import Toast from 'react-native-simple-toast';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
-import { responsiveFontSize } from 'react-native-responsive-dimensions';
+import {
+	responsiveFontSize,
+	responsiveHeight,
+} from 'react-native-responsive-dimensions';
 import { fonts } from '../../config/Fonts';
 import AppTextField from '../../components/AppTextField';
 import { AppButton } from '../../components/AppButton';
 import { EducationPayload } from '../../types/Payload/EducationPayload';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
+import AppDateField from '../../components/AppDateField';
 export default function Education({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
@@ -34,13 +39,32 @@ export default function Education({ navigation }) {
 	const globalStyleSheet = globalStyles(colors);
 	const [loader, setLoader] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [startDateDpShow, setStartDateDpShow] = useState(false);
+	const [endDateDpShow, setEndDateDpShow] = useState(false);
 	const [newEducation, setNewEducation] = useState({
 		institution: '',
-		startDate: '',
-		endDate: '',
+		startDate: new Date(),
+		endDate: new Date(),
 		degree: '',
 		description: '',
+		field: '',
 	});
+	const handleStartDate = (event, selectedDate) => {
+		const currentDate = selectedDate || date;
+		setStartDateDpShow(!startDateDpShow);
+		setNewEducation((prevState) => ({
+			...prevState,
+			startDate: currentDate,
+		}));
+	};
+	const handleEndDate = (event, selectedDate) => {
+		const currentDate = selectedDate || date;
+		setEndDateDpShow(!endDateDpShow);
+		setNewEducation((prevState) => ({
+			...prevState,
+			endDate: currentDate,
+		}));
+	};
 
 	const handleDltEdu = async (id: string) => {
 		try {
@@ -64,10 +88,12 @@ export default function Education({ navigation }) {
 
 	const handleAddEducation = async () => {
 		const payload: EducationPayload = newEducation;
+		console.log(payload);
 		setLoader(true);
 		toggleModal();
 		try {
 			const response = await addEducation(payload);
+			console.log(response)
 			if (response) {
 				dispatch(setUserDetails(response));
 				setLoader(false);
@@ -79,14 +105,15 @@ export default function Education({ navigation }) {
 		} finally {
 			setNewEducation({
 				institution: '',
-				startDate: '',
-				endDate: '',
+				startDate: new Date(),
+				endDate: new Date(),
 				degree: '',
 				description: '',
+				field: '',
 			});
 		}
 	};
-
+	console.log(newEducation);
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.cont}>
@@ -123,7 +150,9 @@ export default function Education({ navigation }) {
 							</TouchableWithoutFeedback>
 						</View>
 					</View>
-					<Text style={globalStyleSheet.smallestHead}>{item.degree}</Text>
+					<Text style={globalStyleSheet.smallestHead}>
+						{item.degree},{item.field}
+					</Text>
 					<Text style={globalStyleSheet.smallestHead}>
 						{moment(item.startDate, 'YYYY-MM-DD').format('MMM YYYY')} -{' '}
 						{moment(item.endDate, 'YYYY-MM-DD').format('MMM YYYY')}
@@ -147,43 +176,64 @@ export default function Education({ navigation }) {
 					<View style={styles.modalOverlay}>
 						<TouchableWithoutFeedback>
 							<View style={styles.modalContainer}>
-								<Text style={styles.modalTitle}>Add Education</Text>
-								<AppTextField
-									label="Institution"
-									value={newEducation.institution}
-									onChangeText={(text) =>
-										setNewEducation({ ...newEducation, institution: text })
-									}
-								/>
-								<AppTextField
-									label="Degree"
-									value={newEducation.degree}
-									onChangeText={(text) =>
-										setNewEducation({ ...newEducation, degree: text })
-									}
-								/>
-								<AppTextField
-									label="Start Date (YYYY-MM-DD)"
-									value={newEducation.startDate}
-									onChangeText={(text) =>
-										setNewEducation({ ...newEducation, startDate: text })
-									}
-								/>
-								<AppTextField
-									label="End Date (YYYY-MM-DD)"
-									value={newEducation.endDate}
-									onChangeText={(text) =>
-										setNewEducation({ ...newEducation, endDate: text })
-									}
-								/>
-								<AppTextField
-									label="Description"
-									value={newEducation.description}
-									onChangeText={(text) =>
-										setNewEducation({ ...newEducation, description: text })
-									}
-								/>
-								<AppButton title="Save" onPress={handleAddEducation} />
+								<ScrollView style={styles.scroll}>
+									<Text style={styles.modalTitle}>Add Education</Text>
+									<AppTextField
+										label="Institution"
+										value={newEducation.institution}
+										onChangeText={(text) =>
+											setNewEducation({ ...newEducation, institution: text })
+										}
+									/>
+									<AppTextField
+										label="Degree"
+										value={newEducation.degree}
+										onChangeText={(text) =>
+											setNewEducation({ ...newEducation, degree: text })
+										}
+									/>
+									<AppTextField
+										label="Field of study"
+										value={newEducation.field}
+										onChangeText={(text) =>
+											setNewEducation({ ...newEducation, field: text })
+										}
+									/>
+									<AppDateField
+										label="Start Date (DD/MM/YYYY)"
+										value={moment(newEducation.startDate).format('DD/MM/YYYY')}
+										onPress={() => setStartDateDpShow(true)}
+									/>
+									<AppDateField
+										label="End Date or expected (DD/MM/YYYY)"
+										value={moment(newEducation.endDate).format('DD/MM/YYYY')}
+										onPress={() => setEndDateDpShow(true)}
+									/>
+									<AppTextField
+										label="Description"
+										value={newEducation.description}
+										onChangeText={(text) =>
+											setNewEducation({ ...newEducation, description: text })
+										}
+									/>
+									{startDateDpShow && (
+										<DateTimePicker
+											value={newEducation.startDate}
+											mode={'date'}
+											display="default"
+											onChange={handleStartDate}
+										/>
+									)}
+									{endDateDpShow && (
+										<DateTimePicker
+											value={newEducation.endDate}
+											mode={'date'}
+											display="default"
+											onChange={handleEndDate}
+										/>
+									)}
+									<AppButton title="Save" onPress={handleAddEducation} />
+								</ScrollView>
 							</View>
 						</TouchableWithoutFeedback>
 					</View>
@@ -245,9 +295,13 @@ const getStyles = (colors) =>
 		modalContainer: {
 			backgroundColor: colors.MAIN_BACKGROUND,
 			borderRadius: 10,
-			padding: 20,
 			elevation: 5,
 			width: '100%',
+			maxHeight: responsiveHeight(70),
+		},
+		scroll: {
+			padding: 20,
+			paddingBottom: 100,
 		},
 		modalTitle: {
 			fontSize: responsiveFontSize(2.5),

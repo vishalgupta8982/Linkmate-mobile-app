@@ -40,6 +40,8 @@ export default function Experience({ navigation }) {
 		endDate: '',
 		position: '',
 		description: '',
+		locationType:'',
+		employmentType:''
 	});
 	const handleDltExp = async (id: string) => {
 		try {
@@ -65,14 +67,16 @@ export default function Experience({ navigation }) {
 		// dispatch(addEducation(newEducation));
 		console.log(newExperience);
 		setNewExperience({
-			institution: '',
+			company: '',
 			startDate: '',
 			endDate: '',
-			degree: '',
+			position: '',
 			description: '',
+			locationType: '',
+			employmentType: '',
 		});
 		toggleModal();
-		Toast.show('Education added successfully', Toast.SHORT);
+		Toast.show('Experience added successfully', Toast.SHORT);
 	};
 	return (
 		<View style={styles.mainCont}>

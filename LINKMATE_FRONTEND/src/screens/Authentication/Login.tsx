@@ -136,7 +136,6 @@ const getStyles = (colors) =>
 			flexDirection: 'row',
 			alignContent: 'center',
 			alignSelf: 'center',
-			marginTop: responsiveHeight(2),
 		},
 		not: {
 			fontFamily: fonts.Inter_Regular,

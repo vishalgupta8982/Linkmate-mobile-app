@@ -4,4 +4,5 @@ export interface EducationPayload {
 	endDate: string;
 	degree: string;
 	description: string;
+	field: string;
 }

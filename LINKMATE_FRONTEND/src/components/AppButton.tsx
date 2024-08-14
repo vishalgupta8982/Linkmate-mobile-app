@@ -46,6 +46,7 @@ const getStyles = (colors) =>
 			marginHorizontal: 5,
 			alignSelf: 'center',
 			marginTop: 20,
+			marginBottom: 20,
 		},
 		appButtonText: {
 			fontSize: 16,
