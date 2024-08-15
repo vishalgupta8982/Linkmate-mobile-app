@@ -10,7 +10,7 @@ public class Project {
     @Id
     private String projectId;
     private String name;
-    private ArrayList<String> skills=new ArrayList<>();
+    private String skills;
     private String startDate;
     private String endDate;
     private String description;

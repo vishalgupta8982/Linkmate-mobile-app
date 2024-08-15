@@ -8,6 +8,7 @@ import { User } from '../types/compoundTypes';
 import { UpdatePayload } from '../types/Payload/updatePayload';
 import { EducationPayload } from '../types/Payload/EducationPayload';
 import { ExperiencePayload } from '../types/Payload/ExperiencePayload';
+import { ProjectPayload } from '../types/Payload/ProjectPayload';
 
 export const userLogin = async (
 	payload: LoginPayload
@@ -85,6 +86,10 @@ export const addExperience = async (payload:ExperiencePayload) => {
 	const url = '/users/update/experience';
 	return await put<User>(url,[payload]);
 };
+export const addProject = async (payload:ProjectPayload) => {
+	const url = '/users/update/project';
+	return await put<User>(url,[payload]);
+};
 export const updateEducation = async (educationId:string,payload: EducationPayload) => {
 	const url = `/users/update/education?educationId=${educationId}`;
 	return await put<User>(url, [payload]);
@@ -93,7 +98,7 @@ export const updateExperience = async (experienceId:string,payload: ExperiencePa
 	const url = `/users/update/experience?experienceId=${experienceId}`;
 	return await put<User>(url, [payload]);
 };
-export const updateProject = async (projectId:string,payload: ExperiencePayload) => {
+export const updateProject = async (projectId:string,payload: ProjectPayload) => {
 	const url = `/users/update/project?projectId=${projectId}`;
 	return await put<User>(url, [payload]);
 };

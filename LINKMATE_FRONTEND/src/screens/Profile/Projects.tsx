@@ -1,25 +1,43 @@
+import React, { useState } from 'react';
 import {
 	View,
 	Text,
 	StyleSheet,
-	ScrollView,
+	Modal,
 	TouchableOpacity,
 	TouchableWithoutFeedback,
+	ScrollView,
 } from 'react-native';
-import Loader from '../../components/Loader';
-import React from 'react';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
 import { useCustomTheme } from '../../config/Theme';
 import { globalStyles } from '../../StylesSheet';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import moment from 'moment';
-import { deleteEducation, deleteExperience } from '../../api/apis';
+import Loader from '../../components/Loader';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {
+	addEducation,
+	addProject,
+	deleteEducation,
+	deleteProject,
+	updateEducation,
+	updateProject,
+} from '../../api/apis';
 import Toast from 'react-native-simple-toast';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
-import { useState } from 'react';
+import {
+	responsiveFontSize,
+	responsiveHeight,
+} from 'react-native-responsive-dimensions';
+import { fonts } from '../../config/Fonts';
+import AppTextField from '../../components/AppTextField';
+import { AppButton } from '../../components/AppButton';
+import { EducationPayload } from '../../types/Payload/EducationPayload';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import AppPickerField from '../../components/AppPickerField';
+import { ProjectPayload } from '../../types/Payload/ProjectPayload';
 export default function Projects({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
@@ -28,10 +46,42 @@ export default function Projects({ navigation }) {
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [loader, setLoader] = useState(false);
-	const handleDltEdu = async (id: string) => {
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [startDateDpShow, setStartDateDpShow] = useState(false);
+	const [endDateDpShow, setEndDateDpShow] = useState(false);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editingProjectId, setEditingProjectId] = useState('');
+	const [newProject, setNewProject] = useState({
+		name: '',
+		startDate: new Date(),
+		endDate: new Date(),
+		link: '',
+		description: '',
+		skills: [],
+	});
+
+	const handleStartDate = (event, selectedDate) => {
+		const currentDate = selectedDate || newProject.startDate;
+		setStartDateDpShow(!startDateDpShow);
+		setNewProject((prevState) => ({
+			...prevState,
+			startDate: currentDate,
+		}));
+	};
+
+	const handleEndDate = (event, selectedDate) => {
+		const currentDate = selectedDate || newProject.endDate;
+		setEndDateDpShow(!endDateDpShow);
+		setNewProject((prevState) => ({
+			...prevState,
+			endDate: currentDate,
+		}));
+	};
+
+	const handleDltProject = async (id: string) => {
 		try {
 			setLoader(true);
-			const response = await deleteEducation(id);
+			const response = await deleteProject(id);
 			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
@@ -43,62 +93,248 @@ export default function Projects({ navigation }) {
 			console.error(err);
 		}
 	};
+
+	const toggleModal = () => {
+		setIsModalVisible(!isModalVisible);
+	};
+
+	const resetProjectForm = () => {
+		setNewProject({
+			name: '',
+			startDate: new Date(),
+			endDate: new Date(),
+			link: '',
+			description: '',
+			skills: '',
+		});
+		setIsEditing(false);
+		setEditingProjectId(null);
+	};
+	const handleAddProject = async () => {
+		const payload: ProjectPayload = newProject;
+		console.log(payload);
+		setLoader(true);
+		if (
+			payload.name.length < 1 ||
+			payload.skills.length < 1 ||
+			payload.description.length < 1
+		) {
+			setLoader(false);
+			Toast.show('All fields are required', Toast.SHORT);
+			return;
+		}
+		toggleModal();
+		try {
+			const response = await addProject(payload);
+			console.log(response);
+			if (response) {
+				dispatch(setUserDetails(response));
+				setLoader(false);
+				Toast.show('Project added successfully', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+			setLoader(false);
+		} finally {
+			setNewProject({
+				name: '',
+				startDate: new Date(),
+				endDate: new Date(),
+				link: '',
+				description: '',
+				skills: '',
+			});
+		}
+	};
+
+	const handleEditProject = (project) => {
+		setIsEditing(true);
+		setEditingProjectId(project.projectId);
+		setNewProject({
+			name: project.name,
+			startDate: moment(project.startDate).toDate(),
+			endDate: moment(project.endDate).toDate(),
+			link: project.link,
+			description: project.description,
+			skills: project.skills,
+		});
+		toggleModal();
+	};
+
+	const handleUpdateProject = async () => {
+		const payload: ProjectPayload = newProject;
+		console.log(payload);
+		setLoader(true);
+		if (
+			payload.name.length < 1 ||
+			payload.skills.length < 1 ||
+			payload.description.length < 1
+		) {
+			setLoader(false);
+			Toast.show('All fields are required', Toast.SHORT);
+			return;
+		}
+		toggleModal();
+		try {
+			const response = await updateProject(editingProjectId, payload);
+			console.log(response);
+			if (response) {
+				dispatch(setUserDetails(response));
+				setLoader(false);
+				Toast.show('Project updated successfully', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+			setLoader(false);
+		} finally {
+			setNewProject({
+				name: '',
+				startDate: new Date(),
+				endDate: new Date(),
+				link: '',
+				description: '',
+				skills: '',
+			});
+			setIsEditing(false);
+			setEditingProjectId('');
+		}
+	};
+
 	return (
 		<View style={styles.mainCont}>
-			{userData?.experiences?.length > 0 && (
-				<View>
-					<View style={styles.cont}>
-						<Text style={globalStyleSheet.smallHead}>Add Education</Text>
-						<View style={styles.plus}>
-							<AntDesign name="plus" size={16} color={colors.TEXT} />
+			<View style={styles.cont}>
+				<Text style={globalStyleSheet.smallHead}>Project</Text>
+				<TouchableOpacity onPress={toggleModal}>
+					<View style={styles.plus}>
+						<AntDesign name="plus" size={16} color={colors.WHITE} />
+					</View>
+				</TouchableOpacity>
+			</View>
+			{loader && <Loader />}
+			{userData?.projects.map((item) => (
+				<View style={styles.experienceCard} key={item.projectId}>
+					<View style={styles.position}>
+						<Text style={globalStyleSheet.smallerHead}>{item.name}</Text>
+						<View style={styles.icon}>
+							<TouchableWithoutFeedback onPress={() => handleEditProject(item)}>
+								<Feather
+									marginRight={10}
+									name="edit-2"
+									size={16}
+									padding={5}
+									color={colors.PRIMARY}
+								/>
+							</TouchableWithoutFeedback>
+							<TouchableWithoutFeedback
+								onPress={() => handleDltProject(item.projectId)}
+							>
+								<MaterialCommunityIcon
+									name="delete-outline"
+									size={20}
+									marginRight={10}
+									padding={5}
+									color={colors.RED}
+								/>
+							</TouchableWithoutFeedback>
 						</View>
 					</View>
-					{loader && <Loader />}
-					{userData?.educations.map((item) => (
-						<View style={styles.experienceCard}>
-							<View style={styles.position}>
-								<Text style={globalStyleSheet.smallerHead}>
-									{item.institution}
-								</Text>
-								<View style={styles.icon}>
-									<Feather
-										name="edit-2"
-										marginRight={10}
-										size={16}
-										padding={5}
-										color={colors.PRIMARY}
-									/>
-									<TouchableWithoutFeedback
-										onPress={() => handleDltEdu(item.educationId)}
-									>
-										<MaterialCommunityIcon
-											name="delete-outline"
-											marginRight={10}
-											size={20}
-											padding={5}
-											color={colors.RED}
-										/>
-									</TouchableWithoutFeedback>
-								</View>
-							</View>
-							<Text style={globalStyleSheet.smallestHead}>{item.degree}</Text>
-							<Text style={globalStyleSheet.smallestHead}>
-								{moment(item.startDate, 'YYYY-MM-DD').format('MMM YYYY')} -{' '}
-								{moment(item.endDate, 'YYYY-MM-DD').format('MMM YYYY')}
-								{' • '}
-								{moment(item.endDate, 'YYYY-MM-DD').diff(
-									moment(item.startDate, 'YYYY-MM-DD'),
-									'months'
-								)}{' '}
-								months
-							</Text>
-							<Text style={globalStyleSheet.description}>
-								{item.description}
-							</Text>
-						</View>
-					))}
+					<Text style={globalStyleSheet.smallestHead}>
+						{item.degree},{item.field}
+					</Text>
+					<Text style={globalStyleSheet.smallestHead}>
+						{moment(item.startDate, 'YYYY-MM-DD').format('MMM YYYY')} -{' '}
+						{moment(item.endDate, 'YYYY-MM-DD').format('MMM YYYY')}
+					</Text>
+					<Text style={globalStyleSheet.description}>{item.description}</Text>
 				</View>
-			)}
+			))}
+			<Modal
+				visible={isModalVisible}
+				transparent={true}
+				animationType="slide"
+				onRequestClose={() => {
+					toggleModal();
+					resetProjectForm();
+				}}
+			>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						toggleModal();
+						resetProjectForm();
+					}}
+				>
+					<View style={styles.modalOverlay}>
+						<TouchableWithoutFeedback>
+							<View style={styles.modalContainer}>
+								<ScrollView style={styles.scroll}>
+									<Text style={styles.modalTitle}>Add Education</Text>
+									<AppTextField
+										label="Project Name"
+										value={newProject.name}
+										onChangeText={(text) =>
+											setNewProject({ ...newProject, name: text })
+										}
+									/>
+									<AppTextField
+										label="Project Link"
+										value={newProject.link}
+										onChangeText={(text) =>
+											setNewProject({ ...newProject, link: text })
+										}
+									/>
+
+									<AppPickerField
+										label="Start Date (DD/MM/YYYY)"
+										value={moment(newProject.startDate).format('DD/MM/YYYY')}
+										onPress={() => setStartDateDpShow(true)}
+										icon={'calendar'}
+									/>
+									<AppPickerField
+										label="End Date or expected (DD/MM/YYYY)"
+										value={moment(newProject.endDate).format('DD/MM/YYYY')}
+										onPress={() => setEndDateDpShow(true)}
+										icon={'calendar'}
+									/>
+									<AppTextField
+										label="Skills(used in project)"
+										value={newProject.skills}
+										onChangeText={(text) =>
+											setNewProject({ ...newProject, skills: text })
+										}
+									/>
+									<AppTextField
+										label="Description"
+										value={newProject.description}
+										onChangeText={(text) =>
+											setNewProject({ ...newProject, description: text })
+										}
+									/>
+									{startDateDpShow && (
+										<DateTimePicker
+											value={newEducation.startDate}
+											mode={'date'}
+											display="default"
+											onChange={handleStartDate}
+										/>
+									)}
+									{endDateDpShow && (
+										<DateTimePicker
+											value={newEducation.endDate}
+											mode={'date'}
+											display="default"
+											onChange={handleEndDate}
+										/>
+									)}
+									<AppButton
+										title={isEditing ? 'Update Project' : 'Add Project'}
+										onPress={isEditing ? handleUpdateProject : handleAddProject}
+									/>
+								</ScrollView>
+							</View>
+						</TouchableWithoutFeedback>
+					</View>
+				</TouchableWithoutFeedback>
+			</Modal>
 		</View>
 	);
 }
@@ -145,5 +381,35 @@ const getStyles = (colors) =>
 		icon: {
 			flexDirection: 'row',
 			alignItems: 'center',
+		},
+		modalOverlay: {
+			flex: 1,
+			backgroundColor: 'rgba(0, 0, 0, 0.5)',
+			justifyContent: 'flex-end',
+			alignItems: 'center',
+		},
+		modalContainer: {
+			backgroundColor: colors.MAIN_BACKGROUND,
+			borderRadius: 10,
+			elevation: 5,
+			width: '100%',
+			maxHeight: responsiveHeight(60),
+		},
+		scroll: {
+			padding: 20,
+			paddingBottom: 100,
+		},
+		modalTitle: {
+			fontSize: responsiveFontSize(2.5),
+			fontFamily: fonts.Inter_Medium,
+			color: colors.TEXT,
+		},
+		input: {
+			borderWidth: 1,
+			borderColor: colors.BORDER,
+			borderRadius: 5,
+			padding: 10,
+			marginBottom: 15,
+			color: colors.TEXT,
 		},
 	});

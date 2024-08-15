@@ -15,6 +15,14 @@ export interface Education {
 	endDate: string;
 	description: string;
 }
+export interface Project{
+	name: string;
+	startDate: string;
+	endDate: string;
+	description: string;
+	link: string;
+	skills: string[];
+}
 
 export interface User {
 	userId: {
@@ -32,6 +40,7 @@ export interface User {
 	connections: any[];
 	experiences: Experience[];
 	educations: Education[];
+	projects: Project[];
 	skills: string[];
 	createdAt: string | null;
 	updatedAt: string | null;
