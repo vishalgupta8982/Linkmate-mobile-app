@@ -166,7 +166,8 @@ export default function EditProfile({ navigation }) {
 			<StackHeader navigation={navigation} title={'Edit Profile'} />
 			{loader && <Loader />}
 			<View style={styles.contentCont}>
-				<TouchableWithoutFeedback
+				<TouchableOpacity
+					activeOpacity={0.4}
 					onPress={() => {
 						if (
 							userData?.profilePicture &&
@@ -187,8 +188,11 @@ export default function EditProfile({ navigation }) {
 									: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8XHcngVONWqKATB8hOuO0GhItmIXIfGflTKqMuLSt6dV73i3caFKmfLcGUGUI5oC1658&usqp=CAU',
 						}}
 					/>
-				</TouchableWithoutFeedback>
-				<TouchableOpacity onPress={() => setImageModalVisible(true)}>
+				</TouchableOpacity>
+				<TouchableOpacity
+					activeOpacity={0.4}
+					onPress={() => setImageModalVisible(true)}
+				>
 					<Text style={styles.editText}>Edit Picture</Text>
 				</TouchableOpacity>
 				<AppTextField
@@ -297,6 +301,6 @@ const getStyles = (colors) =>
 		modalButtonText: {
 			marginLeft: 10,
 			fontSize: 14,
-			color: colors.APP_PRIMARY,
+			color: colors.TEXT,
 		},
 	});

@@ -7,7 +7,6 @@ import {
 	ScrollView,
 } from 'react-native';
 import React from 'react';
-
 import {
 	responsiveHeight,
 	responsiveWidth,
@@ -37,38 +36,38 @@ export default function Login({ navigation }) {
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
-	 const handleLogin = async () => {
-			setLoading(true);
+	const handleLogin = async () => {
+		setLoading(true);
 
-			const payload: LoginPayload = {
-				email: email.trim(),
-				password: password.trim(),
-			};
-			if (payload.password.length < 8) {
-			 Toast.show('Password must be a 8 character', Toast.SHORT);
-				setLoading(false);
-				return;
-			}
-
-			try {
-				const response = await userLogin(payload);
-
-				if (response?.token) {
-					dispatch(setToken(response.token));
-					Toast.show('Login successfull', Toast.SHORT);
-					navigation.replace('BottomNavigation');
-				}
-			} catch (err) {
-				Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
-			} finally {
-				setLoading(false);
-			}
+		const payload: LoginPayload = {
+			email: email.trim(),
+			password: password.trim(),
 		};
+		if (payload.password.length < 8) {
+			Toast.show('Password must be a 8 character', Toast.SHORT);
+			setLoading(false);
+			return;
+		}
+
+		try {
+			const response = await userLogin(payload);
+
+			if (response?.token) {
+				dispatch(setToken(response.token));
+				Toast.show('Login successfull', Toast.SHORT);
+				navigation.replace('BottomNavigation');
+			}
+		} catch (err) {
+			Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
 		<View style={styles.mainCont}>
-			<ScrollView>
-				{loading && <Loader />}
+			{loading && <Loader />}
+			<ScrollView style={styles.scroll}>
 				<View>
 					<Image
 						style={styles.logo}
@@ -111,9 +110,10 @@ const getStyles = (colors) =>
 		mainCont: {
 			flex: 1,
 			backgroundColor: colors.BACKGROUND,
+		},
+		scroll: {
 			padding: responsiveWidth(5),
 		},
-
 		logo: {
 			height: responsiveHeight(20),
 			width: responsiveWidth(40),

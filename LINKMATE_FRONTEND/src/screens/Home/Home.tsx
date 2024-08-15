@@ -5,6 +5,7 @@ import { RootState } from '../../redux/store';
 import { userDetails } from '../../api/apis';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import { useEffect } from 'react';
+import Loader from '../../components/Loader';
 
 export default function Home() {
 	const dispatch = useDispatch();
@@ -23,8 +24,9 @@ export default function Home() {
 	}, []);  
 
 	return (
-		<View>
+		<View  >
 			<Text>Home</Text>
+			<Loader/>
 		</View>
 	);
 }

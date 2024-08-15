@@ -32,16 +32,16 @@ const CustomAlertDialog = ({
 						<Text style={styles.message}>{message}</Text>
 					</View>
 					<View style={styles.footer}>
-						<TouchableWithoutFeedback onPress={onClose}>
+						<TouchableOpacity activeOpacity={0.4} onPress={onClose}>
 							<Text style={[styles.buttonText, { color: '#ff0000' }]}>
 								Cancel
 							</Text>
-						</TouchableWithoutFeedback>
-						<TouchableWithoutFeedback onPress={onConfirm}>
+						</TouchableOpacity >
+						<TouchableOpacity activeOpacity={0.4} onPress={onConfirm}>
 							<Text style={[styles.buttonText, { color: colors.PRIMARY }]}>
 								{ButtonText}
 							</Text>
-						</TouchableWithoutFeedback>
+						</TouchableOpacity >
 					</View>
 				</View>
 			</View>
@@ -55,12 +55,12 @@ const getStyles = (colors) =>
 			flex: 1,
 			justifyContent: 'center',
 			alignItems: 'center',
-			backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dim background
+			backgroundColor: 'rgba(0, 0, 0, 0.5)',  
 		},
 		mainCont: {
 			width: width - 60,
 			borderRadius: 10,
-			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
+			backgroundColor: colors.BACKGROUND,
 			padding: 20,
 		},
 		header: {
@@ -76,7 +76,7 @@ const getStyles = (colors) =>
 		},
 		message: {
 			fontSize: 14,
-			color: colors.LIGHT_TEXT,
+			color: colors.TEXT,
 		},
 		footer: {
 			flexDirection: 'row',

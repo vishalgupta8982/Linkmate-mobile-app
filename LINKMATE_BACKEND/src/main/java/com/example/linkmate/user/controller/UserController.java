@@ -66,7 +66,7 @@ public class UserController {
         return ResponseEntity.ok("OTP sent to email");
     }
 
-    // api for verify otp 
+    // api for verify otp
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtpAndRegister(@RequestBody User user, @RequestParam String otp) {
         boolean isOtpValid = otpService.verifyOtp(user.getEmail(), otp, user);
@@ -236,14 +236,14 @@ public class UserController {
     }
 
     // api for delete education
-      @DeleteMapping("/delete/education")
+    @DeleteMapping("/delete/education")
     public ResponseEntity<?> deleteEducation(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                              @RequestParam String educationId) {
+            @RequestParam String educationId) {
         try {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
-            
-            User user =userService.deleteEducationById(currentUsername, educationId);
+
+            User user = userService.deleteEducationById(currentUsername, educationId);
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException | NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -255,14 +255,14 @@ public class UserController {
     // api for delete experience
     @DeleteMapping("/delete/experience")
     public ResponseEntity<?> deleteExperience(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                               @RequestParam String experienceId) {
+            @RequestParam String experienceId) {
         try {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
-            
-            User user=userService.deleteExperienceById(currentUsername, experienceId);
+
+            User user = userService.deleteExperienceById(currentUsername, experienceId);
             return ResponseEntity.ok(user);
-        } catch ( NotFoundException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
@@ -285,7 +285,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-    //  api for delete skill
+
+    // api for delete skill
     @DeleteMapping("/delete/skill")
     public ResponseEntity<?> deleteSkill(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam String skill) {
@@ -293,13 +294,18 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
 
-            User user =userService.deleteSkillByName(currentUsername, skill);
+            User user = userService.deleteSkillByName(currentUsername, skill);
             return ResponseEntity.ok(user);
-        } catch ( NotFoundException e) {
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
+    }
+// search user
+ @GetMapping("/search")
+    public List<User> searchUsers(@RequestParam String query) {
+        return userService.searchUsers(query);
     }
 
 }

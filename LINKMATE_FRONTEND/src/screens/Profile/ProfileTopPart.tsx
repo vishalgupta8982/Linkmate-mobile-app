@@ -5,6 +5,7 @@ import {
 	ScrollView,
 	Dimensions,
 	Animated,
+	TouchableOpacity,
 } from 'react-native';
 import React,{useRef,useState} from 'react';
 import { AppButton } from '../../components/AppButton';
@@ -42,16 +43,14 @@ export default function ProfileTopPart({ navigation }) {
 							/>{' '}
 							{userData.username}
 						</Text>
-						<AntDesign name="setting" size={22} color={colors.TEXT} />
+						<TouchableOpacity onPress={()=>navigation.navigate("setting")} activeOpacity={0.4} >
+						<AntDesign name="setting" padding={3} size={22} color={colors.TEXT} /></TouchableOpacity>
 					</View>
 					<ProfilePicSection data={userData} navigation={navigation} />
 				</View>
 			) : (
 				<Loader />
 			)}
-			 
-			<AppButton title={'Log out'} onPress={handleLogout} />
-			 
 		</View>
 	);
 }

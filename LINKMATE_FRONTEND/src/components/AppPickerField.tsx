@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
 	View,
-	TextInput,
-	Animated,
-	TouchableWithoutFeedback,
 	StyleSheet,
 	Text,
+	TouchableOpacity
 } from 'react-native';
 import { useCustomTheme } from '../config/Theme';
 import {
@@ -15,6 +13,7 @@ import {
 import { width } from '../config/Dimension';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { fonts } from '../config/Fonts';
+
 const AppPickerField = ({ label, value, Width, onPress, icon }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -27,7 +26,7 @@ const AppPickerField = ({ label, value, Width, onPress, icon }) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.label}>{label}</Text>
-			<TouchableWithoutFeedback onPress={onPress}>
+			<TouchableOpacity activeOpacity={0.4} onPress={onPress}>
 				<View
 					style={[
 						styles.input,
@@ -37,7 +36,7 @@ const AppPickerField = ({ label, value, Width, onPress, icon }) => {
 					<Text style={styles.value}>{inputValue}</Text>
 					<AntDesign name={icon} color={colors.APP_PRIMARY_LIGHT} size={16} />
 				</View>
-			</TouchableWithoutFeedback>
+			</TouchableOpacity >
 		</View>
 	);
 };

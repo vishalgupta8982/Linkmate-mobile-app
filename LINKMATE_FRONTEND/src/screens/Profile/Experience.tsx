@@ -165,7 +165,10 @@ export default function Experience({ navigation }) {
 		}
 	};
 	const handleUpdateExperience = async () => {
-		const payload: ExperiencePayload = newExperience;
+		const payload: ExperiencePayload = {
+			...newExperience,
+			experienceId: editingExperienceId,
+		};
 		console.log(payload);
 		setLoader(true);
 		if (
@@ -220,7 +223,8 @@ export default function Experience({ navigation }) {
 						<View style={styles.position}>
 							<Text style={globalStyleSheet.smallerHead}>{item.position}</Text>
 							<View style={styles.icon}>
-								<TouchableWithoutFeedback
+								<TouchableOpacity
+									activeOpacity={0.4}
 									onPress={() => handleEditExperience(item)}
 								>
 									<Feather
@@ -230,8 +234,9 @@ export default function Experience({ navigation }) {
 										padding={5}
 										color={colors.PRIMARY}
 									/>
-								</TouchableWithoutFeedback>
-								<TouchableWithoutFeedback
+								</TouchableOpacity>
+								<TouchableOpacity
+									activeOpacity={0.4}
 									onPress={() => handleDltExp(item.experienceId)}
 								>
 									<MaterialCommunityIcon
@@ -241,7 +246,7 @@ export default function Experience({ navigation }) {
 										padding={5}
 										color={colors.RED}
 									/>
-								</TouchableWithoutFeedback>
+								</TouchableOpacity>
 							</View>
 						</View>
 						<Text style={globalStyleSheet.smallestHead}>
@@ -263,7 +268,7 @@ export default function Experience({ navigation }) {
 							)}{' '}
 							months
 						</Text>
-						<Text >
+						<Text style={styles.locationTypeText}>
 							{
 								locationTypeOptions.find(
 									(option) => option.value === item.locationType
@@ -550,4 +555,9 @@ const getStyles = (colors) =>
 			fontSize: responsiveFontSize(2),
 			color: colors.TEXT,
 		},
+		locationTypeText:{
+			color:colors.PRIMARY,
+			fontFamily:fonts.Inter_Regular,
+			fontSize:14
+		}
 	});

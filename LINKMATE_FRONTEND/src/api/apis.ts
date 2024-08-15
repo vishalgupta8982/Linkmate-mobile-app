@@ -91,14 +91,15 @@ export const addProject = async (payload:ProjectPayload) => {
 	return await put<User>(url,[payload]);
 };
 export const updateEducation = async (educationId:string,payload: EducationPayload) => {
-	const url = `/users/update/education?educationId=${educationId}`;
+	const url = `/users/update/education`;
 	return await put<User>(url, [payload]);
 };
 export const updateExperience = async (experienceId:string,payload: ExperiencePayload) => {
-	const url = `/users/update/experience?experienceId=${experienceId}`;
+	console.log(payload)
+	const url = `/users/update/experience`;
 	return await put<User>(url, [payload]);
 };
 export const updateProject = async (projectId:string,payload: ProjectPayload) => {
-	const url = `/users/update/project?projectId=${projectId}`;
+	const url = `/users/update/project`;
 	return await put<User>(url, [payload]);
 };

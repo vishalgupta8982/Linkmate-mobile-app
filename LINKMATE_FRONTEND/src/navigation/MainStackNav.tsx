@@ -9,6 +9,7 @@ import Otp from '../screens/Authentication/Otp';
 import BottomNavigation from './BottomNavigation';
 import EditProfile from '../screens/Profile/EditProfile';
 import ViewProfile from '../screens/Profile/ViewProfile';
+import Setting from '../screens/Profile/Setting';
 export type RootStackParamList = {
 	Otp:{email:string,firstName:string,lastName:string,password:string},
 	profile:undefined;
@@ -52,6 +53,7 @@ function MainStackNav({ navigation }) {
 				<Stack.Screen name="Otp" component={Otp} />
 				<Stack.Screen name="EditProfile" component={EditProfile} />
 				<Stack.Screen name="viewProfile" component={ViewProfile} />
+				<Stack.Screen name="setting" component={Setting} />
 				<Stack.Screen name="BottomNavigation" component={BottomNavigation} />
 			</Stack.Navigator>
 		</NavigationContainer>

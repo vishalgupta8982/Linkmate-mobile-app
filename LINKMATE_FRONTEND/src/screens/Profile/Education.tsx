@@ -155,7 +155,10 @@ export default function Education({ navigation }) {
 	};
 
 	const handleUpdateEducation = async () => {
-		const payload: EducationPayload = newEducation;
+		const payload: EducationPayload = {
+			...newEducation,
+			educationId: editingEducationId,
+		};
 		console.log(payload);
 		setLoader(true);
 		if (
@@ -210,7 +213,8 @@ export default function Education({ navigation }) {
 					<View style={styles.position}>
 						<Text style={globalStyleSheet.smallerHead}>{item.institution}</Text>
 						<View style={styles.icon}>
-							<TouchableWithoutFeedback
+							<TouchableOpacity
+								activeOpacity={0.4}
 								onPress={() => handleEditEducation(item)}
 							>
 								<Feather
@@ -220,8 +224,9 @@ export default function Education({ navigation }) {
 									padding={5}
 									color={colors.PRIMARY}
 								/>
-							</TouchableWithoutFeedback>
-							<TouchableWithoutFeedback
+							</TouchableOpacity>
+							<TouchableOpacity
+								activeOpacity={0.4}
 								onPress={() => handleDltEdu(item.educationId)}
 							>
 								<MaterialCommunityIcon
@@ -231,7 +236,7 @@ export default function Education({ navigation }) {
 									padding={5}
 									color={colors.RED}
 								/>
-							</TouchableWithoutFeedback>
+							</TouchableOpacity>
 						</View>
 					</View>
 					<Text style={globalStyleSheet.smallestHead}>

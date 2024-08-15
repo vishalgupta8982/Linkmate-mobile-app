@@ -53,8 +53,8 @@ export default function ProfilePicSection({ navigation, data }) {
 			</View>
 			<View style={styles.headlineCont}>
 				<Text style={styles.name}>{data.firstName + ' ' + data.lastName}</Text>
-				<Text style={styles.headlineText}>{data.headline}</Text>
-				<Text style={styles.locationText}>{data.location}</Text>
+				{data.headline &&(<Text style={styles.headlineText}>{data.headline}</Text>)}
+				{data.location &&(<Text style={styles.locationText}>{data.location}</Text>)}
 			</View>
 
 			<View style={styles.buttonCont}>

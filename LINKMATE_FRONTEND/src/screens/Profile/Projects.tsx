@@ -7,6 +7,7 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	ScrollView,
+	Linking,
 } from 'react-native';
 import { useCustomTheme } from '../../config/Theme';
 import { globalStyles } from '../../StylesSheet';
@@ -162,7 +163,10 @@ export default function Projects({ navigation }) {
 	};
 
 	const handleUpdateProject = async () => {
-		const payload: ProjectPayload = newProject;
+		const payload: ProjectPayload = {
+			...newProject,
+			projectId: editingProjectId,
+		};
 		console.log(payload);
 		setLoader(true);
 		if (
@@ -177,7 +181,6 @@ export default function Projects({ navigation }) {
 		toggleModal();
 		try {
 			const response = await updateProject(editingProjectId, payload);
-			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				setLoader(false);
@@ -203,7 +206,7 @@ export default function Projects({ navigation }) {
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.cont}>
-				<Text style={globalStyleSheet.smallHead}>Project</Text>
+				<Text style={globalStyleSheet.smallHead}> Add Project </Text>
 				<TouchableOpacity onPress={toggleModal}>
 					<View style={styles.plus}>
 						<AntDesign name="plus" size={16} color={colors.WHITE} />
@@ -214,9 +217,29 @@ export default function Projects({ navigation }) {
 			{userData?.projects.map((item) => (
 				<View style={styles.experienceCard} key={item.projectId}>
 					<View style={styles.position}>
-						<Text style={globalStyleSheet.smallerHead}>{item.name}</Text>
+					<View style={styles.linkName} >
+						<Text style={globalStyleSheet.smallerHead}>{item.name} </Text>
+						<TouchableOpacity
+							activeOpacity={0.4}
+							onPress={() =>
+								Linking.openURL('ffv').catch((err) =>
+									Toast.show("Couldn't load page", Toast.SHORT)
+								)
+							}
+						>
+							<Feather
+								name={'link-2'}
+								color={colors.PRIMARY}
+								padding={5}
+								size={16}
+							/>
+						</TouchableOpacity>
+						</View>
 						<View style={styles.icon}>
-							<TouchableWithoutFeedback onPress={() => handleEditProject(item)}>
+							<TouchableOpacity
+								activeOpacity={0.4}
+								onPress={() => handleEditProject(item)}
+							>
 								<Feather
 									marginRight={10}
 									name="edit-2"
@@ -224,8 +247,9 @@ export default function Projects({ navigation }) {
 									padding={5}
 									color={colors.PRIMARY}
 								/>
-							</TouchableWithoutFeedback>
-							<TouchableWithoutFeedback
+							</TouchableOpacity>
+							<TouchableOpacity
+								activeOpacity={0.4}
 								onPress={() => handleDltProject(item.projectId)}
 							>
 								<MaterialCommunityIcon
@@ -235,17 +259,15 @@ export default function Projects({ navigation }) {
 									padding={5}
 									color={colors.RED}
 								/>
-							</TouchableWithoutFeedback>
+							</TouchableOpacity>
 						</View>
 					</View>
-					<Text style={globalStyleSheet.smallestHead}>
-						{item.degree},{item.field}
-					</Text>
 					<Text style={globalStyleSheet.smallestHead}>
 						{moment(item.startDate, 'YYYY-MM-DD').format('MMM YYYY')} -{' '}
 						{moment(item.endDate, 'YYYY-MM-DD').format('MMM YYYY')}
 					</Text>
-					<Text style={globalStyleSheet.description}>{item.description}</Text>
+					<Text style={globalStyleSheet.smallestHead}>{item.skills}</Text>
+					<Text style={globalStyleSheet.description}> {item.description} </Text>
 				</View>
 			))}
 			<Modal
@@ -267,7 +289,7 @@ export default function Projects({ navigation }) {
 						<TouchableWithoutFeedback>
 							<View style={styles.modalContainer}>
 								<ScrollView style={styles.scroll}>
-									<Text style={styles.modalTitle}>Add Education</Text>
+									<Text style={styles.modalTitle}> Add Project </Text>
 									<AppTextField
 										label="Project Name"
 										value={newProject.name}
@@ -311,7 +333,7 @@ export default function Projects({ navigation }) {
 									/>
 									{startDateDpShow && (
 										<DateTimePicker
-											value={newEducation.startDate}
+											value={newProject.startDate}
 											mode={'date'}
 											display="default"
 											onChange={handleStartDate}
@@ -319,7 +341,7 @@ export default function Projects({ navigation }) {
 									)}
 									{endDateDpShow && (
 										<DateTimePicker
-											value={newEducation.endDate}
+											value={newProject.endDate}
 											mode={'date'}
 											display="default"
 											onChange={handleEndDate}
@@ -372,6 +394,10 @@ const getStyles = (colors) =>
 			paddingHorizontal: 15,
 			paddingVertical: 10,
 			marginBottom: 7,
+		},
+		linkName:{
+			flexDirection:'row',
+			alignItems:'center'
 		},
 		position: {
 			flexDirection: 'row',

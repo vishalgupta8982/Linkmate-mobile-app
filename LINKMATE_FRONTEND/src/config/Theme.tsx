@@ -23,25 +23,25 @@ interface Theme {
 }
 
 export const lightTheme: Theme = {
-  dark: false,
-  colors: {
-    PRIMARY: '#1abaff',
-    LIGHT_PRIMARY: '#80D9FF',
-    LIGHTER_PRIMARY: '#bcebff',
-    SECONDARY: '#00354d',
-    SKELETON: '#e5f7ff',
-    APP_PRIMARY: '#41392F',
-    APP_SECONDARY: '#F7F1E7',
-    APP_PRIMARY_LIGHT: '#c2bfbd',
-    LIGHT_MAIN_BACKGROUND: '#CFCFCF',
-    BACKGROUND: '#FFF',
-    DARK_BACKGROUND: '#e7e7e7',
-    MAIN_BACKGROUND: '#f6f6f6',
-    TEXT: '#000000',
-    DARK_PRIMARY: '#00121a',
-    WHITE: '#FFF',
-    RED:'#ff474c'
-  },
+	dark: false,
+	colors: {
+		PRIMARY: '#1abaff',
+		LIGHT_PRIMARY: '#80D9FF',
+		LIGHTER_PRIMARY: '#bcebff',
+		SECONDARY: '#00354d',
+		SKELETON: '#e5f7ff',
+		APP_PRIMARY: '#41392F',
+		APP_SECONDARY: '#F7F1E7',
+		APP_PRIMARY_LIGHT: '#918b88',
+		LIGHT_MAIN_BACKGROUND: '#CFCFCF',
+		BACKGROUND: '#FFF',
+		DARK_BACKGROUND: '#e7e7e7',
+		MAIN_BACKGROUND: '#f6f6f6',
+		TEXT: '#1B1212',
+		DARK_PRIMARY: '#00121a',
+		WHITE: '#FFF',
+		RED: '#ff474c',
+	},
 };
 export const darkTheme: Theme = {
 	dark: true,

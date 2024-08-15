@@ -20,6 +20,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Document(collection = "users")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User {
 
     @Id

@@ -92,34 +92,43 @@ Toast.show('Skill added successfully', Toast.SHORT);
 
 	return (
 		<View style={styles.mainCont}>
-			{userData?.skills?.length > 0 && (
+			{userData?.skills?.length > 0 ? (
 				<View style={styles.Cont}>
 					<Text style={globalStyleSheet.smallHead}>Skills</Text>
 					<View style={styles.adjustSize}>
 						{userData?.skills &&
 							userData.skills.map((item, index) => (
-								<TouchableWithoutFeedback
+								<TouchableOpacity
+									activeOpacity={0.4}
 									onLongPress={() => handleAlertDialog(item)}
 									key={index}
 								>
 									<View style={styles.skill}>
 										<Text style={styles.chip}>{item}</Text>
 									</View>
-								</TouchableWithoutFeedback>
+								</TouchableOpacity>
 							))}
-						<TouchableOpacity onPress={toggleModal}>
+						<TouchableOpacity activeOpacity={0.4} onPress={toggleModal}>
 							<View style={styles.plus}>
 								<AntDesign name="plus" size={16} color={colors.WHITE} />
 							</View>
 						</TouchableOpacity>
 					</View>
 				</View>
+			) : (
+				<TouchableOpacity style={styles.addSkill} activeOpacity={0.4} onPress={toggleModal}>
+					<Text style={styles.modalTitle}>Add Skills</Text>
+					<View style={styles.plus}>
+						<AntDesign name="plus" size={16} color={colors.WHITE} />
+					</View>
+				</TouchableOpacity>
 			)}
 			{userData?.about?.length > 0 && (
 				<View style={styles.Cont}>
 					<View style={styles.edit}>
 						<Text style={globalStyleSheet.smallHead}>About</Text>
 						<TouchableOpacity
+							activeOpacity={0.4}
 							onPress={() => navigation.navigate('EditProfile')}
 						>
 							<Feather
@@ -149,18 +158,18 @@ Toast.show('Skill added successfully', Toast.SHORT);
 				animationType="slide"
 				onRequestClose={toggleModal}
 			>
-			<TouchableWithoutFeedback onPress={toggleModal}>
-				<View style={styles.modalOverlay}>
-					<View style={styles.modalContainer}>
-						<Text style={styles.modalTitle}>Add Skill</Text>
-						<AppTextField
-							label="Skill"
-							value={newSkill}
-							onChangeText={setNewSkill}
-						/>
-						<AppButton onPress={handleAddSkill} title="Save" />
+				<TouchableWithoutFeedback onPress={toggleModal}>
+					<View style={styles.modalOverlay}>
+						<View style={styles.modalContainer}>
+							<Text style={styles.modalTitle}>Add Skill</Text>
+							<AppTextField
+								label="Skill"
+								value={newSkill}
+								onChangeText={setNewSkill}
+							/>
+							<AppButton onPress={handleAddSkill} title="Save" />
+						</View>
 					</View>
-				</View>
 				</TouchableWithoutFeedback>
 			</Modal>
 		</View>
@@ -181,11 +190,11 @@ const getStyles = (colors) =>
 		},
 		chip: {
 			color: colors.WHITE,
-			fontSize: responsiveFontSize(2),
+			fontSize: responsiveFontSize(1.8),
 			fontFamily: fonts.Inter_Medium,
 		},
 		skill: {
-			padding: 6,
+			padding: 4,
 			paddingHorizontal: 20,
 			backgroundColor: colors.PRIMARY,
 			borderRadius: 30,
@@ -245,4 +254,9 @@ const getStyles = (colors) =>
 			marginBottom: 20,
 			color: colors.TEXT,
 		},
+		addSkill:{
+			flexDirection:'row',
+			alignItems:'center',justifyContent:'space-between',
+			paddingHorizontal:10
+		}
 	});

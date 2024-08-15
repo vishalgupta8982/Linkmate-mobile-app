@@ -10,7 +10,8 @@ import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import com.example.linkmate.user.model.Experience;
 import com.example.linkmate.user.model.Project;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
+import com.example.linkmate.user.repository.UserRepositoryImpl;
 import com.example.linkmate.user.utils.JwtUtil;
 
 @Service
@@ -31,6 +33,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserRepositoryImpl userRepositoryImpl;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -321,6 +325,10 @@ public class UserService {
         } else {
             throw new RuntimeException("Skill list is empty or not initialized.");
         }
+    }
+    
+    public List<User> searchUsers(String query) {
+        return userRepositoryImpl.searchUsers(query, 10);
     }
 
 }

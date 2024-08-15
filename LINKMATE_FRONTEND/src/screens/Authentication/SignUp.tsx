@@ -67,7 +67,8 @@ const payload: SignUpPayload= {
 			}
 }; 
 	return (
-		<ScrollView   >
+		<ScrollView>
+			{loading && <Loader />}
 			<View style={styles.mainCont}>
 				<View>
 					<Image
@@ -78,7 +79,6 @@ const payload: SignUpPayload= {
 						Link
 						<Text style={[styles.appName, globalStylesSheet.mate]}>mate</Text>
 					</Text>
-					{loading && <Loader />}
 				</View>
 				<View style={styles.textFieledCont}>
 					<Text style={globalStylesSheet.head}>Signup</Text>
@@ -104,7 +104,7 @@ const payload: SignUpPayload= {
 }
 const getStyles = (colors) =>
 	StyleSheet.create({
-		mainCont: {
+		mainCont: { 
 			flex: 1,
 			backgroundColor: colors.BACKGROUND,
 			padding: responsiveWidth(5),
