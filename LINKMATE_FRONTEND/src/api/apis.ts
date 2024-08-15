@@ -9,6 +9,7 @@ import { UpdatePayload } from '../types/Payload/updatePayload';
 import { EducationPayload } from '../types/Payload/EducationPayload';
 import { ExperiencePayload } from '../types/Payload/ExperiencePayload';
 import { ProjectPayload } from '../types/Payload/ProjectPayload';
+import { Search } from '../types/Response/SearchReponse';
 
 export const userLogin = async (
 	payload: LoginPayload
@@ -39,7 +40,7 @@ export const updateUserDetails = async (payload: UpdatePayload) => {
 	const url = '/users/update';
 	return await put<User>(url, payload);
 };
-export const updateProfilePicture = async (payload) => {
+export const updateProfilePicture = async (payload:any) => {
 	const formData = new FormData();
 	formData.append('profilePicture', {
 		uri: payload,
@@ -102,4 +103,8 @@ export const updateExperience = async (experienceId:string,payload: ExperiencePa
 export const updateProject = async (projectId:string,payload: ProjectPayload) => {
 	const url = `/users/update/project`;
 	return await put<User>(url, [payload]);
+};
+export const searchUser = async (query:string) => {
+	const url = `/users/search?query=${query}`;	
+	return await get<Search>(url);
 };

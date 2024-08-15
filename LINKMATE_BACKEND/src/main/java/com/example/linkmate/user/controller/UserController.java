@@ -1,5 +1,7 @@
 package com.example.linkmate.user.controller;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -305,6 +307,9 @@ public class UserController {
 // search user
  @GetMapping("/search")
     public List<User> searchUsers(@RequestParam String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
         return userService.searchUsers(query);
     }
 

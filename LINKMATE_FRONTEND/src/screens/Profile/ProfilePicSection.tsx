@@ -42,11 +42,11 @@ export default function ProfilePicSection({ navigation, data }) {
 						<Text style={styles.countHead}>Posts</Text>
 					</View>
 					<View style={styles.count}>
-						<Text style={styles.countText}>{data.connections.length}</Text>
+						<Text style={styles.countText}>{data.connections?.length}</Text>
 						<Text style={styles.countHead}>Mutual</Text>
 					</View>
 					<View style={styles.count}>
-						<Text style={styles.countText}>{data.connections.length}</Text>
+						<Text style={styles.countText}>{data.connections?.length}</Text>
 						<Text style={styles.countHead}>Connections</Text>
 					</View>
 				</View>

@@ -328,7 +328,7 @@ public class UserService {
     }
     
     public List<User> searchUsers(String query) {
-        return userRepositoryImpl.searchUsers(query, 10);
+        return userRepositoryImpl.searchUsers(query, 20);
     }
 
 }
