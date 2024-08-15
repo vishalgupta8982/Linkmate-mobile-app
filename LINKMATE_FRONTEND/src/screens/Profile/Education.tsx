@@ -17,7 +17,7 @@ import Loader from '../../components/Loader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { addEducation, deleteEducation } from '../../api/apis';
+import { addEducation, deleteEducation, updateEducation } from '../../api/apis';
 import Toast from 'react-native-simple-toast';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import {
@@ -29,7 +29,7 @@ import AppTextField from '../../components/AppTextField';
 import { AppButton } from '../../components/AppButton';
 import { EducationPayload } from '../../types/Payload/EducationPayload';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AppDateField from '../../components/AppDateField';
+import AppPickerField from '../../components/AppPickerField';
 export default function Education({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
@@ -41,6 +41,8 @@ export default function Education({ navigation }) {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [startDateDpShow, setStartDateDpShow] = useState(false);
 	const [endDateDpShow, setEndDateDpShow] = useState(false);
+	const [isEditing, setIsEditing] = useState(false); // Track if editing mode is active
+	const [editingEducationId, setEditingEducationId] = useState(''); // Track the education being edited
 	const [newEducation, setNewEducation] = useState({
 		institution: '',
 		startDate: new Date(),
@@ -49,16 +51,18 @@ export default function Education({ navigation }) {
 		description: '',
 		field: '',
 	});
+
 	const handleStartDate = (event, selectedDate) => {
-		const currentDate = selectedDate || date;
+		const currentDate = selectedDate || newEducation.startDate;
 		setStartDateDpShow(!startDateDpShow);
 		setNewEducation((prevState) => ({
 			...prevState,
 			startDate: currentDate,
 		}));
 	};
+
 	const handleEndDate = (event, selectedDate) => {
-		const currentDate = selectedDate || date;
+		const currentDate = selectedDate || newEducation.endDate;
 		setEndDateDpShow(!endDateDpShow);
 		setNewEducation((prevState) => ({
 			...prevState,
@@ -86,14 +90,36 @@ export default function Education({ navigation }) {
 		setIsModalVisible(!isModalVisible);
 	};
 
+	const resetEducationForm = () => {
+		setNewEducation({
+			institution: '',
+			degree: '',
+			field: '',
+			startDate: new Date(),
+			endDate: new Date(),
+			description: '',
+		});
+		setIsEditing(false);
+		setEditingEducationId(null);
+	};
 	const handleAddEducation = async () => {
 		const payload: EducationPayload = newEducation;
 		console.log(payload);
 		setLoader(true);
+		if (
+			payload.institution.length < 1 ||
+			payload.degree.length < 1 ||
+			payload.field.length < 1 ||
+			payload.description.length < 1
+		) {
+			setLoader(false);
+			Toast.show('All fields are required', Toast.SHORT);
+			return;
+		}
 		toggleModal();
 		try {
 			const response = await addEducation(payload);
-			console.log(response)
+			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				setLoader(false);
@@ -113,7 +139,61 @@ export default function Education({ navigation }) {
 			});
 		}
 	};
-	console.log(newEducation);
+
+	const handleEditEducation = (education) => {
+		setIsEditing(true);
+		setEditingEducationId(education.educationId);
+		setNewEducation({
+			institution: education.institution,
+			startDate: moment(education.startDate).toDate(),
+			endDate: moment(education.endDate).toDate(),
+			degree: education.degree,
+			description: education.description,
+			field: education.field,
+		});
+		toggleModal();
+	};
+
+	const handleUpdateEducation = async () => {
+		const payload: EducationPayload = newEducation;
+		console.log(payload);
+		setLoader(true);
+		if (
+			payload.institution.length < 1 ||
+			payload.degree.length < 1 ||
+			payload.field.length < 1 ||
+			payload.description.length < 1
+		) {
+			setLoader(false);
+			Toast.show('All fields are required', Toast.SHORT);
+			return;
+		}
+		toggleModal();
+		try {
+			const response = await updateEducation(editingEducationId, payload);
+			console.log(response);
+			if (response) {
+				dispatch(setUserDetails(response));
+				setLoader(false);
+				Toast.show('Education updated successfully', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+			setLoader(false);
+		} finally {
+			setNewEducation({
+				institution: '',
+				startDate: new Date(),
+				endDate: new Date(),
+				degree: '',
+				description: '',
+				field: '',
+			});
+			setIsEditing(false);
+			setEditingEducationId('');
+		}
+	};
+
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.cont}>
@@ -130,13 +210,17 @@ export default function Education({ navigation }) {
 					<View style={styles.position}>
 						<Text style={globalStyleSheet.smallerHead}>{item.institution}</Text>
 						<View style={styles.icon}>
-							<Feather
-								marginRight={10}
-								name="edit-2"
-								size={16}
-								padding={5}
-								color={colors.PRIMARY}
-							/>
+							<TouchableWithoutFeedback
+								onPress={() => handleEditEducation(item)}
+							>
+								<Feather
+									marginRight={10}
+									name="edit-2"
+									size={16}
+									padding={5}
+									color={colors.PRIMARY}
+								/>
+							</TouchableWithoutFeedback>
 							<TouchableWithoutFeedback
 								onPress={() => handleDltEdu(item.educationId)}
 							>
@@ -156,12 +240,6 @@ export default function Education({ navigation }) {
 					<Text style={globalStyleSheet.smallestHead}>
 						{moment(item.startDate, 'YYYY-MM-DD').format('MMM YYYY')} -{' '}
 						{moment(item.endDate, 'YYYY-MM-DD').format('MMM YYYY')}
-						{' • '}
-						{moment(item.endDate, 'YYYY-MM-DD').diff(
-							moment(item.startDate, 'YYYY-MM-DD'),
-							'months'
-						)}{' '}
-						months
 					</Text>
 					<Text style={globalStyleSheet.description}>{item.description}</Text>
 				</View>
@@ -170,9 +248,17 @@ export default function Education({ navigation }) {
 				visible={isModalVisible}
 				transparent={true}
 				animationType="slide"
-				onRequestClose={toggleModal}
+				onRequestClose={() => {
+					toggleModal();
+					resetEducationForm();
+				}}
 			>
-				<TouchableWithoutFeedback onPress={toggleModal}>
+				<TouchableWithoutFeedback
+					onPress={() => {
+						toggleModal();
+						resetEducationForm();
+					}}
+				>
 					<View style={styles.modalOverlay}>
 						<TouchableWithoutFeedback>
 							<View style={styles.modalContainer}>
@@ -199,15 +285,17 @@ export default function Education({ navigation }) {
 											setNewEducation({ ...newEducation, field: text })
 										}
 									/>
-									<AppDateField
+									<AppPickerField
 										label="Start Date (DD/MM/YYYY)"
 										value={moment(newEducation.startDate).format('DD/MM/YYYY')}
 										onPress={() => setStartDateDpShow(true)}
+										icon={'calendar'}
 									/>
-									<AppDateField
+									<AppPickerField
 										label="End Date or expected (DD/MM/YYYY)"
 										value={moment(newEducation.endDate).format('DD/MM/YYYY')}
 										onPress={() => setEndDateDpShow(true)}
+										icon={'calendar'}
 									/>
 									<AppTextField
 										label="Description"
@@ -232,7 +320,12 @@ export default function Education({ navigation }) {
 											onChange={handleEndDate}
 										/>
 									)}
-									<AppButton title="Save" onPress={handleAddEducation} />
+									<AppButton
+										title={isEditing ? 'Update Education' : 'Add Education'}
+										onPress={
+											isEditing ? handleUpdateEducation : handleAddEducation
+										}
+									/>
 								</ScrollView>
 							</View>
 						</TouchableWithoutFeedback>

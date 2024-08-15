@@ -21,6 +21,7 @@ import com.example.linkmate.core.Exception.UsernameAlreadyExistsException;
 import com.example.linkmate.user.dto.UserUpdateDto;
 import com.example.linkmate.user.model.Education;
 import com.example.linkmate.user.model.Experience;
+import com.example.linkmate.user.model.Project;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
 import com.example.linkmate.user.utils.JwtUtil;
@@ -185,6 +186,43 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
+    // service for update experience
+    public User updateUserProjects(String username, List<Project> projects) {
+        User existingUser = findByUserName(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        List<Project> existingProjects = existingUser.getProjects();
+
+        for (Project project : projects) {
+            if (project.getProjectId() == null) {
+                // New experience entry: generate a new ID and add it
+                project.setProjectId(new ObjectId().toString());
+                existingProjects.add(0, project);
+            } else {
+                // Existing experience entry: find and update it
+                Optional<Project> existingProjectOpt = existingProjects.stream()
+                        .filter(e -> e.getProjectId().equals(project.getProjectId()))
+                        .findFirst();
+
+                if (existingProjectOpt.isPresent()) {
+                    Project existingProject = existingProjectOpt.get();
+                    existingProject.setName(project.getName());
+                    existingProject.setSkills(project.getSkills());
+                    existingProject.setDescription(project.getDescription());
+                    existingProject.setStartDate(project.getStartDate());
+                    existingProject.setEndDate(project.getEndDate());
+                    existingProject.setLink(project.getLink());
+                } else {
+                    throw new RuntimeException(
+                            "Project with ID " + project.getProjectId() + " not found.");
+                }
+            }
+        }
+
+        existingUser.setProjects(existingProjects);
+        return userRepository.save(existingUser);
+    }
+
     // service for update skills
     public User updateUserSkills(String username, List<String> newSkills) {
         User existingUser = findByUserName(username)
@@ -242,6 +280,27 @@ public class UserService {
             return existingUser;
         } else {
             throw new NotFoundException("Experience list is empty or not initialized.");
+        }
+    }
+    // service for delete project
+    public User deleteProjectById(String username, String projectId) {
+        User existingUser = findByUserName(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        List<Project> projects = existingUser.getProjects();
+        if (projects != null) {
+            boolean projectRemoved = projects
+                    .removeIf(experience -> experience.getProjectId().equals(projectId));
+
+            if (!projectRemoved) {
+                throw new NotFoundException("Experience with ID " + projectId + " not found.");
+            }
+
+            existingUser.setProjects(projects);
+            userRepository.save(existingUser);
+            return existingUser;
+        } else {
+            throw new NotFoundException("Project list is empty or not initialized.");
         }
     }
 

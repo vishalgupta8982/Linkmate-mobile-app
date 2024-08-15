@@ -40,6 +40,7 @@ public class User {
      private List<String> connections = new ArrayList<>();
     private List<Experience> experiences = new ArrayList<>();
     private List<Education> educations = new ArrayList<>();
+    private List<Project> projects = new ArrayList<>();
     private List<String> skills = new ArrayList<>();
     private Date createdAt;
     private Date updatedAt;

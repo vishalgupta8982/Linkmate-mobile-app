@@ -64,6 +64,10 @@ export const deleteEducation=async(id:string)=>{
 	const url = `/users/delete/education?educationId=${id}`;
 	return await del<User>(url);
 }
+export const deleteProject=async(id:string)=>{
+	const url = `/users/delete/project?projectId=${id}`;
+	return await del<User>(url);
+}
 export const deleteSkill = async (skill: string) => {
 	const url = `/users/delete/skill?skill=${skill}`;
 	return await del<User>(url);
@@ -79,5 +83,17 @@ export const addEducation = async (payload:EducationPayload ) => {
 };
 export const addExperience = async (payload:ExperiencePayload) => {
 	const url = '/users/update/experience';
-	return await put<User>(url,payload);
+	return await put<User>(url,[payload]);
+};
+export const updateEducation = async (educationId:string,payload: EducationPayload) => {
+	const url = `/users/update/education?educationId=${educationId}`;
+	return await put<User>(url, [payload]);
+};
+export const updateExperience = async (experienceId:string,payload: ExperiencePayload) => {
+	const url = `/users/update/experience?experienceId=${experienceId}`;
+	return await put<User>(url, [payload]);
+};
+export const updateProject = async (projectId:string,payload: ExperiencePayload) => {
+	const url = `/users/update/project?projectId=${projectId}`;
+	return await put<User>(url, [payload]);
 };

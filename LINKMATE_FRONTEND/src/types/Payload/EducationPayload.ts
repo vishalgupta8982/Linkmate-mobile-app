@@ -5,4 +5,5 @@ export interface EducationPayload {
 	degree: string;
 	description: string;
 	field: string;
+	educationId?:string
 }

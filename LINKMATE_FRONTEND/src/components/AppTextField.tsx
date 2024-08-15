@@ -191,6 +191,8 @@ const AppTextField = ({
 				editable={!readOnly}
 				value={inputValue}
 				selectionColor={colors.APP_PRIMARY_LIGHT}
+				multiline
+				numOfLine={20}
 				
 			/>
 		</View>
@@ -203,7 +205,6 @@ const getStyles = (colors, width) =>
 			// Preserved original styling if any
 		},
 		input: {
-			height: 40,
 			fontSize: 14,
 			color: colors.TEXT,
 			borderBottomWidth: 1,

@@ -2,16 +2,17 @@ export interface ExperiencePayload {
 	company: string;
 	startDate: string;
 	endDate: string;
-	postion: string;
+	position: string;
 	description: string;
+	experienceId?: string;
 	locationType: LocationType;
 	employmentType: EmploymentType;
 }
 
 enum EmploymentType {
 	INTERNSHIP = 'Internship',
-	PARTTIME = 'Part-Time',
-	FULLTIME = 'Full-Time',
+	PARTTIME = 'Part-time',
+	FULLTIME = 'Full-time',
 }
 enum LocationType {
 	HYBRID = 'Hybrid',

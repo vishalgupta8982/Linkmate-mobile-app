@@ -23,13 +23,19 @@ export const AppButton = ({
 	loading: boolean;
 	disabled: boolean;
 	icon?: any;
-	width?:number;
+	width?: number;
 }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	return (
-		<TouchableOpacity onPress={onPress} style={[styles.appButtonContainer,{width:width?responsiveWidth(width):responsiveWidth(90)}]}>
+		<TouchableOpacity
+			onPress={onPress}
+			style={[
+				styles.appButtonContainer,
+				{ width: width ? responsiveWidth(width) : responsiveWidth(90) },
+			]}
+		>
 			{icon && <View style={styles.icon}>{icon}</View>}
 			<Text style={styles.appButtonText}>{title}</Text>
 			{loading && <ActivityIndicator size="large" color="white" />}
@@ -53,7 +59,7 @@ const getStyles = (colors) =>
 			color: colors.WHITE,
 			fontFamily: fonts.Inter_Medium,
 			alignSelf: 'center',
-			textTransform: 'uppercase',
+			textTransform: 'capitalize',
 		},
 
 		icon: {

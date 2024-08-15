@@ -144,7 +144,7 @@ export default function EditProfile({ navigation }) {
 			lastName !== userData?.lastName ||
 			headline !== userData?.headline ||
 			location !== userData?.location ||
-			userName !== userData?.username || 
+			userName !== userData?.username ||
 			about !== userData?.about
 		) {
 			const backAction = () => {
@@ -159,7 +159,7 @@ export default function EditProfile({ navigation }) {
 				backHandler.remove();
 			};
 		}
-	}, [firstName, lastName, headline, location, userName, userData,about]);
+	}, [firstName, lastName, headline, location, userName, userData, about]);
 
 	return (
 		<ScrollView style={styles.mainCont}>
@@ -216,11 +216,7 @@ export default function EditProfile({ navigation }) {
 					value={location}
 					onChangeText={setLocation}
 				/>
-				<AppTextField
-					label="About"
-					value={about}
-					onChangeText={setAbout}
-				/>
+				<AppTextField label="About" value={about} onChangeText={setAbout} />
 			</View>
 			<Modal
 				transparent={true}

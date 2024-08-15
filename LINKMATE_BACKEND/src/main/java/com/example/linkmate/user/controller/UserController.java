@@ -26,6 +26,7 @@ import com.example.linkmate.core.Exception.UsernameAlreadyExistsException;
 import com.example.linkmate.user.dto.UserUpdateDto;
 import com.example.linkmate.user.model.Education;
 import com.example.linkmate.user.model.Experience;
+import com.example.linkmate.user.model.Project;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.service.CloudinaryService;
 import com.example.linkmate.user.service.OtpService;
@@ -195,6 +196,27 @@ public class UserController {
         }
     }
 
+    // // api for update projects array
+    @PutMapping("/update/project")
+    public ResponseEntity<?> updateProject(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @Valid @RequestBody List<@Valid Project> projects) {
+        try {
+            String jwtToken = token.replace("Bearer ", "");
+            String username = jwtUtil.getUserNameFromToken(jwtToken);
+
+            if (username == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+
+            User updatedUser = userService.updateUserProjects(username, projects);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+        }
+    }
+
     // api for update skills
     @PutMapping("/update/skills")
     public ResponseEntity<?> updateUserSkills(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
@@ -241,6 +263,23 @@ public class UserController {
             User user=userService.deleteExperienceById(currentUsername, experienceId);
             return ResponseEntity.ok(user);
         } catch ( NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
+        }
+    }
+
+    // api for delete project
+    @DeleteMapping("/delete/project")
+    public ResponseEntity<?> deleteProject(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @RequestParam String projectId) {
+        try {
+            String jwtToken = token.replace("Bearer ", "");
+            String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
+
+            User user = userService.deleteProjectById(currentUsername, projectId);
+            return ResponseEntity.ok(user);
+        } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
