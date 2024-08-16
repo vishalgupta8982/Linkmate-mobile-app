@@ -447,6 +447,7 @@ export default function Experience({ navigation }) {
 										/>
 									)}
 									<AppButton
+										marginBottom={30}
 										title={isEditing ? 'Update Experience' : 'Add Experience'}
 										onPress={
 											isEditing ? handleUpdateExperience : handleAddExperience

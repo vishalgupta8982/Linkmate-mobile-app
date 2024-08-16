@@ -30,15 +30,14 @@ import { AppButton } from '../../components/AppButton';
 import { EducationPayload } from '../../types/Payload/EducationPayload';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AppPickerField from '../../components/AppPickerField';
-export default function ViewProfileEducation({ navigation }) {
-	const userData = useSelector((state: RootState) => state.userDetails.user);
+export default function ViewProfileEducation({ navigation, userData }) {
 	const theme = useCustomTheme();
 	const dispatch = useDispatch();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [loader, setLoader] = useState(false);
-	 
+
 	return (
 		<View style={styles.mainCont}>
 			{loader && <Loader />}

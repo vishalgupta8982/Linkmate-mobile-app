@@ -127,7 +127,7 @@ const getStyles = (colors) =>
 		},
 		locationText: {
 			fontSize: responsiveFontSize(1.9),
-			color: colors.APP_PRIMARY,
+			color: colors.APP_PRIMARY_LIGHT,
 			fontFamily: fonts.Inter_Regular,
 			lineHeight: responsiveFontSize(2),
 			marginTop: 5,

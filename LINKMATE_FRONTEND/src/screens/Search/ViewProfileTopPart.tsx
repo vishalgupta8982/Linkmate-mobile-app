@@ -23,8 +23,8 @@ import {
 } from 'react-native-responsive-dimensions';
 import ViewProfilePicSection from './ViewProfilePicSection';
 import ProfileTabBar from './ProfileTabBar';
-export default function ViewProfileTopPart({ navigation }) {
-	const userData = useSelector((state: RootState) => state.userDetails.user);
+export default function ViewProfileTopPart({ navigation, userData }) {
+ 
 	const dispatch = useDispatch();
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -38,13 +38,17 @@ export default function ViewProfileTopPart({ navigation }) {
 			{userData ? (
 				<View>
 					<View style={styles.header}>
-					<TouchableOpacity activeOpacity={0.4} onPress={()=>navigation.goBack()} >
-						<AntDesign
-							name="arrowleft"
-							padding={3}
-							size={22}
-							color={colors.TEXT}
-						/></TouchableOpacity>
+						<TouchableOpacity
+							activeOpacity={0.4}
+							onPress={() => navigation.goBack()}
+						>
+							<AntDesign
+								name="arrowleft"
+								padding={3}
+								size={22}
+								color={colors.TEXT}
+							/>
+						</TouchableOpacity>
 						<Text style={styles.username}> {userData.username}</Text>
 					</View>
 					<ViewProfilePicSection data={userData} navigation={navigation} />

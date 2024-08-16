@@ -58,7 +58,7 @@ export default function Projects({ navigation }) {
 		endDate: new Date(),
 		link: '',
 		description: '',
-		skills: [],
+		skills: '',
 	});
 
 	const handleStartDate = (event, selectedDate) => {
@@ -348,6 +348,7 @@ export default function Projects({ navigation }) {
 										/>
 									)}
 									<AppButton
+									marginBottom={30}
 										title={isEditing ? 'Update Project' : 'Add Project'}
 										onPress={isEditing ? handleUpdateProject : handleAddProject}
 									/>

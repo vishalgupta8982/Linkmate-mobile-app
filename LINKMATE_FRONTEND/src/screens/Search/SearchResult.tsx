@@ -6,9 +6,9 @@ import {
 	TouchableOpacity,
 	TextInput,
 	FlatList,
-	Image
+	Image,
 } from 'react-native';
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { searchUser } from '../../api/apis';
 import { useEffect, useRef } from 'react';
 import Loader from '../../components/Loader';
@@ -18,22 +18,26 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { fonts } from '../../config/Fonts';
 import _ from 'lodash';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 export default function SearchResult({ navigation }) {
+	const username = useSelector(
+		(state: RootState) => state.userDetails.user.username
+	);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
-	const [query,setQuery]=useState('')
-	 const [loading, setLoading] = useState(false);
-	const [searchResult,setSearchResult]=useState([])
+	const [query, setQuery] = useState('');
+	const [loading, setLoading] = useState(false);
+	const [searchResult, setSearchResult] = useState([]);
 	const debouncedSearch = useRef(
 		_.debounce(async (query: string) => {
 			setLoading(true);
-			const test=query.length<1?'':query
+			const test = query.length < 1 ? '' : query;
 			try {
 				const response = await searchUser(test);
-				console.log(response)
-					setSearchResult(response)
+				setSearchResult(response);
 			} catch (err) {
 				console.error(err);
 			} finally {
@@ -43,9 +47,9 @@ export default function SearchResult({ navigation }) {
 	).current;
 	const handleChangeText = (text) => {
 		setQuery(text);
-		debouncedSearch(text); 
+		debouncedSearch(text);
 	};
-	 
+
 	return (
 		<View style={styles.mainCont}>
 			{loading && <Loader />}
@@ -69,6 +73,7 @@ export default function SearchResult({ navigation }) {
 						style={styles.input}
 						selectionColor={colors.PRIMARY}
 						placeholder="Type here to search..."
+						placeholderTextColor={colors.TEXT}
 					/>
 				</View>
 			</View>
@@ -78,7 +83,12 @@ export default function SearchResult({ navigation }) {
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						activeOpacity={0.4}
-						onPress={() => navigation.navigate('searchUserProfile',{userId:item.userId})}
+						onPress={() =>
+							navigation.navigate(
+								username == item.username ? 'Profile' : 'searchUserProfile',
+								{ username: item.username }
+							)
+						}
 					>
 						<View style={styles.list}>
 							<Image
@@ -112,15 +122,15 @@ const getStyles = (colors) =>
 			flex: 1,
 		},
 		searchCont: {
-			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
 			borderWidth: 1,
-			borderColor: colors.APP_PRIMARY,
+			borderColor: colors.PRIMARY,
 			borderRadius: 5,
 			flexDirection: 'row',
 			alignItems: 'center',
 			margin: 5,
 			paddingHorizontal: 10,
 			marginBottom: 5,
+			width:'87%'
 		},
 		input: {
 			fontSize: 14,
@@ -128,10 +138,7 @@ const getStyles = (colors) =>
 			color: colors.TEXT,
 			width: '80%',
 		},
-		name: {
-			color: '#fff',
-			fontSize: 12,
-		},
+		 
 		back: {
 			flexDirection: 'row',
 			alignItems: 'center',
@@ -142,7 +149,7 @@ const getStyles = (colors) =>
 			paddingHorizontal: 10,
 			flexDirection: 'row',
 			alignItems: 'center',
-			width:responsiveWidth(72)
+			width: responsiveWidth(72),
 		},
 		profile: {
 			width: 50,
@@ -156,7 +163,7 @@ const getStyles = (colors) =>
 			fontSize: 16,
 		},
 		headline: {
-			color: colors.TEXT,
+			color: colors.APP_PRIMARY_LIGHT,
 			fontFamily: fonts.Inter_Medium,
 			fontSize: 12,
 		},

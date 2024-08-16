@@ -1,5 +1,6 @@
 package com.example.linkmate.user.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +20,28 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public List<User> searchUsers(String query, int limit) {
-        Query searchQuery = new Query();
-        searchQuery.addCriteria(
-                new Criteria().orOperator(
-                        Criteria.where("username").regex(query, "i"),
-                        Criteria.where("firstName").regex(query, "i"),
-                        Criteria.where("lastName").regex(query, "i"),
-                        Criteria.where("headline").regex(query, "i"),
-                        Criteria.where("location").regex(query, "i"),
-                        Criteria.where("skills").regex(query, "i")));
-                        searchQuery.fields().include("firstName").include("lastName").include("headline").include("profilePicture").include("username"); 
-        searchQuery.limit(limit);
-        searchQuery.with(Sort.by(Sort.Order.asc("username")));
-        return mongoTemplate.find(searchQuery, User.class);
+    String[] terms = query.split("\\s+or\\s+");
+    List<Criteria> criteriaList = new ArrayList<>();
+    for (String term : terms) {
+        String trimmedTerm = term.trim();
+        if (!trimmedTerm.isEmpty()) {
+            Criteria termCriteria = new Criteria().orOperator(
+                    Criteria.where("username").regex(trimmedTerm, "i"),
+                    Criteria.where("firstName").regex(trimmedTerm, "i"),
+                    Criteria.where("lastName").regex(trimmedTerm, "i"),
+                    Criteria.where("headline").regex(trimmedTerm, "i"),
+                    Criteria.where("location").regex(trimmedTerm, "i"),
+                    Criteria.where("skills").regex(trimmedTerm, "i")
+            );
+            criteriaList.add(termCriteria);
+        }
     }
+    Criteria combinedCriteria = new Criteria().orOperator(criteriaList.toArray(new Criteria[0]));
+    Query searchQuery = new Query(combinedCriteria);
+    searchQuery.fields().include("firstName").include("lastName").include("headline").include("profilePicture").include("username");
+    searchQuery.limit(limit);
+    searchQuery.with(Sort.by(Sort.Order.asc("username")));
+    
+    return mongoTemplate.find(searchQuery, User.class);
+}
 }

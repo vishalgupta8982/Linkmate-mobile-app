@@ -17,6 +17,7 @@ export const AppButton = ({
 	disabled,
 	icon,
 	width,
+	marginBottom,
 }: {
 	onPress: () => void;
 	title: string;
@@ -24,6 +25,7 @@ export const AppButton = ({
 	disabled: boolean;
 	icon?: any;
 	width?: number;
+	marginBottom?:number;
 }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -33,7 +35,10 @@ export const AppButton = ({
 			onPress={onPress}
 			style={[
 				styles.appButtonContainer,
-				{ width: width ? responsiveWidth(width) : responsiveWidth(90) },
+				{
+					width: width ? responsiveWidth(width) : responsiveWidth(90),
+					marginBottom: marginBottom ? marginBottom : 10,
+				},
 			]}
 		>
 			{icon && <View style={styles.icon}>{icon}</View>}
@@ -52,7 +57,6 @@ const getStyles = (colors) =>
 			marginHorizontal: 5,
 			alignSelf: 'center',
 			marginTop: 20,
-			marginBottom: 20,
 		},
 		appButtonText: {
 			fontSize: 16,

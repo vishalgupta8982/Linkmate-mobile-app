@@ -25,8 +25,7 @@ import CustomAlertDialog from '../../components/CustomAlertDialog';
 import AppTextField from '../../components/AppTextField';
 import { AppButton } from '../../components/AppButton';
 
-export default function ViewProfileOverview({ navigation }) {
-	const userData = useSelector((state: RootState) => state.userDetails.user);
+export default function ViewProfileOverview({ navigation,userData }) {
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);

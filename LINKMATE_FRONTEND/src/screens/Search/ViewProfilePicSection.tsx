@@ -30,7 +30,7 @@ export default function ViewProfilePicSection({ navigation, data }) {
 				<Image
 					style={styles.pic}
 					source={{
-						uri: data?.profilePicture.length > 0 ? data?.profilePicture : null,
+						uri: data?.profilePicture?.length > 0 ? data?.profilePicture : null,
 					}}
 				/>
 				<View style={styles.countMainCont}>

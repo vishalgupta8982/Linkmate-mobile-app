@@ -35,25 +35,24 @@ import { AppButton } from '../../components/AppButton';
 import AppTextField from '../../components/AppTextField';
 import AppPickerField from '../../components/AppPickerField';
 import { ExperiencePayload } from '../../types/Payload/ExperiencePayload';
-export default function ViewProfileExperience({ navigation }) {
-	const userData = useSelector((state: RootState) => state.userDetails.user);
+export default function ViewProfileExperience({ navigation, userData }) {
 	const theme = useCustomTheme();
 	const dispatch = useDispatch();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [loader, setLoader] = useState(false);
-    const locationTypeOptions = [
-			{ label: 'Remote', value: 'REMOTE' },
-			{ label: 'Onsite', value: 'ONSITE' },
-			{ label: 'Hybrid', value: 'HYBRID' },
-		];
+	const locationTypeOptions = [
+		{ label: 'Remote', value: 'REMOTE' },
+		{ label: 'Onsite', value: 'ONSITE' },
+		{ label: 'Hybrid', value: 'HYBRID' },
+	];
 
-		const employmentTypeOptions = [
-			{ label: 'Internship', value: 'INTERNSHIP' },
-			{ label: 'Full-Time', value: 'FULL-TIME' },
-			{ label: 'Part-Time', value: 'PART-TIME' },
-		];
+	const employmentTypeOptions = [
+		{ label: 'Internship', value: 'INTERNSHIP' },
+		{ label: 'Full-Time', value: 'FULL-TIME' },
+		{ label: 'Part-Time', value: 'PART-TIME' },
+	];
 	return (
 		<View style={styles.mainCont}>
 			<View>

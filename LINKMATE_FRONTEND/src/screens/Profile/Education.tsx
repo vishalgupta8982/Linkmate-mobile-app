@@ -395,7 +395,7 @@ const getStyles = (colors) =>
 			borderRadius: 10,
 			elevation: 5,
 			width: '100%',
-			maxHeight: responsiveHeight(70),
+			maxHeight: responsiveHeight(68),
 		},
 		scroll: {
 			padding: 20,

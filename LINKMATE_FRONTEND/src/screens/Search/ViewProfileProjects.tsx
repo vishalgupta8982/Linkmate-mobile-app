@@ -39,8 +39,7 @@ import { EducationPayload } from '../../types/Payload/EducationPayload';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AppPickerField from '../../components/AppPickerField';
 import { ProjectPayload } from '../../types/Payload/ProjectPayload';
-export default function ViewProfileProjects({ navigation }) {
-	const userData = useSelector((state: RootState) => state.userDetails.user);
+export default function ViewProfileProjects({ navigation, userData }) {
 	const theme = useCustomTheme();
 	const dispatch = useDispatch();
 	const { colors } = theme;
