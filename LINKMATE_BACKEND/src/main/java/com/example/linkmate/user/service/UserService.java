@@ -1,5 +1,6 @@
 package com.example.linkmate.user.service;
 
+import java.lang.StackWalker.Option;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -83,8 +84,8 @@ public class UserService {
     }
     // service for find user by id
 
-    public User getUserById(ObjectId userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public Optional<User> getUserById(ObjectId userId) {
+        return userRepository.findById(userId);
     }
 
     // service for update user detail

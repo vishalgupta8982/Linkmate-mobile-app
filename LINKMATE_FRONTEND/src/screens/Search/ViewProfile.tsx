@@ -10,24 +10,17 @@ import {
 	responsiveHeight,
 	responsiveWidth,
 } from 'react-native-responsive-dimensions';
-import ProfilePicSection from './ProfilePicSection';
+ 
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view';
-import ProfileTopPart from './ProfileTopPart';
-import Overview from './Overview';
-import Education from './Education';
-import Experience from './Experience';
-import Projects from './Projects';
-
+import ViewProfileTopPart from './ViewProfileTopPart';
+import ViewProfileOverview from './ViewProfileOverview';
+import ViewProfileEducation from './ViewProfileEducation';
+import ViewProfileProjects from './ViewProfileProjects';
+import ViewProfileExperience from './ViewProfileExperience';
 const HEADER_HEIGHT = 250;
 
-const DATA = [0, 1, 2, 3, 4];
-const identity = (v: unknown): string => v + '';
-
-const Header = () => {
-	return <View style={styles.header} />;
-};
-
-const Profile: React.FC = ({ navigation }) => {
+const ViewProfile: React.FC = ({ navigation,route }) => {
+    const {userId}=route.params
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
@@ -40,7 +33,7 @@ const Profile: React.FC = ({ navigation }) => {
 	return (
 		<View style={styles.cont}>
 			<Tabs.Container
-				renderHeader={(props) => <ProfileTopPart navigation={navigation} />}
+				renderHeader={(props) => <ViewProfileTopPart navigation={navigation} />}
 				headerHeight={HEADER_HEIGHT}
 				renderTabBar={(props) => (
 					<MaterialTabBar
@@ -60,22 +53,22 @@ const Profile: React.FC = ({ navigation }) => {
 			>
 				<Tabs.Tab name="Overview">
 					<Tabs.ScrollView style={styles.bg}>
-						<Overview navigation={navigation} />
+						<ViewProfileOverview navigation={navigation} />
 					</Tabs.ScrollView>
 				</Tabs.Tab>
 				<Tabs.Tab name="Projects">
 					<Tabs.ScrollView style={styles.bg}>
-						<Projects navigation={navigation} />
+						<ViewProfileProjects navigation={navigation} />
 					</Tabs.ScrollView>
 				</Tabs.Tab>
 				<Tabs.Tab name="Experience">
 					<Tabs.ScrollView style={styles.bg}>
-						<Experience navigation={navigation} />
+						<ViewProfileExperience navigation={navigation} />
 					</Tabs.ScrollView>
 				</Tabs.Tab>
 				<Tabs.Tab name="Education">
 					<Tabs.ScrollView style={styles.bg}>
-						<Education navigation={navigation} />
+						<ViewProfileEducation navigation={navigation} />
 					</Tabs.ScrollView>
 				</Tabs.Tab>
 			</Tabs.Container>
@@ -104,4 +97,4 @@ const getStyles = (colors) =>
 		},
 	});
 
-export default Profile;
+export default ViewProfile;

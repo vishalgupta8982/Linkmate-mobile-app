@@ -28,7 +28,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         Criteria.where("headline").regex(query, "i"),
                         Criteria.where("location").regex(query, "i"),
                         Criteria.where("skills").regex(query, "i")));
-                        searchQuery.fields().include("firstName").include("lastName").include("headline").include("location").include("profilePicture"); 
+                        searchQuery.fields().include("firstName").include("lastName").include("headline").include("profilePicture"); 
         searchQuery.limit(limit);
         searchQuery.with(Sort.by(Sort.Order.asc("username")));
         return mongoTemplate.find(searchQuery, User.class);

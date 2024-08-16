@@ -106,6 +106,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
+    @GetMapping("/search-user-details")
+    public ResponseEntity<User> getSearchUserDetail(@RequestParam ObjectId userId) {
+        try {
+            Optional<User> userOptional = userService.getUserById(userId);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                user.setPassword(null);
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
 
     // api for update user detail
     @PutMapping("/update")

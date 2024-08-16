@@ -32,13 +32,14 @@ export default function SearchResult({ navigation }) {
 			const test=query.length<1?'':query
 			try {
 				const response = await searchUser(test);
+				console.log(response)
 					setSearchResult(response)
 			} catch (err) {
 				console.error(err);
 			} finally {
 				setLoading(false);
 			}
-		}, 300)
+		}, 200)
 	).current;
 	const handleChangeText = (text) => {
 		setQuery(text);
@@ -75,24 +76,29 @@ export default function SearchResult({ navigation }) {
 				data={searchResult}
 				keyExtractor={(item, index) => item.userId?.timestamp.toString()}
 				renderItem={({ item }) => (
-					<View style={styles.list}>
-						<Image
-							style={styles.profile}
-							source={{ uri: item.profilePicture }}
-						/>
-						<View>
-							<Text style={styles.name}>
-								{item.firstName} {item.lastName}
-							</Text>
-							<Text
-								style={styles.headline}
-								numberOfLines={1}
-								ellipsizeMode="tail"
-							>
-								{item.headline}
-							</Text>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => navigation.navigate('searchUserProfile',{userId:item.userId})}
+					>
+						<View style={styles.list}>
+							<Image
+								style={styles.profile}
+								source={{ uri: item.profilePicture }}
+							/>
+							<View>
+								<Text style={styles.name}>
+									{item.firstName} {item.lastName}
+								</Text>
+								<Text
+									style={styles.headline}
+									numberOfLines={1}
+									ellipsizeMode="tail"
+								>
+									{item.headline}
+								</Text>
+							</View>
 						</View>
-					</View>
+					</TouchableOpacity>
 				)}
 			/>
 		</View>
@@ -142,7 +148,7 @@ const getStyles = (colors) =>
 			width: 50,
 			height: 50,
 			borderRadius: 25,
-			marginRight: 20,
+			marginRight: 10,
 		},
 		name: {
 			color: colors.TEXT,
