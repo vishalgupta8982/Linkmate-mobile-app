@@ -22,7 +22,6 @@ import java.util.List;
  
 @Data
 @NoArgsConstructor
-@JsonFilter("userFilter")
 @Document(collection = "users")
 public class User {
 
