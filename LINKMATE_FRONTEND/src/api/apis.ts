@@ -108,3 +108,7 @@ export const searchUser = async (query:string) => {
 	const url = `/users/search?query=${query}`;	
 	return await get<Search>(url);
 };
+export const getSearchUserDetail = async (username: string) => {
+	const url = `/users/search-user-details?username=${username}`;
+	return await get<Search>(url);
+};

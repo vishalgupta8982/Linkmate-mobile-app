@@ -107,9 +107,9 @@ public class UserController {
         }
     }
     @GetMapping("/search-user-details")
-    public ResponseEntity<User> getSearchUserDetail(@RequestParam ObjectId userId) {
+    public ResponseEntity<User> getSearchUserDetail(@RequestParam String username) {
         try {
-            Optional<User> userOptional = userService.getUserById(userId);
+            Optional<User> userOptional = userService.findByUserName(username);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 user.setPassword(null);

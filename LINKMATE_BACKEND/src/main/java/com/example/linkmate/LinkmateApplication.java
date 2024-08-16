@@ -15,10 +15,6 @@ public class LinkmateApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LinkmateApplication.class, args);
 	}
-	@Bean
-public Jackson2ObjectMapperBuilderCustomizer customizer()
-{
-    return builder -> builder.serializerByType(ObjectId.class,new ToStringSerializer());
-}
+	 
 
 }
