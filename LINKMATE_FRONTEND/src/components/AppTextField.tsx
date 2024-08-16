@@ -109,6 +109,7 @@ const getStyles = (colors, width) =>
 			borderBottomColor: colors.PRIMARY,
 			fontFamily: fonts.Inter_Regular,
 			paddingBottom: -10,
+			lineHeight:22
 		},
 		label: {
 			marginTop: 20,

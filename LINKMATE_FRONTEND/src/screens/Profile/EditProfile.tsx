@@ -271,13 +271,13 @@ const getStyles = (colors) =>
 			height: 120,
 			borderRadius: 60,
 			alignSelf: 'center',
-			marginVertical: 20,
+			marginVertical: 10,
 		},
 		editText: {
 			color: colors.PRIMARY,
 			fontSize: 14,
 			textAlign: 'center',
-			marginVertical: 10,
+			// marginVertical: 0,
 		},
 		modalOverlay: {
 			flex: 1,

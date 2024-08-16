@@ -5,9 +5,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import org.springframework.data.annotation.Transient;
 import lombok.Data;
@@ -19,11 +22,12 @@ import java.util.List;
  
 @Data
 @NoArgsConstructor
+@JsonFilter("userFilter")
 @Document(collection = "users")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
 
     @Id
+  @JsonSerialize(using= ToStringSerializer.class)
     private ObjectId userId;
 
     @Indexed(unique = true)

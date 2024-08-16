@@ -15,50 +15,68 @@ import UserCard from '../../components/UserCard';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useState } from 'react';
+import Loader from '../../components/Loader';
 
 export default function Search({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
-	const[suggestion,setSuggestion]=useState([])
-	const[loader,setLoader]=useState(true)
-	const getSuggestion=async()=>{
-		try{
-			const response=await searchUser();
-			setSuggestion(response)
-
-		}catch(err){
-			console.error(err)
+	const [suggestion, setSuggestion] = useState([]);
+	const [loader, setLoader] = useState(true);
+	const getSuggestion = async () => {
+		const query = `${
+			userData?.location.split(' ')[0]
+		} or ${userData?.skills.join(' or ')}`;
+		try {
+			const response = await searchUser(query);
+			setSuggestion(response);
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setLoader(false);
 		}
-		finally{
-			setLoader(false)
-		}
-	}
-	useEffect(()=>{
-		getSuggestion()
-	},[])
+	};
+	useEffect(() => {
+		getSuggestion();
+	}, [userData]);
 	return (
-		<ScrollView style={styles.mainCont}>
-			<TouchableOpacity
-				activeOpacity={0.4}
-				onPress={() => navigation.navigate('searchResult')}
-			>
-				<View style={styles.searchCont}>
-					<Ionicons name="search" color={colors.PRIMARY} size={15} />
-					<Text style={styles.type}> Type here to search...</Text>
-				</View>
-			</TouchableOpacity>
+		<View style={styles.mainCont}>
+		<ScrollView>
+				<TouchableOpacity
+					activeOpacity={0.4}
+					onPress={() => navigation.navigate('searchResult')}
+				>
+					<View style={styles.searchCont}>
+						<Ionicons name="search" color={colors.PRIMARY} size={15} />
+						<Text style={styles.type}> Type here to search...</Text>
+					</View>
+				</TouchableOpacity>
 
-			<UserCard userData= />
-		</ScrollView>
+				{loader ? (
+					<Loader />
+				) : (
+					<View style={styles.container}>
+						{suggestion.map(
+							(item, index) =>
+								item.username != userData.username && (
+									<UserCard userData={item} navigation={navigation} />
+								)
+						)}
+					</View>
+				)}
+				</ScrollView>
+			</View>
 	);
 }
 
 const getStyles = (colors) =>
 	StyleSheet.create({
 		mainCont: {
+			flex: 1,
 			backgroundColor: colors.MAIN_BACKGROUND,
+			padding: 10,
+			paddingHorizontal: 15,
 		},
 		searchCont: {
 			padding: 15,
@@ -67,12 +85,17 @@ const getStyles = (colors) =>
 			borderRadius: 5,
 			flexDirection: 'row',
 			alignItems: 'flex-end',
-			margin: 5,
-			width: '95%',
+			width: '100%',
 			alignSelf: 'center',
+			marginBottom: 5,
 		},
 		type: {
 			color: colors.TEXT,
 			fontFamily: fonts.Inter_Regular,
+		},
+		container: {
+			flexDirection: 'row',
+			flexWrap: 'wrap',
+			justifyContent: 'space-between', // Ensures cards are spaced evenly
 		},
 	});

@@ -9,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,9 @@ import com.example.linkmate.user.service.OtpService;
 import com.example.linkmate.user.service.UserService;
 import com.example.linkmate.user.utils.GenerateUniqueUserName;
 import com.example.linkmate.user.utils.JwtUtil;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 import jakarta.validation.Valid;
 
@@ -321,11 +325,23 @@ public class UserController {
     }
 // search user
  @GetMapping("/search")
-    public List<User> searchUsers(@RequestParam String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return new ArrayList<>();
-        }
-        return userService.searchUsers(query);
-    }
+public MappingJacksonValue searchUsers(@RequestParam(required = false) String query) {
+    FilterProvider filterProvider = new SimpleFilterProvider()
+            .addFilter("userFilter", SimpleBeanPropertyFilter.serializeAllExcept(
+                    "skills", "educations", "connections", "experiences",
+                    "projects", "about", "createdAt", "updatedAt", "token","location"));
+
+    List<User> users = (query == null || query.trim().isEmpty())
+            ? new ArrayList<>()
+            : userService.searchUsers(query);
+
+    return applyFilters(users, filterProvider);
+}
+
+private MappingJacksonValue applyFilters(List<User> users, FilterProvider filterProvider) {
+    MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(users);
+    mappingJacksonValue.setFilters(filterProvider);
+    return mappingJacksonValue;
+}
 
 }
