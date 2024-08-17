@@ -17,10 +17,13 @@ const userDetailsSlice = createSlice({
 		setUserDetails(state, action: PayloadAction<User>) {
 			state.user = action.payload;
 		},
+		clearUserDetail(state) {
+			state.user= null;
+		},
 	},
 });
 
-export const { setUserDetails } = userDetailsSlice.actions;
+export const { setUserDetails, clearUserDetail } = userDetailsSlice.actions;
 
 export const selectUser = (state: RootState) => state.userDetails.user;
 

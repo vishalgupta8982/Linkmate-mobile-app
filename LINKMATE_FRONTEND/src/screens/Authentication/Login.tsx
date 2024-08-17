@@ -25,8 +25,9 @@ import { LoginPayload } from '../../types/Payload/LoginPayload';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectToken, setToken } from '../../redux/slices/authSlice';
 import Loader from '../../components/Loader';
-import { RootState } from '../../redux/store';
+import { persistor, RootState } from '../../redux/store';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Login({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -37,6 +38,7 @@ export default function Login({ navigation }) {
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
 	const handleLogin = async () => {
+		
 		setLoading(true);
 
 		const payload: LoginPayload = {

@@ -116,4 +116,20 @@ export const getMyConnections = async () => {
 	const url = `/users/connections/my-connections`;
 	return await get<Search>(url);
 };
+export const sendConnectionRequest = async (recieverId:String) => {
+	const url = `/users/connections/${recieverId}`;
+	return await post<Search>(url);
+};
+export const getAllConnectionRequest = async () => {
+	const url = `/users/connections/received`;
+	return await get<Search>(url);
+};
+export const acceptConnectionRequest = async (senderId: String) => {
+	const url = `/users/connections/${senderId}/accept`;
+	return await post<Search>(url);
+};
+export const rejectConnectionRequest = async (senderId: String) => {
+	const url = `/users/connections/${senderId}/decline`;
+	return await post<Search>(url);
+};
 

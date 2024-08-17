@@ -20,10 +20,10 @@ import _ from 'lodash';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-
+import Feather from 'react-native-vector-icons/Feather'
 export default function SearchResult({ navigation }) {
-	const username = useSelector(
-		(state: RootState) => state.userDetails.user.username
+	const userData = useSelector(
+		(state: RootState) => state.userDetails.user
 	);
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -85,7 +85,9 @@ export default function SearchResult({ navigation }) {
 						activeOpacity={0.4}
 						onPress={() =>
 							navigation.navigate(
-								username == item.username ? 'Profile' : 'searchUserProfile',
+								userData.username == item.username
+									? 'Profile'
+									: 'viewUserProfile',
 								{ username: item.username }
 							)
 						}
@@ -95,7 +97,7 @@ export default function SearchResult({ navigation }) {
 								style={styles.profile}
 								source={{ uri: item.profilePicture }}
 							/>
-							<View>
+							<View style={styles.nameCont}>
 								<Text style={styles.name}>
 									{item.firstName} {item.lastName}
 								</Text>
@@ -107,6 +109,21 @@ export default function SearchResult({ navigation }) {
 									{item.headline}
 								</Text>
 							</View>
+
+							{userData.username != item.username &&
+								(userData.connections.includes(item.userId) ? (
+									<Feather
+										name="send"
+										color={colors.TEXT}
+										size={20}
+									/>
+								) : (
+									<Ionicons
+										name="person-add-outline"
+										color={colors.TEXT}
+										size={20}
+									/>
+								))}
 						</View>
 					</TouchableOpacity>
 				)}
@@ -149,7 +166,8 @@ const getStyles = (colors) =>
 			paddingHorizontal: 10,
 			flexDirection: 'row',
 			alignItems: 'center',
-			width: responsiveWidth(72),
+			width: responsiveWidth(90),
+			justifyContent:'space-between'
 		},
 		profile: {
 			width: 50,
@@ -167,4 +185,8 @@ const getStyles = (colors) =>
 			fontFamily: fonts.Inter_Medium,
 			fontSize: 12,
 		},
+		nameCont:{
+			width:responsiveWidth(62),
+			marginRight:responsiveWidth(5)
+		}
 	});

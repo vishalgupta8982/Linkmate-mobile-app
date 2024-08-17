@@ -18,6 +18,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/ThemeSlice';
 import { useState } from 'react';
 import { clearToken } from '../../redux/slices/authSlice';
+import { persistor } from '../../redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { clearUserDetail } from '../../redux/slices/UserDetailsSlice';
 export default function Setting({ navigation }) {
 	const dispatch = useDispatch();
 	const currentTheme = useSelector((state) => state.theme.theme);
@@ -28,9 +31,11 @@ export default function Setting({ navigation }) {
 	const handleToggle = () => {
 		dispatch(toggleTheme());
 	};
-	const handleLogout = () => {
-		navigation.replace('Login');
-		dispatch(clearToken());
+	const handleLogout = async() => {
+		await navigation.replace('Login');
+		 dispatch(clearToken());
+		 dispatch(clearUserDetail());
+
 	};
 	return (
 		<ScrollView style={styles.mainCont}>

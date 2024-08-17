@@ -42,7 +42,7 @@ export default function Search({ navigation }) {
 	}, [userData]);
 	return (
 		<View style={styles.mainCont}>
-		<ScrollView>
+			<ScrollView>
 				<TouchableOpacity
 					activeOpacity={0.4}
 					onPress={() => navigation.navigate('searchResult')}
@@ -65,8 +65,8 @@ export default function Search({ navigation }) {
 						)}
 					</View>
 				)}
-				</ScrollView>
-			</View>
+			</ScrollView>
+		</View>
 	);
 }
 

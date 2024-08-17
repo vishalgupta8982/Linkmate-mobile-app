@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useCustomTheme } from '../config/Theme';
 import {
 	responsiveHeight,
@@ -9,17 +9,36 @@ import { globalStyles } from '../StylesSheet';
 import { AppButton } from './AppButton';
 import { fonts } from '../config/Fonts';
 import OutlineButton from './OutlineButton';
-
+import { sendConnectionRequest } from '../api/apis';
+import Toast from 'react-native-simple-toast';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 export default function UserCard({ userData, navigation }) {
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
+	const [request,setRequest]=useState(false)
+	const [loading,setLoading]=useState(false)
+	const handleSendRqst=async(id:string)=>{
+		setLoading(true)
+		try{
+			const response=await sendConnectionRequest(id);
+			if(response){
+			setRequest(true)
+			Toast.show('Connection request sent', Toast.SHORT);
+			}
+		}catch(err){
+			console.error(err)
+		}
+		finally{
+			setLoading(false)
+		}
+	}
 	return (
 		<TouchableOpacity
 			activeOpacity={0.4}
 			onPress={() =>
-				navigation.navigate('searchUserProfile', {
+				navigation.navigate('viewUserProfile', {
 					username: userData.username,
 				})
 			}
@@ -36,8 +55,19 @@ export default function UserCard({ userData, navigation }) {
 			>
 				{userData.headline}
 			</Text>
-            <OutlineButton title="Connect" />
-            
+			<OutlineButton
+				onPress={() => handleSendRqst(userData.userId)}
+				title={request ? 'Pending' : 'Connect'}
+				icon={
+					request && (
+						<AntDesign
+							name="clockcircleo"
+							color={colors.APP_PRIMARY_LIGHT}
+							size={12}
+						/>
+					)
+				}
+			/>
 		</TouchableOpacity>
 	);
 }

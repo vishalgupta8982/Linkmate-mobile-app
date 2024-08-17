@@ -39,6 +39,8 @@ export const globalStyles = (colors) =>
 			fontFamily: fonts.Inter_Medium,
 			color: colors.APP_PRIMARY_LIGHT,
 			fontSize: responsiveFontSize(1.8),
-			marginTop:7
+			marginTop:5,
+			lineHeight:responsiveFontSize(2.8)
+			 
 		},
 	});

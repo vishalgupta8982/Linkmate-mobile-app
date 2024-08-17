@@ -4,13 +4,13 @@ import { useCustomTheme } from '../config/Theme';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { fonts } from '../config/Fonts';
 
-export default function OutlineButton({ title, onPress, width }) {
+export default function OutlineButton({ title, onPress, width,icon }) {
     const theme = useCustomTheme();
 		const { colors } = theme;
 		const styles = getStyles(colors);
 	return (
-		<TouchableOpacity>
-			<Text style={[styles.outlineButton,{width:width?width:responsiveWidth(38)}]}>{title}</Text>
+		<TouchableOpacity activeOpacity={0.4} onPress={onPress} >
+			<Text style={[styles.outlineButton,{width:width?width:responsiveWidth(38)}]}>{title}{" "}{icon &&(icon)}</Text>
 		</TouchableOpacity>
 	);
 }

@@ -50,7 +50,7 @@ const get = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
 
 const post = async <T>(
 	url: string,
-	data: any,
+	data?: any,
 	config?: AxiosRequestConfig
 ): Promise<T> => {
 	return apiCall<T>(() => axiosInstance.post(url, data, config));

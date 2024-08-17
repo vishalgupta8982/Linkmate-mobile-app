@@ -16,6 +16,7 @@ import {
 	responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import { useState } from 'react';
 import { fonts } from '../../config/Fonts';
 export default function ViewProfilePicSection({ navigation, data }) {
@@ -59,6 +60,10 @@ export default function ViewProfilePicSection({ navigation, data }) {
 			</View>
 
 			<View style={styles.buttonCont}>
+				<Text style={styles.button}>
+					<Feather name="send" size={14} color={colors.WHITE} />{' '}
+					Message
+				</Text>
 				<Text style={styles.button}>
 					<MaterialCommunityIcon name="share" size={18} color={colors.WHITE} />{' '}
 					Share profile

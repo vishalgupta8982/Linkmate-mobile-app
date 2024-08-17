@@ -267,7 +267,7 @@ export default function Projects({ navigation }) {
 						{moment(item.endDate, 'YYYY-MM-DD').format('MMM YYYY')}
 					</Text>
 					<Text style={globalStyleSheet.smallestHead}>{item.skills}</Text>
-					<Text style={globalStyleSheet.description}> {item.description} </Text>
+					<Text style={globalStyleSheet.description}>{item.description} </Text>
 				</View>
 			))}
 			<Modal

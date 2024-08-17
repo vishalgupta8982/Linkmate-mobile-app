@@ -1,8 +1,11 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useCustomTheme } from '../config/Theme';
-import { responsiveHeight, responsiveScreenHeight, responsiveWidth } from 'react-native-responsive-dimensions';
-
+import {
+	responsiveHeight,
+	responsiveScreenHeight,
+	responsiveWidth,
+} from 'react-native-responsive-dimensions';
 
 const Loader = () => {
 	const theme = useCustomTheme();
@@ -19,9 +22,9 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		zIndex: 1000,
 		backgroundColor: 'rgba(0, 0, 0, 0.1)',
-		height:responsiveHeight(100),
-		width:responsiveWidth(100),
-		justifyContent:'center'
+		height: responsiveHeight(100),
+		width: responsiveWidth(100),
+		justifyContent: 'center',
 	},
 });
 

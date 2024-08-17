@@ -96,8 +96,9 @@ public class ConnectionService {
 
 public List<User> getConnections(String token) {
     ObjectId userId = jwtUtil.getUserIdFromToken(token);
-    List<Connection> connections = connectionRepository.findByUserIdOrConnectedUserIdAndStatus(userId, userId,
+    List<Connection> connections = connectionRepository.findByUserIdOrConnectedUserIdAndStatus(userId, 
             ConnectionStatus.ACCEPTED);
+            System.out.println(connections);
     return connections.stream()
             .map(connection -> {
                 ObjectId otherUserId = connection.getUserId().equals(userId) ? connection.getConnectedUserId()
@@ -111,7 +112,8 @@ public List<User> getConnections(String token) {
 
     public List<User> getReceivedConnectionRequests(String token) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        List<Connection> connections = connectionRepository.findByConnectedUserId(userId);
+        List<Connection> connections = connectionRepository.findByConnectedUserIdAndStatus(userId,
+                ConnectionStatus.PENDING);
         return connections.stream()
                 .map(connection -> userService.getUserById(connection.getUserId()))
                 .flatMap(Optional::stream)

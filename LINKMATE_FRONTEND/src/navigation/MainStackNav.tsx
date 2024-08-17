@@ -11,8 +11,9 @@ import EditProfile from '../screens/Profile/EditProfile';
 import ViewProfile from '../screens/Profile/ViewProfile';
 import Setting from '../screens/Profile/Setting';
 import SearchResult from '../screens/Search/SearchResult';
-import  SearchUserProfile from '../screens/Search/ViewProfile'
+import  ViewUserProfile from '../screens/Search/ViewProfile'
 import MyConnections from '../screens/Profile/MyConnections';
+import Notification from '../screens/Notification/Notification';
 
 export type RootStackParamList = {
 	Otp:{email:string,firstName:string,lastName:string,password:string},
@@ -60,7 +61,8 @@ function MainStackNav({ navigation }) {
 				<Stack.Screen name="setting" component={Setting} />
 				<Stack.Screen name="searchResult" component={SearchResult} />
 				<Stack.Screen name="myConnection" component={MyConnections} />
-				<Stack.Screen name="searchUserProfile" component={SearchUserProfile} />
+				<Stack.Screen name="notification" component={Notification} />
+				<Stack.Screen name="viewUserProfile" component={ViewUserProfile} />
 				<Stack.Screen name="BottomNavigation" component={BottomNavigation} />
 			</Stack.Navigator>
 		</NavigationContainer>
