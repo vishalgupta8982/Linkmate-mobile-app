@@ -5,14 +5,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
-import org.springframework.data.annotation.Transient;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,28 +23,57 @@ import java.util.List;
 public class User {
 
     @Id
+    @JsonView(Views.Public.class)
   @JsonSerialize(using= ToStringSerializer.class)
     private ObjectId userId;
 
+    @JsonView(Views.Public.class)
     @Indexed(unique = true)
     private String username;
-
+    
+    @JsonView(Views.Credential.class)
     private String email;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
+    @JsonView(Views.Credential.class)
     private String password;
+
+    @JsonView(Views.Public.class)
     private String firstName;
+
+    @JsonView(Views.Public.class)
     private String lastName;
+
+    @JsonView(Views.Search.class)
     private String profilePicture;
+
+    @JsonView(Views.Search.class)
     private String headline;
+
+    @JsonView(Views.Internal.class)
     private String location;
+
+    @JsonView(Views.Internal.class)
     private String about;
+
+    @JsonView(Views.Internal.class)
      private List<String> connections = new ArrayList<>();
+
+     @JsonView(Views.Internal.class)
     private List<Experience> experiences = new ArrayList<>();
+
+    @JsonView(Views.Internal.class)
     private List<Education> educations = new ArrayList<>();
+
+    @JsonView(Views.Internal.class)
     private List<Project> projects = new ArrayList<>();
+
+    @JsonView(Views.Internal.class)
     private List<String> skills = new ArrayList<>();
+
+    @JsonView(Views.Internal.class)
     private Date createdAt;
-    private Date updatedAt;
+
+    @JsonView(Views.Credential.class)
     private String token;
       
 }

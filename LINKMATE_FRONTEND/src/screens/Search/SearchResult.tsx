@@ -79,7 +79,7 @@ export default function SearchResult({ navigation }) {
 			</View>
 			<FlatList
 				data={searchResult}
-				keyExtractor={(item, index) => item.userId?.timestamp.toString()}
+				keyExtractor={(item, index) => item.userId}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						activeOpacity={0.4}
@@ -130,7 +130,7 @@ const getStyles = (colors) =>
 			margin: 5,
 			paddingHorizontal: 10,
 			marginBottom: 5,
-			width:'87%'
+			width: '87%',
 		},
 		input: {
 			fontSize: 14,
@@ -138,7 +138,7 @@ const getStyles = (colors) =>
 			color: colors.TEXT,
 			width: '80%',
 		},
-		 
+
 		back: {
 			flexDirection: 'row',
 			alignItems: 'center',

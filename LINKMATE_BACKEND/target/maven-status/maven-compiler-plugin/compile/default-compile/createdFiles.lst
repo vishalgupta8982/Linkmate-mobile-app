@@ -3,6 +3,7 @@ com\example\linkmate\user\controller\UserController.class
 com\example\linkmate\user\service\OtpService.class
 com\example\linkmate\user\service\CloudinaryService.class
 com\example\linkmate\config\SecurityConfig.class
+com\example\linkmate\user\model\Views$Credential.class
 com\example\linkmate\user\repository\UserRepository.class
 com\example\linkmate\user\repository\UserRepositoryImpl.class
 com\example\linkmate\user\utils\JwtUtil.class
@@ -15,12 +16,16 @@ com\example\linkmate\user\service\CustomUserDetailsService.class
 com\example\linkmate\user\service\UserService.class
 com\example\linkmate\user\utils\GenerateUniqueUserName.class
 com\example\linkmate\user\dto\UserUpdateDto.class
+com\example\linkmate\user\model\Views$Search.class
 com\example\linkmate\user\Config\MailConfig.class
 com\example\linkmate\core\Exception\GlobalExceptionHandler.class
 com\example\linkmate\user\model\EmploymentPreference.class
+com\example\linkmate\user\model\Views.class
 com\example\linkmate\core\Exception\UsernameAlreadyExistsException.class
 com\example\linkmate\config\CloudinaryConfig.class
 com\example\linkmate\user\model\WorkPreference.class
+com\example\linkmate\user\model\Views$Internal.class
 com\example\linkmate\user\model\User.class
 com\example\linkmate\filter\JwtRequestFilter.class
 com\example\linkmate\LinkmateApplication.class
+com\example\linkmate\user\model\Views$Public.class

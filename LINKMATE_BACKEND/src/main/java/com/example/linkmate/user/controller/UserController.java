@@ -2,6 +2,7 @@ package com.example.linkmate.user.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +31,13 @@ import com.example.linkmate.user.model.Education;
 import com.example.linkmate.user.model.Experience;
 import com.example.linkmate.user.model.Project;
 import com.example.linkmate.user.model.User;
+import com.example.linkmate.user.model.Views;
 import com.example.linkmate.user.service.CloudinaryService;
 import com.example.linkmate.user.service.OtpService;
 import com.example.linkmate.user.service.UserService;
 import com.example.linkmate.user.utils.GenerateUniqueUserName;
 import com.example.linkmate.user.utils.JwtUtil;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.validation.Valid;
 
@@ -58,6 +61,7 @@ public class UserController {
     private CloudinaryService cloudinaryService;
 
     // api for register user
+    @JsonView(Views.Credential.class)
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         Optional<User> existingUser = userService.findByEmail(user.getEmail());
@@ -69,6 +73,7 @@ public class UserController {
     }
 
     // api for verify otp
+    @JsonView(Views.Credential.class)
     @PostMapping("/verify-otp")
     public ResponseEntity<?> verifyOtpAndRegister(@RequestBody User user, @RequestParam String otp) {
         boolean isOtpValid = otpService.verifyOtp(user.getEmail(), otp, user);
@@ -78,17 +83,20 @@ public class UserController {
         }
         String username = generateUniqueUserName.generateUniqueUsername(user.getFirstName(), user.getLastName());
         user.setUsername(username);
+        user.setCreatedAt(new Date());
         User registeredUser = userService.registerUser(user);
         return ResponseEntity.ok(registeredUser);
     }
 
     // api for login
+    @JsonView(Views.Credential.class)
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.authenticateUser(user));
     }
 
     // api for get user detail
+    @JsonView(Views.Internal.class)
     @GetMapping("/user-details")
     public ResponseEntity<User> getCurrentUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
@@ -106,6 +114,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
+
+    @JsonView(Views.Internal.class)
     @GetMapping("/search-user-details")
     public ResponseEntity<User> getSearchUserDetail(@RequestParam String username) {
         try {
@@ -123,6 +133,7 @@ public class UserController {
     }
 
     // api for update user detail
+    @JsonView(Views.Internal.class)
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestBody UserUpdateDto userUpdateDto) {
@@ -146,6 +157,7 @@ public class UserController {
     }
 
     // api for update profile
+    @JsonView(Views.Internal.class)
     @PutMapping("/update/profile")
     public ResponseEntity<?> updateProfilePicture(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
@@ -172,6 +184,7 @@ public class UserController {
     }
 
     // api for update education
+    @JsonView(Views.Internal.class)
     @PutMapping("/update/education")
     public ResponseEntity<?> updateEducation(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestBody List<Education> educations) {
@@ -193,6 +206,7 @@ public class UserController {
     }
 
     // api for update experience
+    @JsonView(Views.Internal.class)
     @PutMapping("/update/experience")
     public ResponseEntity<?> updateExperience(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Valid @RequestBody List<@Valid Experience> experiences) {
@@ -214,6 +228,7 @@ public class UserController {
     }
 
     // // api for update projects array
+    @JsonView(Views.Internal.class)
     @PutMapping("/update/project")
     public ResponseEntity<?> updateProject(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Valid @RequestBody List<@Valid Project> projects) {
@@ -235,6 +250,7 @@ public class UserController {
     }
 
     // api for update skills
+    @JsonView(Views.Internal.class)
     @PutMapping("/update/skills")
     public ResponseEntity<?> updateUserSkills(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestBody List<String> skills) {
@@ -253,6 +269,7 @@ public class UserController {
     }
 
     // api for delete education
+    @JsonView(Views.Internal.class)
     @DeleteMapping("/delete/education")
     public ResponseEntity<?> deleteEducation(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam String educationId) {
@@ -270,6 +287,7 @@ public class UserController {
     }
 
     // api for delete experience
+    @JsonView(Views.Internal.class)
     @DeleteMapping("/delete/experience")
     public ResponseEntity<?> deleteExperience(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam String experienceId) {
@@ -287,6 +305,7 @@ public class UserController {
     }
 
     // api for delete project
+    @JsonView(Views.Internal.class)
     @DeleteMapping("/delete/project")
     public ResponseEntity<?> deleteProject(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam String projectId) {
@@ -304,6 +323,7 @@ public class UserController {
     }
 
     // api for delete skill
+    @JsonView(Views.Internal.class)
     @DeleteMapping("/delete/skill")
     public ResponseEntity<?> deleteSkill(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam String skill) {
@@ -320,6 +340,7 @@ public class UserController {
         }
     }
 // search user
+@JsonView(Views.Search.class)
  @GetMapping("/search")
     public List<User> searchUsers(@RequestParam String query) {
         if (query == null || query.trim().isEmpty()) {
