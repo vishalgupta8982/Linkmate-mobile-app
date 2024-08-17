@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import Loader from '../../components/Loader';
 import StackHeader from '../../components/StackHeader';
 export default function MyConnections() {
-    const theme = useCustomTheme();
+    const theme = useCustomTheme({navigation});
 		const { colors } = theme;
 		const styles = getStyles(colors);
         const [myConnection,setMyConnnection]=useState([])
@@ -24,14 +24,14 @@ export default function MyConnections() {
             setLoader(true)
             fetchConnection()
         },[])
-  return (<ScrollView style={styles.mainCont} >
-    <View style={styles.mainCont}  >
-    {!loader &&(<Loader/>)}
-    <StackHeader title="Connections" />
-
-    <
-    /View>
-  </ScrollView>);
+  return (
+		<View style={styles.mainCont}>
+			{loader && <Loader />}
+			<ScrollView >
+				<StackHeader naviagtion={navigation} title="Connections" />
+			</ScrollView>
+		</View>
+	);
 }
 
 const getStyles = (colors) =>
