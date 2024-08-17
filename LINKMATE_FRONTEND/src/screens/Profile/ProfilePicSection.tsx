@@ -28,12 +28,9 @@ export default function ProfilePicSection({ navigation, data }) {
 		<View style={styles.mainCont}>
 			<View style={styles.profile}>
 				<Image
-					 style={styles.pic}
+					style={styles.pic}
 					source={{
-						uri:
-							data?.profilePicture.length > 0
-								? data?.profilePicture
-								: null,
+						uri: data?.profilePicture.length > 0 ? data?.profilePicture : null,
 					}}
 				/>
 				<View style={styles.countMainCont}>
@@ -41,20 +38,34 @@ export default function ProfilePicSection({ navigation, data }) {
 						<Text style={styles.countText}>0</Text>
 						<Text style={styles.countHead}>Posts</Text>
 					</View>
-					<View style={styles.count}>
-						<Text style={styles.countText}>{data.connections?.length}</Text>
-						<Text style={styles.countHead}>Mutual</Text>
-					</View>
-					<View style={styles.count}>
-						<Text style={styles.countText}>{data.connections?.length}</Text>
-						<Text style={styles.countHead}>Connections</Text>
-					</View>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => navigation.navigate('myConnection')}
+					>
+						<View style={styles.count}>
+							<Text style={styles.countText}>{data.connections?.length}</Text>
+							<Text style={styles.countHead}>Mutual</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => navigation.navigate('myConnection')}
+					>
+						<View style={styles.count}>
+							<Text style={styles.countText}>{data.connections?.length}</Text>
+							<Text style={styles.countHead}>Connections</Text>
+						</View>
+					</TouchableOpacity>
 				</View>
 			</View>
 			<View style={styles.headlineCont}>
 				<Text style={styles.name}>{data.firstName + ' ' + data.lastName}</Text>
-				{data.headline &&(<Text style={styles.headlineText}>{data.headline}</Text>)}
-				{data.location &&(<Text style={styles.locationText}>{data.location}</Text>)}
+				{data.headline && (
+					<Text style={styles.headlineText}>{data.headline}</Text>
+				)}
+				{data.location && (
+					<Text style={styles.locationText}>{data.location}</Text>
+				)}
 			</View>
 
 			<View style={styles.buttonCont}>
@@ -74,7 +85,6 @@ export default function ProfilePicSection({ navigation, data }) {
 				</Text>
 			</View>
 		</View>
-		 
 	);
 }
 const getStyles = (colors) =>

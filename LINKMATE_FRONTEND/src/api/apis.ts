@@ -110,5 +110,10 @@ export const searchUser = async (query:string) => {
 };
 export const getSearchUserDetail = async (username: string) => {
 	const url = `/users/search-user-details?username=${username}`;
+	return await get<User>(url);
+};
+export const getMyConnections = async () => {
+	const url = `/users/connections/my-connections`;
 	return await get<Search>(url);
 };
+

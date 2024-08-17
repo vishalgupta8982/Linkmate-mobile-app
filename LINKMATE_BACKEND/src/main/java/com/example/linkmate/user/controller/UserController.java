@@ -142,7 +142,7 @@ public class UserController {
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
             User updatedUser = userService.updateUserDetails(currentUsername, userUpdateDto);
             if (!currentUsername.equals(updatedUser.getUsername())) {
-                String newToken = jwtUtil.generateToken(updatedUser.getUsername());
+                String newToken = jwtUtil.generateToken(updatedUser.getUsername(),updatedUser.getUserId().toString());
                 updatedUser.setToken(newToken);
             }
 

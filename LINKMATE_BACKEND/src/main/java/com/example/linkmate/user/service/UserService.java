@@ -54,7 +54,7 @@ public class UserService {
         user.setLastName(user.getLastName());
         user.setEmail(user.getEmail());
         User savedUser = userRepository.save(user);
-        String token = jwtUtil.generateToken(savedUser.getUsername());
+        String token = jwtUtil.generateToken(savedUser.getUsername(),savedUser.getUserId().toString());
         savedUser.setToken(token);
         return savedUser;
     }
@@ -65,7 +65,7 @@ public class UserService {
         if (foundUserOptional.isPresent()) {
             User foundUser = foundUserOptional.get();
             if (passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
-                String token = jwtUtil.generateToken(foundUser.getUsername());
+                String token = jwtUtil.generateToken(foundUser.getUsername(),foundUser.getUserId().toString());
                 foundUser.setToken(token);
                 return foundUser;
             }

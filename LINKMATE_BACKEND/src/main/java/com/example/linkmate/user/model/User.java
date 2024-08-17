@@ -56,7 +56,12 @@ public class User {
     private String about;
 
     @JsonView(Views.Internal.class)
-     private List<String> connections = new ArrayList<>();
+    @JsonSerialize(using = ToStringSerializer.class)
+     private List<ObjectId> connections = new ArrayList<>();
+
+    @JsonView(Views.Credential.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+     private List<ObjectId> connectionsRequest = new ArrayList<>();
 
      @JsonView(Views.Internal.class)
     private List<Experience> experiences = new ArrayList<>();

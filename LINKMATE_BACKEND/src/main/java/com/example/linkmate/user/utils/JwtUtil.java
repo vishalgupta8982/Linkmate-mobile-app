@@ -24,13 +24,14 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username,String userId) {
         Date now = new Date();
         long expirationInMs = expiration * 24 * 60 * 60 * 1000L; 
         Date expiryDate = new Date(now.getTime() + expirationInMs);
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId",userId)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
@@ -57,15 +58,24 @@ public class JwtUtil {
 
     public ObjectId getUserIdFromToken(String token) {
         try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+                    System.out.println(claims);
             String userIdStr = claims.get("userId", String.class);
-            return new ObjectId(userIdStr);
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid token ");
+            System.out.println(userIdStr);
+            if (userIdStr != null && ObjectId.isValid(userIdStr)) {
+                return new ObjectId(userIdStr);
+            } else {
+                throw new RuntimeException("Invalid userId format");
+            }
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+            throw new RuntimeException("Invalid token", e);
         }
     }
 }

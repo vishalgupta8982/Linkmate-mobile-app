@@ -12,6 +12,7 @@ import ViewProfile from '../screens/Profile/ViewProfile';
 import Setting from '../screens/Profile/Setting';
 import SearchResult from '../screens/Search/SearchResult';
 import  SearchUserProfile from '../screens/Search/ViewProfile'
+import MyConnections from '../screens/Profile/MyConnections';
 
 export type RootStackParamList = {
 	Otp:{email:string,firstName:string,lastName:string,password:string},
@@ -58,6 +59,7 @@ function MainStackNav({ navigation }) {
 				<Stack.Screen name="viewProfile" component={ViewProfile} />
 				<Stack.Screen name="setting" component={Setting} />
 				<Stack.Screen name="searchResult" component={SearchResult} />
+				<Stack.Screen name="myConnection" component={MyConnections} />
 				<Stack.Screen name="searchUserProfile" component={SearchUserProfile} />
 				<Stack.Screen name="BottomNavigation" component={BottomNavigation} />
 			</Stack.Navigator>

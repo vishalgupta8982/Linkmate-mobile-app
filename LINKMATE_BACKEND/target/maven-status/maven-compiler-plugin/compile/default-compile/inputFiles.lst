@@ -1,5 +1,10 @@
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\config\CloudinaryConfig.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\config\SecurityConfig.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\connection\controller\ConnectionController.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\connection\model\Connection.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\connection\model\ConnectionStatus.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\connection\repository\ConnectionRepository.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\connection\service\ConnectionService.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\core\Exception\GlobalExceptionHandler.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\core\Exception\NotFoundException.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\core\Exception\UsernameAlreadyExistsException.java
