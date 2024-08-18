@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.example.linkmate.connection.model.Connection;
@@ -31,6 +32,7 @@ public class ConnectionService {
     @Autowired
     private JwtUtil jwtUtil;
 
+     
     // api for send connnection request
     public Connection sendConnectionRequest(String token, ObjectId connectedUserId) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
