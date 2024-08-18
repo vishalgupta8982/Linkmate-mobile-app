@@ -42,7 +42,7 @@ export default function MyConnections({ navigation }) {
 		<View style={styles.mainCont}>
 			{loader && <Loader />}
 			<ScrollView>
-				<StackHeader naviagtion={navigation} title="Connections" />
+				<StackHeader navigation={navigation} title="Connections" />
 				{myConnection.map((item) => (
 					<TouchableOpacity
 						activeOpacity={0.4}

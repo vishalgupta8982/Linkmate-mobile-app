@@ -59,7 +59,7 @@ export default function Search({ navigation }) {
 					<View style={styles.container}>
 						{suggestion.map(
 							(item, index) =>
-								item.username != userData.username && (
+								item.username != userData?.username && (
 									<UserCard userData={item} navigation={navigation} />
 								)
 						)}

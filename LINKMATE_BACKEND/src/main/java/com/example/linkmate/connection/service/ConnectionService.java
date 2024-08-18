@@ -98,7 +98,6 @@ public List<User> getConnections(String token) {
     ObjectId userId = jwtUtil.getUserIdFromToken(token);
     List<Connection> connections = connectionRepository.findByUserIdOrConnectedUserIdAndStatus(userId, 
             ConnectionStatus.ACCEPTED);
-            System.out.println(connections);
     return connections.stream()
             .map(connection -> {
                 ObjectId otherUserId = connection.getUserId().equals(userId) ? connection.getConnectedUserId()
