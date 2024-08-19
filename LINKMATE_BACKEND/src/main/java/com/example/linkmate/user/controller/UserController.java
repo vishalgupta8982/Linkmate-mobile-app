@@ -92,7 +92,6 @@ public class UserController {
     @JsonView(Views.Credential.class)
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
-        System.out.println(user.getConnections());
         return ResponseEntity.ok(userService.authenticateUser(user));
     }
 

@@ -56,6 +56,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
         String token = jwtUtil.generateToken(savedUser.getUsername(),savedUser.getUserId().toString());
         savedUser.setToken(token);
+        userRepository.save(savedUser);
         return savedUser;
     }
 
@@ -67,6 +68,7 @@ public class UserService {
             if (passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
                 String token = jwtUtil.generateToken(foundUser.getUsername(),foundUser.getUserId().toString());
                 foundUser.setToken(token);
+                userRepository.save(foundUser);
                 return foundUser;
             }
         }

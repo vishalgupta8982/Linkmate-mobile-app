@@ -1,14 +1,18 @@
 package com.example.linkmate.connection.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import com.example.linkmate.config.MyWebSocketHandler;
 import com.example.linkmate.connection.model.Connection;
 import com.example.linkmate.connection.model.ConnectionStatus;
 import com.example.linkmate.connection.repository.ConnectionRepository;
@@ -16,6 +20,8 @@ import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
 import com.example.linkmate.user.service.UserService;
 import com.example.linkmate.user.utils.JwtUtil;
+import com.google.cloud.firestore.Firestore;
+import com.google.firebase.cloud.FirestoreClient;
 
 @Service
 public class ConnectionService {
@@ -32,7 +38,12 @@ public class ConnectionService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    @Lazy
+    private MyWebSocketHandler webSocketHandler;
      
+
+   
     // api for send connnection request
     public Connection sendConnectionRequest(String token, ObjectId connectedUserId) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
@@ -40,6 +51,10 @@ public class ConnectionService {
                 .orElseThrow(() -> new RuntimeException("Request Sender user not found"));
         User connectedUser = userRepository.findById(connectedUserId)
                 .orElseThrow(() -> new RuntimeException("Request Receiver user not found"));
+                 
+                webSocketHandler.sendConnectionRequestUpdate(
+                        connectedUser.getToken(),
+                        "You have a new connection request");
         Connection existingConnection = connectionRepository.findByUserIdAndConnectedUserId(userId, connectedUserId);
         if (existingConnection != null) {
             throw new RuntimeException("Connection request already sent");
@@ -50,7 +65,9 @@ public class ConnectionService {
         connection.setConnectedUserId(connectedUserId);
         connection.setStatus(ConnectionStatus.PENDING);
         connectedUser.getConnectionsRequest().add(userId);  
-        userRepository.save(connectedUser);  
+        userRepository.save(connectedUser); 
+         
+         
         return connectionRepository.save(connection);
     }
     
@@ -121,3 +138,5 @@ public List<User> getConnections(String token) {
                 .collect(Collectors.toList());
     }
 }
+
+

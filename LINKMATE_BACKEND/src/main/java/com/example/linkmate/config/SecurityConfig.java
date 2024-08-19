@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/users/login", "/users/register", "/users/verify-otp", "/users/user-details",
                                 "/users/update")
                         .permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -54,3 +55,5 @@ public class SecurityConfig {
     }
 
 }
+ 
+ 

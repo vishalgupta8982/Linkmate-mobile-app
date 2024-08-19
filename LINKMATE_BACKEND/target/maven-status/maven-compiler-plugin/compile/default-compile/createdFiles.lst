@@ -17,7 +17,6 @@ com\example\linkmate\user\repository\UserRepositoryCustom.class
 com\example\linkmate\user\service\CustomUserDetailsService.class
 com\example\linkmate\user\service\UserService.class
 com\example\linkmate\user\utils\GenerateUniqueUserName.class
-com\example\linkmate\config\WebSocketConfig.class
 com\example\linkmate\user\dto\UserUpdateDto.class
 com\example\linkmate\user\model\Views$Search.class
 com\example\linkmate\user\Config\MailConfig.class
@@ -30,6 +29,7 @@ com\example\linkmate\connection\controller\ConnectionController.class
 com\example\linkmate\config\CloudinaryConfig.class
 com\example\linkmate\user\model\WorkPreference.class
 com\example\linkmate\user\model\Views$Internal.class
+com\example\linkmate\config\FirebaseConfig.class
 com\example\linkmate\user\model\User.class
 com\example\linkmate\filter\JwtRequestFilter.class
 com\example\linkmate\LinkmateApplication.class

@@ -1,6 +1,7 @@
 package com.example.linkmate.connection.controller;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpHeaders;
 import org.bson.types.ObjectId;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.linkmate.connection.model.Connection;
@@ -25,8 +27,6 @@ public class ConnectionController {
     
     @Autowired
     private ConnectionService connectionService;
-
-     
 
     @PostMapping("/{connectedUserId}")
     public Connection sendConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId connectedUserId) {
