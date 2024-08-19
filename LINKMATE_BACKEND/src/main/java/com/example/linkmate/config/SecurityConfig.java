@@ -44,7 +44,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/users/login", "/users/register", "/users/verify-otp", "/users/user-details",
-                                "/users/update")
+                                "/users/update","users/connections/66b6d4d5f1305235014414ad")
                         .permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated())
