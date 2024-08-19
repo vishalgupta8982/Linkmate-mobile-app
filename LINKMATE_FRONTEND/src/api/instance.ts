@@ -3,8 +3,9 @@ import { store } from '../redux/store';
 import { selectToken } from '../redux/slices/authSlice';
 
 const baseURL = 'https://linkmate.onrender.com/';
+export const socketUrl="wss://linkmate.onrender.com/ws/connection-requests"
 // const baseURL = 'http://192.168.21.101:8083';
-console.log('Backend URL:', baseURL);
+
 
 const axiosInstance = axios.create({
 	baseURL: baseURL,
@@ -14,7 +15,6 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
 	async (config) => {
 		const token = selectToken(store.getState());
-		console.log(token)
 		if (token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}

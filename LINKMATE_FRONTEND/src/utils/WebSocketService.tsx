@@ -1,3 +1,6 @@
+import { Alert } from "react-native";
+import { displayNotification } from "./DisplayNotification";
+
 const WebSocketService = {
 	socket: null,
 
@@ -9,9 +12,8 @@ const WebSocketService = {
 		};
 
 		this.socket.onmessage = (event) => {
-			console.log('Message received:', event.data);
-			const message = JSON.parse(event.data);
-			this.handleMessage(message);
+			console.log(event.data,event,"df")
+			displayNotification("Hello")
 		};
 
 		this.socket.onclose = () => {

@@ -21,44 +21,19 @@ import Toast from 'react-native-simple-toast';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { globalStyles } from '../../StylesSheet';
 import WebSocketService from '../../utils/WebSocketService';
+import { selectToken } from '../../redux/slices/authSlice';
+import { store } from '../../redux/store';
+import { socketUrl } from '../../api/instance';
 export default function ConnectionRequest({ navigation }) {
 	const theme = useCustomTheme();
+	const token = selectToken(store.getState());
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [connectionRequest, setConnectionRequest] = useState([]);
-
-	 useEffect(() => {
-			 
-			'ws://192.168.21.101:8083/ws/connection-requests',
-				'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2aXNoYWxndXB0YSIsInVzZXJJZCI6IjY2YjZkNGQ1ZjEzMDUyMzUwMTQ0MTRhZCIsImlhdCI6MTcyMzk1MTAxMCwiZXhwIjoxNzI0NTU1ODEwfQ.-AgvgoRyDvI8TfaS0XxI93DGPrEg2cWtPn1osbgMYubKD8tBWCtn7PfuaGTo5FwaoUmJsroIaUehEXHKaoz2fg';
-
-			return () => {
-				if (WebSocketService.socket) {
-					WebSocketService.socket.close(); // Clean up the WebSocket connection when the component unmounts
-				}
-			};
-		}, []);
-
-	useEffect(() => {
-	 
-		WebSocketService.connect(
-			'ws://192.168.21.101:8083/ws/connection-requests',
-			'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ2aXNoYWxndXB0YSIsInVzZXJJZCI6IjY2YjZkNGQ1ZjEzMDUyMzUwMTQ0MTRhZCIsImlhdCI6MTcyMzk1MTAxMCwiZXhwIjoxNzI0NTU1ODEwfQ.-AgvgoRyDvI8TfaS0XxI93DGPrEg2cWtPn1osbgMYubKD8tBWCtn7PfuaGTo5FwaoUmJsroIaUehEXHKaoz2fg'
-		);
-
-		return () => {
-			// Cleanup on unmount
-			if (WebSocketService.socket) {
-				WebSocketService.socket.close();
-			}
-		};
-	}, []);
-
-	 
+ 
 
 	const fetchConnectionRequest = async () => {
-        console.log("n")
 		try {
 			const response = await getAllConnectionRequest();
 			if (response) {
@@ -68,34 +43,34 @@ export default function ConnectionRequest({ navigation }) {
 			console.error(err);
 		}
 	};
-	 
-	const handleAcceptRequest = async (senderId:string) => {
-        console.log(senderId)
+
+	const handleAcceptRequest = async (senderId: string) => {
+		console.log(senderId);
 		try {
 			const response = await acceptConnectionRequest(senderId);
 			if (response) {
 				Toast.show('Request accepted', Toast.SHORT);
-                 fetchConnectionRequest();  
+				fetchConnectionRequest();
 			}
 		} catch (err) {
 			console.error(err);
 		}
 	};
-	const handleRejectRequest = async (senderId:string) => {
-          console.log(senderId);
+	const handleRejectRequest = async (senderId: string) => {
+		console.log(senderId);
 		try {
 			const response = await rejectConnectionRequest(senderId);
 			if (response) {
 				Toast.show('Request cancelled', Toast.SHORT);
-                 fetchConnectionRequest();  
+				fetchConnectionRequest();
 			}
 		} catch (err) {
 			console.error(err);
 		}
 	};
-    useEffect(() => {
-			fetchConnectionRequest();
-		}, []);
+	useEffect(() => {
+		fetchConnectionRequest();
+	}, []);
 	return (
 		<ScrollView style={styles.mainCont}>
 			{connectionRequest.map((item) => (
@@ -177,5 +152,3 @@ const getStyles = (colors) =>
 			marginRight: 'auto',
 		},
 	});
-
- 

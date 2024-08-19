@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.linkmate.config.MyWebSocketHandler;
 import com.example.linkmate.connection.model.Connection;
+import com.example.linkmate.connection.model.ConnectionRequestDetail;
 import com.example.linkmate.connection.model.ConnectionStatus;
 import com.example.linkmate.connection.repository.ConnectionRepository;
 import com.example.linkmate.user.model.User;
@@ -38,6 +39,8 @@ public class ConnectionService {
     @Autowired
     private JwtUtil jwtUtil;
 
+  
+
     @Autowired
     @Lazy
     private MyWebSocketHandler webSocketHandler;
@@ -51,10 +54,16 @@ public class ConnectionService {
                 .orElseThrow(() -> new RuntimeException("Request Sender user not found"));
         User connectedUser = userRepository.findById(connectedUserId)
                 .orElseThrow(() -> new RuntimeException("Request Receiver user not found"));
-                 
-                webSocketHandler.sendConnectionRequestUpdate(
-                        connectedUser.getToken(),
-                        "You have a new connection request");
+                ConnectionRequestDetail detail = new ConnectionRequestDetail();
+        detail.setFirstName(user.getFirstName());
+        detail.setLastName(user.getLastName());
+        detail.setHeadline(user.getHeadline());
+        detail.setUsername(user.getUsername());
+        detail.setUserId(userId);
+        detail.setProfilePicture(user.getProfilePicture());
+        webSocketHandler.sendConnectionRequestUpdate(
+                connectedUser.getToken(),
+                detail);
         Connection existingConnection = connectionRepository.findByUserIdAndConnectedUserId(userId, connectedUserId);
         if (existingConnection != null) {
             throw new RuntimeException("Connection request already sent");
@@ -67,7 +76,7 @@ public class ConnectionService {
         connectedUser.getConnectionsRequest().add(userId);  
         userRepository.save(connectedUser); 
          
-         
+        
         return connectionRepository.save(connection);
     }
     

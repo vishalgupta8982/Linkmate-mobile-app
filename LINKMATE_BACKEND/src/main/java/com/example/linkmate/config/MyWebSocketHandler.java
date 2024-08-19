@@ -6,11 +6,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.stereotype.Component;
 import com.example.linkmate.connection.service.ConnectionService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 @Component
 public class MyWebSocketHandler extends TextWebSocketHandler {
 
@@ -50,11 +50,13 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         super.afterConnectionClosed(session, status);
     }
 
-    public void sendConnectionRequestUpdate(String token, String message) {
+    public void sendConnectionRequestUpdate(String token, Object message) {
         WebSocketSession session = sessions.get(token);
         if (session != null && session.isOpen()) {
             try {
-                session.sendMessage(new TextMessage(message));
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonMessage = objectMapper.writeValueAsString(message);
+                session.sendMessage(new TextMessage(jsonMessage));
                 System.out.println("Sent message to token: " + token);
             } catch (IOException e) {
                 e.printStackTrace();
