@@ -5,6 +5,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import org.springframework.stereotype.Component;
+
+import com.example.linkmate.connection.model.ConnectionRequestDetail;
 import com.example.linkmate.connection.service.ConnectionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,13 +52,20 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
         super.afterConnectionClosed(session, status);
     }
 
-    public void sendConnectionRequestUpdate(String token, Object message) {
+    public void sendConnectionRequestUpdate(String token, ConnectionRequestDetail detail) {
         WebSocketSession session = sessions.get(token);
         if (session != null && session.isOpen()) {
             try {
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("type", "RECEIVE_CONNECTION_REQUEST");
+                payload.put("data", new ConnectionRequestDetail[] { detail }); // Wrapping in array
+
+                // Serialize the payload to JSON
                 ObjectMapper objectMapper = new ObjectMapper();
-                String jsonMessage = objectMapper.writeValueAsString(message);
-                session.sendMessage(new TextMessage(jsonMessage));
+                String message = objectMapper.writeValueAsString(payload);
+
+                // Send the message through the WebSocket session
+                session.sendMessage(new TextMessage(message));
                 System.out.println("Sent message to token: " + token);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -66,9 +66,7 @@ public class JwtUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-                    System.out.println(claims);
             String userIdStr = claims.get("userId", String.class);
-            System.out.println(userIdStr);
             if (userIdStr != null && ObjectId.isValid(userIdStr)) {
                 return new ObjectId(userIdStr);
             } else {

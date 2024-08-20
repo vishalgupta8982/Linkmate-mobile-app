@@ -15,7 +15,6 @@ public class ConnectionRequestDetail {
 
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId userId;  
-
     private String username;
     private String firstName;
     private String lastName;

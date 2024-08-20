@@ -3,7 +3,8 @@ import notifee, {
 	AndroidStyle,
 } from '@notifee/react-native';
 
-export const displayNotification = async (remoteMessage) => {
+export const displayNotification = async (remoteMessage:Array) => {
+	console.log("remoteMessage",remoteMessage)
 	// Create a notification channel
 	const channelId = await notifee.createChannel({
 		id: 'default',
@@ -19,13 +20,11 @@ export const displayNotification = async (remoteMessage) => {
 		channelId,
 		importance: AndroidImportance.HIGH,
  	};
-		androidConfig.largeIcon =
-			'https://res.cloudinary.com/dytlgwywf/image/upload/v1724069808/v1mfgsv3mroie0s18b6n.jpg';
-            androidConfig.picture='https://res.cloudinary.com/dytlgwywf/image/upload/v1724069808/v1mfgsv3mroie0s18b6n.jpg'
+		androidConfig.largeIcon =`${remoteMessage[0].profilePicture}`;
 	// Display the notification
 	await notifee.displayNotification({
-		title: '📩 New Connection Request!',
-		body: '👤 John Doe wants to connect with you.',
+		title: 'New Connection Request!',
+		body: `${remoteMessage[0].firstName+" "+remoteMessage[0].lastName} wants to connect with you.`,
 		android: androidConfig,
 	});
 };

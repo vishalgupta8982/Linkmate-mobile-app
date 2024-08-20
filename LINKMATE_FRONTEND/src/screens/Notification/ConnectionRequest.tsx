@@ -22,22 +22,28 @@ import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { globalStyles } from '../../StylesSheet';
 import WebSocketService from '../../utils/WebSocketService';
 import { selectToken } from '../../redux/slices/authSlice';
-import { store } from '../../redux/store';
+import { RootState, store } from '../../redux/store';
 import { socketUrl } from '../../api/instance';
+import { useDispatch, useSelector } from 'react-redux';
+import { addConnectionRequest, clearConnectionRequests } from '../../redux/slices/ConnectionRequestSlice';
 export default function ConnectionRequest({ navigation }) {
+	const request = useSelector(
+		(state: RootState) => state.connectionRqst.connectionRequests.undefined
+	);
+ 
 	const theme = useCustomTheme();
+	const dispatch = useDispatch();
 	const token = selectToken(store.getState());
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
-	const [connectionRequest, setConnectionRequest] = useState([]);
- 
+	const [connectionRequest, setConnectionRequest] = useState(request);
 
 	const fetchConnectionRequest = async () => {
 		try {
 			const response = await getAllConnectionRequest();
 			if (response) {
-				setConnectionRequest(response);
+				 dispatch(addConnectionRequest(response))
 			}
 		} catch (err) {
 			console.error(err);
@@ -60,6 +66,7 @@ export default function ConnectionRequest({ navigation }) {
 		console.log(senderId);
 		try {
 			const response = await rejectConnectionRequest(senderId);
+			console.log(response)
 			if (response) {
 				Toast.show('Request cancelled', Toast.SHORT);
 				fetchConnectionRequest();
@@ -71,58 +78,60 @@ export default function ConnectionRequest({ navigation }) {
 	useEffect(() => {
 		fetchConnectionRequest();
 	}, []);
+
 	return (
 		<ScrollView style={styles.mainCont}>
-			{connectionRequest.map((item) => (
-				<TouchableOpacity
-					activeOpacity={0.4}
-					onPress={() =>
-						navigation.navigate('viewUserProfile', {
-							username: item.username,
-						})
-					}
-				>
-					<View style={styles.list}>
-						<Image source={{ uri: item.profilePicture }} style={styles.img} />
-						<View style={styles.nameCont}>
-							<Text style={globalStyleSheet.smallerHead}>
-								{item.firstName} {item.lastName}
-							</Text>
-							<Text
-								numberOfLines={1}
-								ellipsizeMode="tail"
-								style={globalStyleSheet.description}
+			{connectionRequest &&
+				connectionRequest.map((item) => (
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() =>
+							navigation.navigate('viewUserProfile', {
+								username: item.username,
+							})
+						}
+					>
+						<View style={styles.list}>
+							<Image source={{ uri: item.profilePicture }} style={styles.img} />
+							<View style={styles.nameCont}>
+								<Text style={globalStyleSheet.smallerHead}>
+									{item.firstName} {item.lastName}
+								</Text>
+								<Text
+									numberOfLines={1}
+									ellipsizeMode="tail"
+									style={globalStyleSheet.description}
+								>
+									{item.headline}
+								</Text>
+							</View>
+							<TouchableOpacity
+								activeOpacity={0.4}
+								onPress={() => handleRejectRequest(item.userId)}
 							>
-								{item.headline}
-							</Text>
+								<AntDesign
+									name="closecircleo"
+									size={20}
+									color={colors.RED}
+									marginRight={5}
+									padding={5}
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity
+								activeOpacity={0.4}
+								onPress={() => handleAcceptRequest(item.userId)}
+							>
+								<AntDesign
+									name="checkcircleo"
+									size={20}
+									padding={5}
+									color={colors.PRIMARY}
+									marginRight={5}
+								/>
+							</TouchableOpacity>
 						</View>
-						<TouchableOpacity
-							activeOpacity={0.4}
-							onPress={() => handleAcceptRequest(item.userId)}
-						>
-							<AntDesign
-								name="closecircleo"
-								size={20}
-								color={colors.RED}
-								marginRight={5}
-								padding={5}
-							/>
-						</TouchableOpacity>
-						<TouchableOpacity
-							activeOpacity={0.4}
-							onPress={() => handleAcceptRequest(item.userId)}
-						>
-							<AntDesign
-								name="checkcircleo"
-								size={20}
-								padding={5}
-								color={colors.PRIMARY}
-								marginRight={5}
-							/>
-						</TouchableOpacity>
-					</View>
-				</TouchableOpacity>
-			))}
+					</TouchableOpacity>
+				))}
 		</ScrollView>
 	);
 }

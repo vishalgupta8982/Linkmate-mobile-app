@@ -24,25 +24,41 @@ import com.fasterxml.jackson.annotation.JsonView;
 @RestController
 @RequestMapping("/users/connections/")
 public class ConnectionController {
-    
+
     @Autowired
     private ConnectionService connectionService;
 
     @PostMapping("/{connectedUserId}")
-    public Connection sendConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId connectedUserId) {
+    public Connection sendConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ObjectId connectedUserId) {
         return connectionService.sendConnectionRequest(token, connectedUserId);
     }
 
     @PostMapping("{connectedUserId}/accept")
-    public Connection acceptConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId connectedUserId){
+    public Connection acceptConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ObjectId connectedUserId) {
         return connectionService.acceptConnectionRequest(token, connectedUserId);
     }
 
     @PostMapping("/{connectedUserId}/decline")
-    public void declineConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable ObjectId connectedUserId) {
-        connectionService.declineConnectionRequest(token, connectedUserId);
+    public String declineConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ObjectId connectedUserId) {
+        return connectionService.declineConnectionRequest(token, connectedUserId);
     }
-@JsonView(Views.Search.class)
+
+    @PostMapping("/{revokerUserId}/cancel")
+    public String cancelConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ObjectId revokerUserId) {
+        return connectionService.cancelConnectionRequest(token, revokerUserId);
+    }
+
+    @PostMapping("/{connectedUserId}/remove")
+    public String removeConnection(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @PathVariable ObjectId connectedUserId) {
+        return connectionService.removeConnection(token, connectedUserId);
+    }
+
+    @JsonView(Views.Search.class)
     @GetMapping("/my-connections")
     public List<User> getConnections(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         return connectionService.getConnections(token);
@@ -54,4 +70,3 @@ public class ConnectionController {
         return connectionService.getReceivedConnectionRequests(token);
     }
 }
- 

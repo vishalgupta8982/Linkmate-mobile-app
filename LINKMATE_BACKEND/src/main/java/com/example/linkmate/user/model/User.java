@@ -4,8 +4,6 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -63,6 +61,10 @@ public class User {
     @JsonView(Views.Credential.class)
     @JsonSerialize(contentUsing = ToStringSerializer.class)
      private List<ObjectId> connectionsRequest = new ArrayList<>();
+
+    @JsonView(Views.Credential.class)
+    @JsonSerialize(contentUsing = ToStringSerializer.class)
+     private List<ObjectId> sendConnectionsRequest = new ArrayList<>();
 
      @JsonView(Views.Internal.class)
     private List<Experience> experiences = new ArrayList<>();

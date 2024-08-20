@@ -20,7 +20,7 @@ export default function Home({ navigation }) {
 	const [loader, setLoader] = useState(false);
 	 const token = selectToken(store.getState());
 		useEffect(() => {
-			WebSocketService.connect(socketUrl, token);
+			WebSocketService.connect(socketUrl, token,dispatch);
 			return () => {
 				if (WebSocketService.socket) {
 					WebSocketService.socket.close();

@@ -57,6 +57,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import themeReducer from './slices/ThemeSlice';
 import authReducer from './slices/authSlice';
 import userDetailsReducer from './slices/UserDetailsSlice';
+import connectionRequestReducer from './slices/ConnectionRequestSlice';
 
 // Persist config
 const persistConfig = {
@@ -70,6 +71,7 @@ const rootReducer = combineReducers({
 	theme: themeReducer,
 	auth: authReducer,
 	userDetails: userDetailsReducer,
+	connectionRqst: connectionRequestReducer,
 });
 
 // Create persisted reducer

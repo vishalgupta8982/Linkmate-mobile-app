@@ -17,6 +17,8 @@ import { useEffect } from 'react';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { globalStyles } from '../../StylesSheet';
 import ConnectionRequest from './ConnectionRequest';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 export default function Notification({navigation}) {
     const theme = useCustomTheme();
 		const { colors } = theme;
