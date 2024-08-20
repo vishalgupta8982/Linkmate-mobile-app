@@ -50,9 +50,16 @@ public class ConnectionService {
                 .orElseThrow(() -> new RuntimeException("Request Sender user not found"));
         User connectedUser = userRepository.findById(connectedUserId)
                 .orElseThrow(() -> new RuntimeException("Request Receiver user not found"));
-        Connection existingConnection = connectionRepository.findByUserIdAndConnectedUserId(userId, connectedUserId);
-        if (existingConnection != null && existingConnection.getStatus() != ConnectionStatus.REJECTED) {
-            throw new RuntimeException("Connection request already sent");
+        Connection existingConnection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(userId, connectedUserId,
+                ConnectionStatus.ACCEPTED);
+                Connection pendingConnection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(userId,
+                connectedUserId,
+                ConnectionStatus.PENDING);
+        if (existingConnection != null ) {
+            throw new RuntimeException("Connected already");
+        }
+        if(pendingConnection != null){
+            throw new RuntimeException("Connected request already sent");
         }
 
         Connection connection = new Connection();
