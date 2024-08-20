@@ -58,11 +58,11 @@ public class User {
     private List<ObjectId> connections = new ArrayList<>();
      
 
-    @JsonView(Views.Credential.class)
+    @JsonView(Views.Internal.class)
     @JsonSerialize(contentUsing = ToStringSerializer.class)
      private List<ObjectId> connectionsRequest = new ArrayList<>();
 
-    @JsonView(Views.Credential.class)
+    @JsonView(Views.Internal.class)
     @JsonSerialize(contentUsing = ToStringSerializer.class)
      private List<ObjectId> sendConnectionsRequest = new ArrayList<>();
 

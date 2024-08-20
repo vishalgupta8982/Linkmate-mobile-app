@@ -117,8 +117,9 @@ public class ConnectionService {
             throw new RuntimeException("Connection request is not pending");
         }
         connectionRepository.delete(connection);
-
         user.getConnectionsRequest().remove(connectedUserId);
+        connectedUser.getSendConnectionsRequest().remove(userId);
+        userRepository.save(connectedUser);
         userRepository.save(user);
         return "Request decline successfully";
     }
