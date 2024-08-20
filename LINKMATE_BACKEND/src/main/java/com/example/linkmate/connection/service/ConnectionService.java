@@ -98,8 +98,7 @@ public class ConnectionService {
 
         user.getConnections().add(connectedUserId);
         user.getConnectionsRequest().remove(connectedUserId);
-        connectedUser.getSendConnectionsRequest().remove(userId
-        );
+        connectedUser.getSendConnectionsRequest().remove(userId);
         connectedUser.getConnections().add(userId);
         userRepository.save(user);
         userRepository.save(connectedUser);
@@ -113,7 +112,8 @@ public class ConnectionService {
         User connectedUser = userRepository.findById(connectedUserId)
                 .orElseThrow(() -> new RuntimeException("Connected user not found"));
 
-        Connection connection = connectionRepository.findByUserIdAndConnectedUserId(connectedUserId, userId);
+        Connection connection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(connectedUserId, userId,
+                ConnectionStatus.PENDING);
         if (connection.getStatus() != ConnectionStatus.PENDING) {
             throw new RuntimeException("Connection request is not pending");
         }
@@ -134,14 +134,15 @@ public class ConnectionService {
                 connectedUserId)
                 .orElseThrow(() -> new RuntimeException("revoker user not found"));
 
-         Connection connection=connectionRepository.findByUserIdAndConnectedUserId(userId, connectedUserId);
+        Connection connection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(userId, connectedUserId,
+                ConnectionStatus.PENDING);
         if (connection.getStatus() != ConnectionStatus.PENDING) {
             throw new RuntimeException("Connection request is not pending");
         }
 
         connectedUser.getConnectionsRequest().remove(userId);
-         user.getSendConnectionsRequest().remove(connectedUserId);
-         userRepository.save(connectedUser);
+        user.getSendConnectionsRequest().remove(connectedUserId);
+        userRepository.save(connectedUser);
         userRepository.save(user);
 
         return "Connection request cancel sucessfully";
@@ -153,7 +154,8 @@ public class ConnectionService {
         User connectedUser = userRepository.findById(connectedUserId)
                 .orElseThrow(() -> new RuntimeException("Connected user not found"));
 
-        Connection connection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(connectedUserId, userId,ConnectionStatus.ACCEPTED);
+        Connection connection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(connectedUserId, userId,
+                ConnectionStatus.ACCEPTED);
         if (connection.getStatus() != ConnectionStatus.ACCEPTED) {
             throw new RuntimeException("You are not connected");
         }
