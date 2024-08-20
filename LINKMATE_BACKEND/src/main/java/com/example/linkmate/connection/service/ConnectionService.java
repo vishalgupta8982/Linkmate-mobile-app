@@ -123,22 +123,23 @@ public class ConnectionService {
         return "Request decline successfully";
     }
 
-    public String cancelConnectionRequest(String token, ObjectId revokerUserId) {
+    public String cancelConnectionRequest(String token, ObjectId connectedUserId) {
         // Extract userId from the token
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         User connectedUser = userRepository.findById(
-                revokerUserId)
+                connectedUserId)
                 .orElseThrow(() -> new RuntimeException("revoker user not found"));
 
-        Connection connection = connectionRepository.findByUserIdAndConnectedUserId(revokerUserId, userId);
-
+         Connection connection=connectionRepository.findByUserIdAndConnectedUserId(userId, connectedUserId);
+         System.out.println("connection"+connection);
         if (connection.getStatus() != ConnectionStatus.PENDING) {
             throw new RuntimeException("Connection request is not pending");
         }
+
         connectionRepository.delete(connection);
 
-        user.getConnectionsRequest().remove(revokerUserId);
+        user.getConnectionsRequest().remove(connectedUserId);
         userRepository.save(user);
 
         return "Connection request cancel sucessfully";

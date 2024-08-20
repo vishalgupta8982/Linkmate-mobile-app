@@ -132,4 +132,8 @@ export const rejectConnectionRequest = async (senderId: String) => {
 	const url = `/users/connections/${senderId}/decline`;
 	return await post<Search>(url);
 };
+export const revertConnectionRequest = async (senderId: String) => {
+	const url = `/users/connections/${senderId}/cancel`;
+	return await post<Search>(url);
+};
 

@@ -9,7 +9,7 @@ import { globalStyles } from '../StylesSheet';
 import { AppButton } from './AppButton';
 import { fonts } from '../config/Fonts';
 import OutlineButton from './OutlineButton';
-import { sendConnectionRequest } from '../api/apis';
+import { revertConnectionRequest, sendConnectionRequest } from '../api/apis';
 import Toast from 'react-native-simple-toast';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 export default function UserCard({ userData, navigation }) {
@@ -34,6 +34,22 @@ export default function UserCard({ userData, navigation }) {
 			setLoading(false)
 		}
 	}
+
+	const handleCancelRequest = async (id: string) => {
+		setLoading(true);
+		try {
+			const response = await revertConnectionRequest(id);
+			console.log(response)
+			if (response) {
+				setRequest(false);
+				Toast.show('Connection request cancelled', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setLoading(false);
+		}
+	};
 	return (
 		<TouchableOpacity
 			activeOpacity={0.4}
@@ -56,10 +72,10 @@ export default function UserCard({ userData, navigation }) {
 				{userData.headline}
 			</Text>
 			<OutlineButton
-				onPress={() => handleSendRqst(userData.userId)}
+				onPress={() =>request?handleCancelRequest(userData.userId): handleSendRqst(userData.userId) }
 				title={request ? 'Pending' : 'Connect'}
 				icon={
-					request && (
+					(request || loading) && (
 						<AntDesign
 							name="clockcircleo"
 							color={colors.APP_PRIMARY_LIGHT}

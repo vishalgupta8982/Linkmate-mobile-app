@@ -46,10 +46,10 @@ public class ConnectionController {
         return connectionService.declineConnectionRequest(token, connectedUserId);
     }
 
-    @PostMapping("/{revokerUserId}/cancel")
+    @PostMapping("/{connectedUserId}/cancel")
     public String cancelConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @PathVariable ObjectId revokerUserId) {
-        return connectionService.cancelConnectionRequest(token, revokerUserId);
+            @PathVariable ObjectId connectedUserId) {
+        return connectionService.cancelConnectionRequest(token, connectedUserId);
     }
 
     @PostMapping("/{connectedUserId}/remove")
