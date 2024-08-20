@@ -14,4 +14,5 @@ public interface ConnectionRepository extends MongoRepository<Connection,ObjectI
     List<Connection> findByUserIdOrConnectedUserIdAndStatus(ObjectId userId, ConnectionStatus status);
     List<Connection> findByConnectedUserIdAndStatus(ObjectId connectedUserId, ConnectionStatus status);
     Connection findByUserIdAndConnectedUserId(ObjectId userId, ObjectId connectedUserId);
+    Connection findByUserIdAndConnectedUserIdAndStatus(ObjectId userId, ObjectId connectedUserId,ConnectionStatus status);
 }

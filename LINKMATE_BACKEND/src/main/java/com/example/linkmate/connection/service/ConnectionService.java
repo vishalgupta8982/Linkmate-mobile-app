@@ -86,7 +86,8 @@ public class ConnectionService {
         User connectedUser = userRepository.findById(connectedUserId)
                 .orElseThrow(() -> new RuntimeException("Connected user not found"));
 
-        Connection connection = connectionRepository.findByUserIdAndConnectedUserId(connectedUserId, userId);
+        Connection connection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(connectedUserId, userId,
+                ConnectionStatus.PENDING);
 
         if (connection.getStatus() != ConnectionStatus.PENDING) {
             throw new RuntimeException("Connection request is not pending");
@@ -152,7 +153,7 @@ public class ConnectionService {
         User connectedUser = userRepository.findById(connectedUserId)
                 .orElseThrow(() -> new RuntimeException("Connected user not found"));
 
-        Connection connection = connectionRepository.findByUserIdAndConnectedUserId(connectedUserId, userId);
+        Connection connection = connectionRepository.findByUserIdAndConnectedUserIdAndStatus(connectedUserId, userId,ConnectionStatus.ACCEPTED);
         if (connection.getStatus() != ConnectionStatus.ACCEPTED) {
             throw new RuntimeException("You are not connected");
         }
