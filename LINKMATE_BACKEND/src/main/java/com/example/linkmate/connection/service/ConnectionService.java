@@ -116,7 +116,8 @@ public class ConnectionService {
         if (connection.getStatus() != ConnectionStatus.PENDING) {
             throw new RuntimeException("Connection request is not pending");
         }
-        connectionRepository.delete(connection);
+        connection.setStatus(ConnectionStatus.REJECTED);
+        connectionRepository.save(connection);
         user.getConnectionsRequest().remove(connectedUserId);
         connectedUser.getSendConnectionsRequest().remove(userId);
         userRepository.save(connectedUser);
@@ -137,7 +138,6 @@ public class ConnectionService {
             throw new RuntimeException("Connection request is not pending");
         }
 
-        connectionRepository.delete(connection);
         connectedUser.getConnectionsRequest().remove(userId);
          user.getSendConnectionsRequest().remove(connectedUserId);
          userRepository.save(connectedUser);
