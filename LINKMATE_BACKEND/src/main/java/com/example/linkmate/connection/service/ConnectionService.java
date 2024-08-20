@@ -146,7 +146,7 @@ public class ConnectionService {
         if (connection.getStatus() != ConnectionStatus.PENDING) {
             throw new RuntimeException("Connection request is not pending");
         }
-
+        connectionRepository.delete(connection);
         connectedUser.getConnectionsRequest().remove(userId);
         user.getSendConnectionsRequest().remove(connectedUserId);
         userRepository.save(connectedUser);
