@@ -14,5 +14,8 @@ public interface ConnectionRepository extends MongoRepository<Connection,ObjectI
     List<Connection> findByUserIdOrConnectedUserIdAndStatus(ObjectId userId, ConnectionStatus status);
     List<Connection> findByConnectedUserIdAndStatus(ObjectId connectedUserId, ConnectionStatus status);
     Connection findByUserIdAndConnectedUserId(ObjectId userId, ObjectId connectedUserId);
-    Connection findByUserIdAndConnectedUserIdAndStatus(ObjectId userId, ObjectId connectedUserId,ConnectionStatus status);
+    
+    @Query("{ $or: [ { 'userId': ?0, 'connectedUserId': ?1, 'status': ?2 }, { 'userId': ?1, 'connectedUserId': ?0, 'status': ?2 } ] }")
+    Connection findByUserIdAndConnectedUserIdAndStatus(ObjectId userId, ObjectId connectedUserId,
+            ConnectionStatus status);
 }
