@@ -132,14 +132,14 @@ public class ConnectionService {
                 .orElseThrow(() -> new RuntimeException("revoker user not found"));
 
          Connection connection=connectionRepository.findByUserIdAndConnectedUserId(userId, connectedUserId);
-         System.out.println("connection"+connection);
         if (connection.getStatus() != ConnectionStatus.PENDING) {
             throw new RuntimeException("Connection request is not pending");
         }
 
         connectionRepository.delete(connection);
-
-        user.getConnectionsRequest().remove(connectedUserId);
+        connectedUser.getConnectionsRequest().remove(userId);
+         user.getSendConnectionsRequest().remove(connectedUserId);
+         userRepository.save(connectedUser);
         userRepository.save(user);
 
         return "Connection request cancel sucessfully";
