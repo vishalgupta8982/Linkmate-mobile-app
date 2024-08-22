@@ -21,6 +21,7 @@ import { clearToken } from '../../redux/slices/authSlice';
 import { persistor } from '../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearUserDetail } from '../../redux/slices/UserDetailsSlice';
+import WebSocketService from '../../utils/WebSocketService';
 export default function Setting({ navigation }) {
 	const dispatch = useDispatch();
 	const currentTheme = useSelector((state) => state.theme.theme);
@@ -31,11 +32,11 @@ export default function Setting({ navigation }) {
 	const handleToggle = () => {
 		dispatch(toggleTheme());
 	};
-	const handleLogout = async() => {
+	const handleLogout = async () => {
+		dispatch(clearToken());
+		WebSocketService.disconnect();
+		dispatch(clearUserDetail());
 		await navigation.replace('Login');
-		 dispatch(clearToken());
-		 dispatch(clearUserDetail());
-
 	};
 	return (
 		<ScrollView style={styles.mainCont}>
@@ -63,9 +64,9 @@ export default function Setting({ navigation }) {
 				onPress={() => setAlertDialogVisible(true)}
 				activeOpaceity={0.4}
 			>
-					<View style={styles.iconName}>
-						<MaterialIcons name="logout" size={16} color={colors.TEXT} />
-						<Text style={styles.head}>Logout</Text>
+				<View style={styles.iconName}>
+					<MaterialIcons name="logout" size={16} color={colors.TEXT} />
+					<Text style={styles.head}>Logout</Text>
 				</View>
 			</TouchableOpacity>
 			<CustomAlertDialog

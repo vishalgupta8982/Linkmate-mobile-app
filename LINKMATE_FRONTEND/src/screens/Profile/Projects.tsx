@@ -217,23 +217,23 @@ export default function Projects({ navigation }) {
 			{userData?.projects.map((item) => (
 				<View style={styles.experienceCard} key={item.projectId}>
 					<View style={styles.position}>
-					<View style={styles.linkName} >
-						<Text style={globalStyleSheet.smallerHead}>{item.name} </Text>
-						<TouchableOpacity
-							activeOpacity={0.4}
-							onPress={() =>
-								Linking.openURL('ffv').catch((err) =>
-									Toast.show("Couldn't load page", Toast.SHORT)
-								)
-							}
-						>
-							<Feather
-								name={'link-2'}
-								color={colors.PRIMARY}
-								padding={5}
-								size={16}
-							/>
-						</TouchableOpacity>
+						<View style={styles.linkName}>
+							<Text style={globalStyleSheet.smallerHead}>{item.name} </Text>
+							<TouchableOpacity
+								activeOpacity={0.4}
+								onPress={() =>
+									Linking.openURL('ffv').catch((err) =>
+										Toast.show("Couldn't load page", Toast.SHORT)
+									)
+								}
+							>
+								<Feather
+									name={'link-2'}
+									color={colors.PRIMARY}
+									padding={5}
+									size={16}
+								/>
+							</TouchableOpacity>
 						</View>
 						<View style={styles.icon}>
 							<TouchableOpacity
@@ -348,7 +348,7 @@ export default function Projects({ navigation }) {
 										/>
 									)}
 									<AppButton
-									marginBottom={30}
+										marginBottom={30}
 										title={isEditing ? 'Update Project' : 'Add Project'}
 										onPress={isEditing ? handleUpdateProject : handleAddProject}
 									/>
@@ -396,9 +396,9 @@ const getStyles = (colors) =>
 			paddingVertical: 10,
 			marginBottom: 7,
 		},
-		linkName:{
-			flexDirection:'row',
-			alignItems:'center'
+		linkName: {
+			flexDirection: 'row',
+			alignItems: 'center',
 		},
 		position: {
 			flexDirection: 'row',

@@ -45,8 +45,8 @@ const getStyles = (colors) =>
 			alignItems: 'center',
 		},
 		img: {
-			width: 50,
-			height: 50,
+			width: 40,
+			height: 40,
 			borderRadius: 25,
 		},
 		icons: {

@@ -12,7 +12,11 @@ import OutlineButton from './OutlineButton';
 import { revertConnectionRequest, sendConnectionRequest } from '../api/apis';
 import Toast from 'react-native-simple-toast';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import Feather from 'react-native-vector-icons/Feather'
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 export default function UserCard({ userData, navigation }) {
+	const data = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
@@ -71,19 +75,35 @@ export default function UserCard({ userData, navigation }) {
 			>
 				{userData.headline}
 			</Text>
-			<OutlineButton
-				onPress={() =>request?handleCancelRequest(userData.userId): handleSendRqst(userData.userId) }
-				title={request ? 'Pending' : 'Connect'}
-				icon={
-					(request || loading) && (
-						<AntDesign
-							name="clockcircleo"
-							color={colors.APP_PRIMARY_LIGHT}
-							size={12}
-						/>
-					)
-				}
-			/>
+			{(request ||
+				data?.sendConnectionsRequest.includes(userData.userId) ||
+				!data?.connections.includes(userData.userId)) && (
+				<OutlineButton
+					onPress={() =>
+						request || data?.sendConnectionsRequest.includes(userData.userId)
+							? handleCancelRequest(userData.userId)
+							: handleSendRqst(userData.userId)
+					}
+					title={
+						request || data?.sendConnectionsRequest.includes(userData.userId)
+							? 'Pending'
+							: 'Connect'
+					}
+					icon={
+						(request ||
+							data?.sendConnectionsRequest.includes(userData.userId) ||
+							loading) && (
+							<AntDesign name="clockcircleo" color={colors.TEXT} size={12} />
+						)
+					}
+				/>
+			)}
+			{data?.connections.includes(userData.userId) && (
+				<OutlineButton
+					title={'Message'}
+					icon={<Feather name="send" color={colors.TEXT} size={12} />}
+				/>
+			)}
 		</TouchableOpacity>
 	);
 }

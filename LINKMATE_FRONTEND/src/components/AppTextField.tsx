@@ -96,7 +96,6 @@ const AppTextField = ({
 		</View>
 	);
 };
-
 const getStyles = (colors, width) =>
 	StyleSheet.create({
 		container: {

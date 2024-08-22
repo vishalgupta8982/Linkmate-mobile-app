@@ -17,21 +17,50 @@ import {
 } from 'react-native-responsive-dimensions';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useState } from 'react';
+import Toast from 'react-native-simple-toast';
 import { fonts } from '../../config/Fonts';
-export default function ViewProfilePicSection({ navigation, data }) {
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { revertConnectionRequest, sendConnectionRequest } from '../../api/apis';
+export default function ViewProfilePicSection({ navigation, searchUserData }) {
+	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
-	const [openAS, setOpenAS] = useState(false);
-	const [filePath, setFilePath] = useState({});
+	const [request, setRequest] = useState(false);
+	const handelCancelRequest = async (userId) => {
+		try {
+			const response = await revertConnectionRequest(userId);
+			if (response) {
+				Toast.show('Connection request cancelled', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const handelSendRequest = async (userId) => {
+		try {
+			const response = await sendConnectionRequest(userId);
+			if (response) {
+				Toast.show('Connection request sent', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.profile}>
 				<Image
 					style={styles.pic}
 					source={{
-						uri: data?.profilePicture?.length > 0 ? data?.profilePicture : null,
+						uri:
+							searchUserData?.profilePicture?.length > 0
+								? searchUserData?.profilePicture
+								: null,
 					}}
 				/>
 				<View style={styles.countMainCont}>
@@ -40,30 +69,66 @@ export default function ViewProfilePicSection({ navigation, data }) {
 						<Text style={styles.countHead}>Posts</Text>
 					</View>
 					<View style={styles.count}>
-						<Text style={styles.countText}>{data.connections?.length}</Text>
-						<Text style={styles.countHead}>Mutual</Text>
-					</View>
-					<View style={styles.count}>
-						<Text style={styles.countText}>{data.connections?.length}</Text>
+						<Text style={styles.countText}>
+							{searchUserData.connections?.length}
+						</Text>
 						<Text style={styles.countHead}>Connections</Text>
 					</View>
 				</View>
 			</View>
 			<View style={styles.headlineCont}>
-				<Text style={styles.name}>{data.firstName + ' ' + data.lastName}</Text>
-				{data.headline && (
-					<Text style={styles.headlineText}>{data.headline}</Text>
+				<Text style={styles.name}>
+					{searchUserData.firstName + ' ' + searchUserData.lastName}
+				</Text>
+				{searchUserData.headline && (
+					<Text style={styles.headlineText}>{searchUserData.headline}</Text>
 				)}
-				{data.location && (
-					<Text style={styles.locationText}>{data.location}</Text>
+				{searchUserData.location && (
+					<Text style={styles.locationText}>{searchUserData.location}</Text>
 				)}
 			</View>
 
 			<View style={styles.buttonCont}>
-				<Text style={styles.button}>
-					<Feather name="send" size={14} color={colors.WHITE} />{' '}
-					Message
-				</Text>
+				{(userData?.sendConnectionsRequest.includes(searchUserData.userId) ||
+					request) && (
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => handelCancelRequest(searchUserData.userId)}
+					>
+						<Text style={styles.button}>
+							<AntDesign name="clockcircleo" color={colors.WHITE} size={14} />{' '}
+							Pending
+						</Text>
+					</TouchableOpacity>
+				)}
+				{userData?.connections.includes(searchUserData.userData) && (
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => handelCancelRequest(searchUserData.userId)}
+					>
+						<Text style={styles.button}>
+							<Feather name="send" size={14} color={colors.WHITE} /> Message
+						</Text>
+					</TouchableOpacity>
+				)}
+				{!userData?.connections.includes(searchUserData.userData) &&
+					!request &&
+					!userData?.sendConnectionsRequest.includes(searchUserData.userId) && (
+						<TouchableOpacity
+							activeOpacity={0.4}
+							onPress={() => handelSendRequest(searchUserData.userId)}
+						>
+							<Text style={styles.button}>
+								<Ionicons
+									name="person-add-outline"
+									color={colors.WHITE}
+									size={14}
+								/>{' '}
+								Connect
+							</Text>
+						</TouchableOpacity>
+					)}
+
 				<Text style={styles.button}>
 					<MaterialCommunityIcon name="share" size={18} color={colors.WHITE} />{' '}
 					Share profile
@@ -80,6 +145,7 @@ const getStyles = (colors) =>
 		profile: {
 			flexDirection: 'row',
 			alignItems: 'center',
+			justifyContent: 'space-between',
 		},
 		pic: {
 			width: 100,
@@ -89,12 +155,12 @@ const getStyles = (colors) =>
 		countMainCont: {
 			flexDirection: 'row',
 			alignItems: 'center',
-			marginLeft: 20,
+			marginHorizontal: 20,
 			justifyContent: 'space-between',
 		},
 		count: {
 			alignItems: 'center',
-			width: responsiveWidth(20),
+			width: responsiveWidth(25),
 		},
 		countText: {
 			fontSize: 22,

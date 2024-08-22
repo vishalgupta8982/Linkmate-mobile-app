@@ -9,7 +9,11 @@ import {
 	Image,
 } from 'react-native';
 import React, { useState } from 'react';
-import { searchUser } from '../../api/apis';
+import {
+	revertConnectionRequest,
+	searchUser,
+	sendConnectionRequest,
+} from '../../api/apis';
 import { useEffect, useRef } from 'react';
 import Loader from '../../components/Loader';
 import { useCustomTheme } from '../../config/Theme';
@@ -20,15 +24,15 @@ import _ from 'lodash';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import Feather from 'react-native-vector-icons/Feather'
+import Toast from 'react-native-simple-toast';
+import Feather from 'react-native-vector-icons/Feather';
 export default function SearchResult({ navigation }) {
-	const userData = useSelector(
-		(state: RootState) => state.userDetails.user
-	);
+	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const [query, setQuery] = useState('');
+	const [request, setRequest] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [searchResult, setSearchResult] = useState([]);
 	const debouncedSearch = useRef(
@@ -48,6 +52,27 @@ export default function SearchResult({ navigation }) {
 	const handleChangeText = (text) => {
 		setQuery(text);
 		debouncedSearch(text);
+	};
+
+	const handelCancelRequest = async (userId) => {
+		try {
+			const response = await revertConnectionRequest(userId);
+			if (response) {
+				Toast.show('Connection request cancelled', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
+	const handelSendRequest = async (userId) => {
+		try {
+			const response = await sendConnectionRequest(userId);
+			if (response) {
+				Toast.show('Connection request sent', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+		}
 	};
 
 	return (
@@ -80,53 +105,81 @@ export default function SearchResult({ navigation }) {
 			<FlatList
 				data={searchResult}
 				keyExtractor={(item, index) => item.userId}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						activeOpacity={0.4}
-						onPress={() =>
-							navigation.navigate(
-								userData.username == item.username
-									? 'Profile'
-									: 'viewUserProfile',
-								{ username: item.username }
-							)
-						}
-					>
-						<View style={styles.list}>
-							<Image
-								style={styles.profile}
-								source={{ uri: item.profilePicture }}
-							/>
-							<View style={styles.nameCont}>
-								<Text style={styles.name}>
-									{item.firstName} {item.lastName}
-								</Text>
-								<Text
-									style={styles.headline}
-									numberOfLines={1}
-									ellipsizeMode="tail"
-								>
-									{item.headline}
-								</Text>
-							</View>
+				renderItem={({ item }) => {
+					const hasSentRequest = userData?.sendConnectionsRequest.includes(
+						item.userId
+					);
+					const isConnected = userData?.connections.includes(item.userId);
+					const isCurrentUser = userData.username === item.username;
 
-							{userData.username != item.username &&
-								(userData.connections.includes(item.userId) ? (
+					return (
+						<TouchableOpacity
+							activeOpacity={0.4}
+							onPress={() =>
+								navigation.navigate(
+									isCurrentUser ? 'Profile' : 'viewUserProfile',
+									{ username: item.username }
+								)
+							}
+						>
+							<View style={styles.list}>
+								<Image
+									style={styles.profile}
+									source={{ uri: item.profilePicture }}
+								/>
+								<View style={styles.nameCont}>
+									<Text style={styles.name}>
+										{item.firstName} {item.lastName}
+									</Text>
+									<Text
+										style={styles.headline}
+										numberOfLines={1}
+										ellipsizeMode="tail"
+									>
+										{item.headline}
+									</Text>
+								</View>
+								{(request || hasSentRequest) && (
+									<TouchableOpacity
+										activeOpacity={0.4}
+										onPress={() => handelCancelRequest(item.userId)}
+									>
+										<AntDesign
+											name="clockcircleo"
+											color={colors.TEXT}
+											size={16}
+											padding={4}
+										/>
+									</TouchableOpacity>
+								)}
+								{!isConnected &&
+									!hasSentRequest &&
+									!request &&
+									!isCurrentUser && (
+										<TouchableOpacity
+											activeOpacity={0.4}
+											onPress={() => handelSendRequest(item.userId)}
+										>
+											<Ionicons
+												name="person-add-outline"
+												color={colors.TEXT}
+												size={20}
+												padding={4}
+											/>
+										</TouchableOpacity>
+									)}
+								{isConnected && (
 									<Feather
 										name="send"
 										color={colors.TEXT}
-										size={20}
+										size={16}
+										padding={4}
 									/>
-								) : (
-									<Ionicons
-										name="person-add-outline"
-										color={colors.TEXT}
-										size={20}
-									/>
-								))}
-						</View>
-					</TouchableOpacity>
-				)}
+								)}
+							</View>
+						</TouchableOpacity>
+					);
+				}}
 			/>
 		</View>
 	);
@@ -167,7 +220,7 @@ const getStyles = (colors) =>
 			flexDirection: 'row',
 			alignItems: 'center',
 			width: responsiveWidth(90),
-			justifyContent:'space-between'
+			justifyContent: 'space-between',
 		},
 		profile: {
 			width: 50,
@@ -185,8 +238,8 @@ const getStyles = (colors) =>
 			fontFamily: fonts.Inter_Medium,
 			fontSize: 12,
 		},
-		nameCont:{
-			width:responsiveWidth(62),
-			marginRight:responsiveWidth(5)
-		}
+		nameCont: {
+			width: responsiveWidth(62),
+			marginRight: responsiveWidth(5),
+		},
 	});

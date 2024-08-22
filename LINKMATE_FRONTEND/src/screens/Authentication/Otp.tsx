@@ -169,7 +169,7 @@ const getStyles = (colors) =>
 			paddingVertical: 2,
 			fontSize: 24,
 			fontFamily: fonts.Inter_Medium,
-			color: colors.TEXT,
+			color:colors.TEXT,
 		},
 		smallText: {
 			fontSize: 14,

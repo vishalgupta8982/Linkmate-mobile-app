@@ -17,7 +17,7 @@ import ViewProfileOverview from './ViewProfileOverview';
 import ViewProfileEducation from './ViewProfileEducation';
 import ViewProfileProjects from './ViewProfileProjects';
 import ViewProfileExperience from './ViewProfileExperience';
-import { getSearchUserDetail } from '../../api/apis';
+import { getSearchUserDetail, revertConnectionRequest, sendConnectionRequest } from '../../api/apis';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Loader from '../../components/Loader';
@@ -51,6 +51,7 @@ const ViewProfile: React.FC = ({ navigation,route }) => {
 		);
 	}, []);
 
+	 
 	return (
 		<View style={styles.cont}>
 			{loader ? (
@@ -59,7 +60,7 @@ const ViewProfile: React.FC = ({ navigation,route }) => {
 				<Tabs.Container
 					renderHeader={(props) => (
 						<ViewProfileTopPart
-							userData={userDetails}
+							searchUserData={userDetails}
 							navigation={navigation}
 						/>
 					)}

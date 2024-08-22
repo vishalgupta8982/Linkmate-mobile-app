@@ -25,7 +25,7 @@ export const AppButton = ({
 	disabled: boolean;
 	icon?: any;
 	width?: number;
-	marginBottom?:number;
+	marginBottom?: number;
 }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -56,7 +56,7 @@ const getStyles = (colors) =>
 			paddingHorizontal: 12,
 			marginHorizontal: 5,
 			alignSelf: 'center',
-			marginTop: 20,
+			marginTop: 10,
 		},
 		appButtonText: {
 			fontSize: 16,

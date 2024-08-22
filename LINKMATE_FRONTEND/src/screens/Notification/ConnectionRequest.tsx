@@ -25,12 +25,14 @@ import { selectToken } from '../../redux/slices/authSlice';
 import { RootState, store } from '../../redux/store';
 import { socketUrl } from '../../api/instance';
 import { useDispatch, useSelector } from 'react-redux';
-import { addConnectionRequest, clearConnectionRequests } from '../../redux/slices/ConnectionRequestSlice';
+import {  addConnectionRequests, clearConnectionRequests } from '../../redux/slices/ConnectionRequestSlice';
 export default function ConnectionRequest({ navigation }) {
 	const request = useSelector(
-		(state: RootState) => state.connectionRqst.connectionRequests.undefined
+		(state: RootState) => state.connectionRqst.connectionRequests
 	);
- 
+	useEffect(()=>{
+		setConnectionRequest(request)
+	},[request])
 	const theme = useCustomTheme();
 	const dispatch = useDispatch();
 	const token = selectToken(store.getState());
@@ -42,9 +44,8 @@ export default function ConnectionRequest({ navigation }) {
 	const fetchConnectionRequest = async () => {
 		try {
 			const response = await getAllConnectionRequest();
-			if (response) {
-				 dispatch(addConnectionRequest(response))
-			}
+			if(response)
+				 dispatch(response.length>0?addConnectionRequests(response):clearConnectionRequests());
 		} catch (err) {
 			console.error(err);
 		}
@@ -66,7 +67,6 @@ export default function ConnectionRequest({ navigation }) {
 		console.log(senderId);
 		try {
 			const response = await rejectConnectionRequest(senderId);
-			console.log(response)
 			if (response) {
 				Toast.show('Request cancelled', Toast.SHORT);
 				fetchConnectionRequest();

@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { store } from '../redux/store';
 import { selectToken } from '../redux/slices/authSlice';
 
-const baseURL = 'https://linkmate.onrender.com/';
+const baseURL = 'https://linkmate.onrender.com/api/';
 export const socketUrl="wss://linkmate.onrender.com/ws/connection-requests"
 // export const socketUrl = 'ws://192.168.21.101:8083/ws/connection-requests';
 // const baseURL = 'http://192.168.21.101:8083';

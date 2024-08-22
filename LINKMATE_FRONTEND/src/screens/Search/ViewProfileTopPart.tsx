@@ -23,8 +23,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import ViewProfilePicSection from './ViewProfilePicSection';
 import ProfileTabBar from './ProfileTabBar';
-export default function ViewProfileTopPart({ navigation, userData }) {
- 
+export default function ViewProfileTopPart({ navigation, searchUserData }) {
 	const dispatch = useDispatch();
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -35,7 +34,7 @@ export default function ViewProfileTopPart({ navigation, userData }) {
 	};
 	return (
 		<View style={styles.mainCont}>
-			{userData ? (
+			{searchUserData ? (
 				<View>
 					<View style={styles.header}>
 						<TouchableOpacity
@@ -49,9 +48,12 @@ export default function ViewProfileTopPart({ navigation, userData }) {
 								color={colors.TEXT}
 							/>
 						</TouchableOpacity>
-						<Text style={styles.username}> {userData.username}</Text>
+						<Text style={styles.username}> {searchUserData.username}</Text>
 					</View>
-					<ViewProfilePicSection data={userData} navigation={navigation} />
+					<ViewProfilePicSection
+						searchUserData={searchUserData}
+						navigation={navigation}
+					/>
 				</View>
 			) : (
 				<Loader />

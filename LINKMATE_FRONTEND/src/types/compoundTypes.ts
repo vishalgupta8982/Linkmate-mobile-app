@@ -1,3 +1,4 @@
+import { sendConnectionRequest } from '../api/apis';
 export interface Experience {
 	experienceId: string;
 	company: string;
@@ -42,6 +43,7 @@ export interface User {
 	educations: Education[];
 	projects: Project[];
 	skills: string[];
+	sendConnectionsRequest: string[];
 	createdAt: string | null;
 	updatedAt: string | null;
 }

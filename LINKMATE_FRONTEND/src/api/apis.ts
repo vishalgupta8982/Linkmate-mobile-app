@@ -10,16 +10,13 @@ import { EducationPayload } from '../types/Payload/EducationPayload';
 import { ExperiencePayload } from '../types/Payload/ExperiencePayload';
 import { ProjectPayload } from '../types/Payload/ProjectPayload';
 import { Search } from '../types/Response/SearchReponse';
+import { Post } from '../types/Response/PostResponse';
 
 export const userLogin = async (
 	payload: LoginPayload
 ): Promise<verifyOtpResponse> => {
 	const url = '/users/login';
-	try {
 		return await post<verifyOtpResponse>(url, payload);
-	} catch (error) {
-		throw error;
-	}
 };
 
 export const userRegister = async (payload: SignUpPayload) => {
@@ -113,27 +110,35 @@ export const getSearchUserDetail = async (username: string) => {
 	return await get<User>(url);
 };
 export const getMyConnections = async () => {
-	const url = `/users/connections/my-connections`;
+	const url = `/connections/my-connections`;
 	return await get<Search>(url);
 };
 export const sendConnectionRequest = async (recieverId:String) => {
-	const url = `/users/connections/${recieverId}`;
+	const url = `/connections/${recieverId}`;
 	return await post<Search>(url);
 };
 export const getAllConnectionRequest = async () => {
-	const url = `/users/connections/received`;
+	const url = `/connections/received`;
 	return await get<Search>(url);
 };
 export const acceptConnectionRequest = async (senderId: String) => {
-	const url = `/users/connections/${senderId}/accept`;
+	const url = `/connections/${senderId}/accept`;
 	return await post<Search>(url);
 };
 export const rejectConnectionRequest = async (senderId: String) => {
-	const url = `/users/connections/${senderId}/decline`;
+	const url = `/connections/${senderId}/decline`;
 	return await post<Search>(url);
 };
 export const revertConnectionRequest = async (senderId: String) => {
-	const url = `/users/connections/${senderId}/cancel`;
+	const url = `/connections/${senderId}/cancel`;
 	return await post<Search>(url);
+};
+export const removeConnection = async (removerId: String) => {
+	const url = `/connections/${removerId}/remove`;
+	return await post<Search>(url);
+};
+export const createPost = async (content: String,fileType:String) => {
+	const url = `/posts?content=${content}&fileType=${fileType}`;
+	return await post<Post>(url);
 };
 

@@ -42,10 +42,7 @@ export default function ProfilePicSection({ navigation, data }) {
 						activeOpacity={0.4}
 						onPress={() => navigation.navigate('myConnection')}
 					>
-						<View style={styles.count}>
-							<Text style={styles.countText}>{data.connections?.length}</Text>
-							<Text style={styles.countHead}>Mutual</Text>
-						</View>
+						
 					</TouchableOpacity>
 					<TouchableOpacity
 						activeOpacity={0.4}
@@ -95,6 +92,7 @@ const getStyles = (colors) =>
 		profile: {
 			flexDirection: 'row',
 			alignItems: 'center',
+			justifyContent:'space-between'
 		},
 		pic:{
 			width:100,
@@ -104,12 +102,12 @@ const getStyles = (colors) =>
 		countMainCont: {
 			flexDirection: 'row',
 			alignItems: 'center',
-			marginLeft: 20,
+			marginHorizontal: 20,
 			justifyContent: 'space-between',
 		},
 		count: {
 			alignItems: 'center',
-			width: responsiveWidth(20),
+			width: responsiveWidth(25),
 		},
 		countText: {
 			fontSize: 22,

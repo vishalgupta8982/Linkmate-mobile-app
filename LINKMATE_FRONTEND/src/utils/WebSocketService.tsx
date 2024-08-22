@@ -1,12 +1,12 @@
 import { Alert } from "react-native";
 import { displayNotification } from "./DisplayNotification";
-import { addConnectionRequest, setConnectionRequest } from "../redux/slices/ConnectionRequestSlice";
+import { addConnectionRequest, mergeConnectionRequests, setConnectionRequest, updateConnectionRequests } from "../redux/slices/ConnectionRequestSlice";
 import { useDispatch } from "react-redux";
  
 const WebSocketService = {
 	socket: null,
 
-	connect(url, token,dispatch) {
+	connect(url, token, dispatch) {
 		this.socket = new WebSocket(`${url}?token=${token}`);
 
 		this.socket.onopen = () => {
@@ -15,8 +15,8 @@ const WebSocketService = {
 
 		(this.socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
-			 dispatch(addConnectionRequest(data.data))
-			displayNotification(data.data)
+			dispatch(updateConnectionRequests(data.data));
+			displayNotification(data.data);
 			this.socket.onclose = () => {
 				console.log('WebSocket connection closed');
 			};
@@ -46,6 +46,12 @@ const WebSocketService = {
 			this.socket.send(JSON.stringify(data));
 		} else {
 			console.warn('WebSocket is not open');
+		}
+	},
+	disconnect() {
+		if (this.socket) {
+			this.socket.close();
+			console.log('WebSocket connection disconnected');
 		}
 	},
 };
