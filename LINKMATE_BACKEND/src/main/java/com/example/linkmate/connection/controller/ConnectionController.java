@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpHeaders;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,51 +24,56 @@ import com.example.linkmate.user.model.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
-@RequestMapping("/users/connections/")
+@RequestMapping("/api/connections/")
 public class ConnectionController {
 
     @Autowired
     private ConnectionService connectionService;
 
     @PostMapping("/{connectedUserId}")
-    public Connection sendConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<Connection> sendConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @PathVariable ObjectId connectedUserId) {
-        return connectionService.sendConnectionRequest(token, connectedUserId);
+        Connection connection= connectionService.sendConnectionRequest(token, connectedUserId);
+        return new ResponseEntity<>(connection,HttpStatus.OK);
     }
 
     @PostMapping("{connectedUserId}/accept")
-    public Connection acceptConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<Connection> acceptConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @PathVariable ObjectId connectedUserId) {
-        return connectionService.acceptConnectionRequest(token, connectedUserId);
+        Connection connection = connectionService.acceptConnectionRequest(token, connectedUserId);
+        return new ResponseEntity<>(connection, HttpStatus.OK);
     }
 
     @PostMapping("/{connectedUserId}/decline")
-    public String declineConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<String> declineConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @PathVariable ObjectId connectedUserId) {
-        return connectionService.declineConnectionRequest(token, connectedUserId);
+        String response = connectionService.declineConnectionRequest(token, connectedUserId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{connectedUserId}/cancel")
-    public String cancelConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<String> cancelConnectionRequest(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @PathVariable ObjectId connectedUserId) {
-        return connectionService.cancelConnectionRequest(token, connectedUserId);
+        String response= connectionService.cancelConnectionRequest(token, connectedUserId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/{connectedUserId}/remove")
-    public String removeConnection(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<String> removeConnection(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @PathVariable ObjectId connectedUserId) {
-        return connectionService.removeConnection(token, connectedUserId);
+         String response = connectionService.removeConnection(token, connectedUserId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @JsonView(Views.Search.class)
     @GetMapping("/my-connections")
-    public List<User> getConnections(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        return connectionService.getConnections(token);
+    public ResponseEntity<List<User>> getConnections(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        return new ResponseEntity<>(connectionService.getConnections(token),HttpStatus.OK);
     }
 
     @JsonView(Views.Search.class)
     @GetMapping("/received")
-    public List<User> getReceivedConnectionRequests(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        return connectionService.getReceivedConnectionRequests(token);
+    public ResponseEntity<List<User>> getReceivedConnectionRequests(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+         return new ResponseEntity<>(connectionService.getReceivedConnectionRequests(token),HttpStatus.OK);
     }
 }

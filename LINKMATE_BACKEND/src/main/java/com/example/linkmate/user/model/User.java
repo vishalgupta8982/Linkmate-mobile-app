@@ -79,6 +79,9 @@ public class User {
     private List<String> skills = new ArrayList<>();
 
     @JsonView(Views.Internal.class)
+    private List<ObjectId> posts=new ArrayList<>();
+
+    @JsonView(Views.Internal.class)
     private Date createdAt;
 
     @JsonView(Views.Credential.class)
