@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.http.HttpHeaders;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.linkmate.post.model.Post;
 import com.example.linkmate.post.service.PostsService;
+import com.example.linkmate.user.model.User;
+import com.example.linkmate.user.service.UserService;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -20,6 +23,9 @@ public class PostController {
 
     @Autowired
     private PostsService postsService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping
     public ResponseEntity<Post> createPost(
@@ -38,8 +44,9 @@ public class PostController {
     }
 
     @GetMapping("/userPosts")
-    public ResponseEntity<List<Post>> getPostsByUserId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        List<Post> posts = postsService.findPostByUserId(token);
+    public ResponseEntity<Page<Post>> getPostsByUserId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestParam int page, @RequestParam int size) {
+        System.out.println(page+""+size);
+        Page<Post> posts = postsService.findPostByUserId(token,page,size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
@@ -57,5 +64,14 @@ public class PostController {
     @PostMapping("/like/{postId}")
     public ResponseEntity<String> likePost(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId postId){
         return new ResponseEntity<>(postsService.likePost(token, postId),HttpStatus.OK);
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<Page<Post>> getFeed(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @RequestParam int page,
+            @RequestParam int size) {
+        Page<Post> posts = postsService.getFeed(token, page, size);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }

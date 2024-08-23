@@ -6,6 +6,12 @@ import java.util.*;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,9 +63,10 @@ public class PostsService {
         return postRepository.findById(id);
     }
 
-    public List<Post> findPostByUserId(String token) {
+    public Page<Post> findPostByUserId(String token,int page,int size) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        return postRepository.findByUserId(userId);
+          Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return postRepository.findByUserId(userId,pageable);
     }
 
     public boolean deletePost(String token, ObjectId postId) {
@@ -93,5 +100,20 @@ public class PostsService {
         postRepository.save(post);
 
         return "Post updated successfully"; 
+    }
+   
+    public Page<Post> getFeed(String token, int page, int size) {
+        if (page < 0 || size <= 0) {
+            throw new IllegalArgumentException("Page number must be non-negative and size must be positive.");
+        }
+        ObjectId userId = jwtUtil.getUserIdFromToken(token);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        List<ObjectId> connections = user.getConnections();
+        connections.add(userId); 
+        Page<Post> postsPage = postRepository.findByUserIdIn(connections, pageable);
+        return postsPage;
     }
 }

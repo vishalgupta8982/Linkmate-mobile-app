@@ -18,7 +18,10 @@ import { AppButton } from '../../components/AppButton';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Toast from 'react-native-simple-toast';
 import DocumentPicker from 'react-native-document-picker';
+import { createPost } from '../../api/apis';
+import Loader from '../../components/Loader';
 export default function CreatePost({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
@@ -28,6 +31,7 @@ export default function CreatePost({ navigation }) {
 	const [content, setContent] = useState('');
 	const [filePath, setFilePath] = useState(null);
 	const [fileType, setFileType] = useState(null);
+  const [loading,setLoading]=useState(false)
 	const chooseImage = () => {
 		ImagePicker.openPicker({
 			cropping: false,
@@ -35,8 +39,8 @@ export default function CreatePost({ navigation }) {
 			compressImageMaxHeight: 800,
 		})
 			.then((image) => {
+				setFileType("image");
 				setFilePath(image);
-				setFileType(image.mime.split('/')[0]);
 			})
 			.catch((e) => console.log(e));
 	};
@@ -45,7 +49,7 @@ export default function CreatePost({ navigation }) {
 			const response = await DocumentPicker.pick({
 				type: [DocumentPicker.types.allFiles],
 			});
-			console.log(response);
+			setFileType('document');
 			setFilePath(response);
 		} catch (err) {
 			if (DocumentPicker.isCancel(err)) {
@@ -55,6 +59,23 @@ export default function CreatePost({ navigation }) {
 			}
 		}
 	};
+  const handlePost=async()=>{
+    setLoading(true)
+    if(content.length<1){
+      Toast.show('Write something to post or choose file', Toast.SHORT);
+    }
+    try{
+      const response =await createPost(filePath,content,fileType);
+       if(response){
+        navigation.navigate("Home")
+        Toast.show('Post uploaded successfully', Toast.SHORT);
+       }
+    }catch(err){
+      console.error(err)
+    }finally{
+      setLoading(false)
+    }
+  }
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.header}>
@@ -65,8 +86,9 @@ export default function CreatePost({ navigation }) {
 					/>
 					<Text style={globalStyleSheet.smallHead}>Create post</Text>
 				</View>
-				<AppButton width={25} title="Post" />
+				<AppButton onPress={handlePost} width={25} title="Post" />
 			</View>
+			{loading && <Loader />}
 			<View style={styles.somethingBox}>
 				<TextInput
 					multiline={true}
@@ -78,7 +100,7 @@ export default function CreatePost({ navigation }) {
 					onChangeText={setContent}
 				/>
 			</View>
-			{filePath && fileType=="image" && (
+			{filePath && fileType == 'image' && (
 				<View style={{ position: 'relative' }}>
 					<Image source={{ uri: filePath?.path }} style={styles.selectImg} />
 					<TouchableOpacity
@@ -90,11 +112,26 @@ export default function CreatePost({ navigation }) {
 					</TouchableOpacity>
 				</View>
 			)}
-			{filePath && (
-				<View style={{ marginTop: 20 }}>
-					<Text>File Name: {filePath.name}</Text>
-					<Text>Type: {filePath.type}</Text>
-					<Text>URI: {filePath.uri}</Text>
+			{filePath && fileType == 'document' && (
+				<View>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => setFilePath(null)}
+						style={styles.close2}
+					>
+						<AntDesign name="close" color={colors.TEXT} size={18} />
+					</TouchableOpacity>
+					<View style={styles.pdf}>
+						<AntDesign
+							name="pdffile1"
+							color={colors.TEXT}
+							size={18}
+							style={{ marginRight: 5 }}
+						/>
+						<Text numberOfLines={1} ellipsizeMode="tail">
+							{filePath[0]?.name}
+						</Text>
+					</View>
 				</View>
 			)}
 			<View style={styles.iconCont}>
@@ -181,5 +218,20 @@ const getStyles = (colors: any) =>
 			position: 'absolute',
 			left: '40%',
 			marginTop: 20,
+		},
+		close2: {
+			position: 'absolute',
+			left: '88%',
+			marginTop: 20,
+		},
+		pdf: {
+			borderWidth: 1,
+			borderColor: 'red',
+			padding: 10,
+			paddingHorizontal: 10,
+			flexDirection: 'row',
+			marginTop: 20,
+			width: '80%',
+			margin: 20,
 		},
 	});

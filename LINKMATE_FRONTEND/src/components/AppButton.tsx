@@ -21,8 +21,8 @@ export const AppButton = ({
 }: {
 	onPress: () => void;
 	title: string;
-	loading: boolean;
-	disabled: boolean;
+	loading?: boolean;
+	disabled?: boolean;
 	icon?: any;
 	width?: number;
 	marginBottom?: number;

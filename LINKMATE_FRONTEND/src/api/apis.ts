@@ -16,7 +16,7 @@ export const userLogin = async (
 	payload: LoginPayload
 ): Promise<verifyOtpResponse> => {
 	const url = '/users/login';
-		return await post<verifyOtpResponse>(url, payload);
+	return await post<verifyOtpResponse>(url, payload);
 };
 
 export const userRegister = async (payload: SignUpPayload) => {
@@ -37,7 +37,7 @@ export const updateUserDetails = async (payload: UpdatePayload) => {
 	const url = '/users/update';
 	return await put<User>(url, payload);
 };
-export const updateProfilePicture = async (payload:any) => {
+export const updateProfilePicture = async (payload: any) => {
 	const formData = new FormData();
 	formData.append('profilePicture', {
 		uri: payload,
@@ -55,54 +55,63 @@ export const updateProfilePicture = async (payload:any) => {
 	return await put<User>(url, formData, config);
 };
 
-export const deleteExperience=async(id:string)=>{
+export const deleteExperience = async (id: string) => {
 	const url = `/users/delete/experience?experienceId=${id}`;
 	return await del<User>(url);
-}
-export const deleteEducation=async(id:string)=>{
+};
+export const deleteEducation = async (id: string) => {
 	const url = `/users/delete/education?educationId=${id}`;
 	return await del<User>(url);
-}
-export const deleteProject=async(id:string)=>{
+};
+export const deleteProject = async (id: string) => {
 	const url = `/users/delete/project?projectId=${id}`;
 	return await del<User>(url);
-}
+};
 export const deleteSkill = async (skill: string) => {
 	const url = `/users/delete/skill?skill=${skill}`;
 	return await del<User>(url);
 };
 export const addSkill = async (skill: string[]) => {
 	const url = '/users/update/skills';
-	return await put<User>(url,skill);
+	return await put<User>(url, skill);
 };
-export const addEducation = async (payload:EducationPayload ) => {
-	console.log(payload)
+export const addEducation = async (payload: EducationPayload) => {
+	console.log(payload);
 	const url = '/users/update/education';
-	return await put<User>(url,[payload]);
+	return await put<User>(url, [payload]);
 };
-export const addExperience = async (payload:ExperiencePayload) => {
+export const addExperience = async (payload: ExperiencePayload) => {
 	const url = '/users/update/experience';
-	return await put<User>(url,[payload]);
+	return await put<User>(url, [payload]);
 };
-export const addProject = async (payload:ProjectPayload) => {
+export const addProject = async (payload: ProjectPayload) => {
 	const url = '/users/update/project';
-	return await put<User>(url,[payload]);
+	return await put<User>(url, [payload]);
 };
-export const updateEducation = async (educationId:string,payload: EducationPayload) => {
+export const updateEducation = async (
+	educationId: string,
+	payload: EducationPayload
+) => {
 	const url = `/users/update/education`;
 	return await put<User>(url, [payload]);
 };
-export const updateExperience = async (experienceId:string,payload: ExperiencePayload) => {
-	console.log(payload)
+export const updateExperience = async (
+	experienceId: string,
+	payload: ExperiencePayload
+) => {
+	console.log(payload);
 	const url = `/users/update/experience`;
 	return await put<User>(url, [payload]);
 };
-export const updateProject = async (projectId:string,payload: ProjectPayload) => {
+export const updateProject = async (
+	projectId: string,
+	payload: ProjectPayload
+) => {
 	const url = `/users/update/project`;
 	return await put<User>(url, [payload]);
 };
-export const searchUser = async (query:string) => {
-	const url = `/users/search?query=${query}`;	
+export const searchUser = async (query: string) => {
+	const url = `/users/search?query=${query}`;
 	return await get<Search>(url);
 };
 export const getSearchUserDetail = async (username: string) => {
@@ -113,7 +122,7 @@ export const getMyConnections = async () => {
 	const url = `/connections/my-connections`;
 	return await get<Search>(url);
 };
-export const sendConnectionRequest = async (recieverId:String) => {
+export const sendConnectionRequest = async (recieverId: String) => {
 	const url = `/connections/${recieverId}`;
 	return await post<Search>(url);
 };
@@ -137,8 +146,32 @@ export const removeConnection = async (removerId: String) => {
 	const url = `/connections/${removerId}/remove`;
 	return await post<Search>(url);
 };
-export const createPost = async (content: String,fileType:String) => {
+export const createPost = async (
+	file: Object[],
+	content: String,
+	fileType: String
+) => {
+	const formData = new FormData();
+	if (fileType == 'image') {
+		formData.append('file', {
+			uri: file.path,
+			name: 'image.png',
+			fileName: 'image',
+			type: 'image/png',
+		});
+	} else {
+		formData.append('file', {
+			uri: file[0].uri,
+			name: file[0].name,
+			fileName: 'pdf',
+			type: 'application/pdf',
+		});
+	}
+	const config = {
+		headers: {
+			'Content-Type': 'multipart/form-data',
+		},
+	};
 	const url = `/posts?content=${content}&fileType=${fileType}`;
-	return await post<Post>(url);
+	return await post<Post>(url, formData, config);
 };
-
