@@ -34,8 +34,8 @@ public class Post {
 
     @Indexed(direction = IndexDirection.DESCENDING)   
     private LocalDateTime createdAt;
-
+    @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<ObjectId> comments=new ArrayList<>();
-
+    @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<ObjectId> likedBy= new ArrayList<>();
 }
