@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.linkmate.post.model.Post;
+import com.example.linkmate.post.model.PostUserDetail;
 import com.example.linkmate.post.repository.PostRepository;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
@@ -39,11 +40,16 @@ public class PostsService {
 
     public Post createPost(String content, String fileType, MultipartFile file, String token) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Post post = new Post();
         post.setContent(content);
-        post.setUserId(userId);
         post.setCreatedAt(LocalDateTime.now());
         post.setFileType(fileType);
+        PostUserDetail userDetail=new PostUserDetail();
+        userDetail.setUserId(userId);
+        userDetail.setProfilePicture(user.getProfilePicture());
+        userDetail.setUsername(user.getUsername());
+        post.setUserDetail(userDetail);
         if (file != null && !file.isEmpty()) {
             try {
                 String fileUrl = cloudinaryService.uploadFile(file);
@@ -53,7 +59,6 @@ public class PostsService {
             }
         }
         Post savedPost = postRepository.save(post);
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         user.getPosts().add(savedPost.getPostId());
         userRepository.save(user);
         return savedPost;
@@ -63,28 +68,28 @@ public class PostsService {
         return postRepository.findById(id);
     }
 
-    public Page<Post> findPostByUserId(String token,int page,int size) {
+    public Page<Post> findPostByUserId(String token, int page, int size) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-          Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return postRepository.findByUserId(userId,pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return postRepository.findByUserDetail_UserId(userId, pageable);
     }
 
     public boolean deletePost(String token, ObjectId postId) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        Post post = postRepository.findByUserIdAndPostId(userId, postId);
+        Post post = postRepository.findByUserDetail_UserIdAndPostId(userId, postId);
         if (post != null) {
             postRepository.delete(post);
             return true;
         }
         return false;
     }
-    
+
     public String likePost(String token, ObjectId postId) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
         Optional<Post> optionalPost = findPost(postId);
 
         if (!optionalPost.isPresent()) {
-            return "Post not found";  
+            return "Post not found";
         }
 
         Post post = optionalPost.get();
@@ -99,9 +104,9 @@ public class PostsService {
         post.setLikedBy(likedBy);
         postRepository.save(post);
 
-        return "Post updated successfully"; 
+        return "Post updated successfully";
     }
-   
+
     public Page<Post> getFeed(String token, int page, int size) {
         if (page < 0 || size <= 0) {
             throw new IllegalArgumentException("Page number must be non-negative and size must be positive.");
@@ -112,8 +117,9 @@ public class PostsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         List<ObjectId> connections = user.getConnections();
-        connections.add(userId); 
-        Page<Post> postsPage = postRepository.findByUserIdIn(connections, pageable);
+        connections.add(userId);
+        Page<Post> postsPage = postRepository.findByUserDetail_UserIdIn(connections, pageable);
+
         return postsPage;
     }
 }

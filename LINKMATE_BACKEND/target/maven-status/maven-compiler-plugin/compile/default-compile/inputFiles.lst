@@ -21,6 +21,7 @@ E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\filte
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\LinkmateApplication.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\post\controller\PostController.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\post\model\Post.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\post\model\PostUserDetail.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\post\repository\PostRepository.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\post\service\PostsService.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\user\Config\MailConfig.java

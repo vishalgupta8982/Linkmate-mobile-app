@@ -24,10 +24,7 @@ public class Post {
     @JsonSerialize(using= ToStringSerializer.class)
     private ObjectId postId;
 
-    @Indexed
-    @JsonSerialize(using = ToStringSerializer.class)
-    private ObjectId userId;
-
+ private PostUserDetail userDetail;
     private String content;
     private String fileUrl;
     private String fileType;

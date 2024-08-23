@@ -59,7 +59,7 @@ public class CommentService {
     }
 
     Comment comment = optionalComment.get();
-    if (!comment.getUserId().equals(userId) && !post.getUserId().equals(userId)) {
+    if (!comment.getUserId().equals(userId) && !post.getUserDetail().getUserId().equals(userId)) {
         return "Not authorized to delete this comment";
     }
     commentRepository.deleteById(commentId);

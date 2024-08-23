@@ -11,6 +11,7 @@ com\example\linkmate\post\model\Post.class
 com\example\linkmate\core\Exception\NotFoundException.class
 com\example\linkmate\connection\model\Connection.class
 com\example\linkmate\user\service\CustomUserDetailsService.class
+com\example\linkmate\post\model\PostUserDetail.class
 com\example\linkmate\config\WebSocketConfig.class
 com\example\linkmate\post\controller\PostController.class
 com\example\linkmate\user\model\EmploymentPreference.class
