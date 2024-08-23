@@ -30,7 +30,7 @@ export default function CreatePost({ navigation }) {
 	const globalStyleSheet = globalStyles(colors);
 	const [content, setContent] = useState('');
 	const [filePath, setFilePath] = useState(null);
-	const [fileType, setFileType] = useState(null);
+	const [fileType, setFileType] = useState('content');
   const [loading,setLoading]=useState(false)
 	const chooseImage = () => {
 		ImagePicker.openPicker({
@@ -61,11 +61,16 @@ export default function CreatePost({ navigation }) {
 	};
   const handlePost=async()=>{
     setLoading(true)
-    if(content.length<1){
+    if(content.length<1 && !filePath){
       Toast.show('Write something to post or choose file', Toast.SHORT);
+	  return;
     }
     try{
-      const response =await createPost(filePath,content,fileType);
+      const response = await createPost(
+				filePath,
+				encodeURIComponent(content),
+				fileType
+			);
        if(response){
 		setContent('')
 		setFilePath(null)

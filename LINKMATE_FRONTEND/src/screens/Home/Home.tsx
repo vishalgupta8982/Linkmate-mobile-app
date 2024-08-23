@@ -1,8 +1,16 @@
-import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
-import React, { useState } from 'react';
+import {
+	View,
+	Text,
+	StyleSheet,
+	ScrollView,
+	FlatList,
+	ActivityIndicator,
+} from 'react-native';
+import React, { useState,useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, store } from '../../redux/store';
 import { getFeed, userDetails } from '../../api/apis';
+import { useFocusEffect } from '@react-navigation/native';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import { useEffect } from 'react';
 import Loader from '../../components/Loader';
@@ -30,7 +38,7 @@ export default function Home({ navigation }) {
 				WebSocketService.socket.close();
 			}
 		};
-	}, []);
+	}, [navigation]);
 	const fetchUserDetails = async () => {
 		try {
 			const response = await userDetails();
@@ -61,20 +69,27 @@ export default function Home({ navigation }) {
 		fetchFeed();
 		fetchUserDetails();
 	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			fetchFeed();
+			return () => {};
+		}, [])
+	);
 
 	return (
 		<View style={styles.mainCont}>
-			{loading && <Loader />}
 			<HomePageHeader navigation={navigation} />
 			<FlatList
 				data={feedData}
 				keyExtractor={(item) => item.postId}
 				renderItem={({ item }) => (
-					 <PostCard navigation={navigation} data={item} />
+					<PostCard navigation={navigation} data={item} />
 				)}
 				onEndReached={fetchFeed}
 				onEndReachedThreshold={0.5}
-				ListFooterComponent={<Loader />}
+				ListFooterComponent={
+					<ActivityIndicator size={32} color={colors.PRIMARY} />
+				}
 			/>
 		</View>
 	);

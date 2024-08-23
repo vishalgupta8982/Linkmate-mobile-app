@@ -15,4 +15,5 @@ public class PostUserDetail {
     private String firstName;
     private String lastName;
     private String headline;
+    private String username;
 }

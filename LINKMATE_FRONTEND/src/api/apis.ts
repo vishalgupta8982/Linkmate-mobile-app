@@ -158,9 +158,10 @@ export const createPost = async (
 			uri: file.path,
 			name: 'image.png',
 			fileName: 'image',
-			type: 'image/png',
+			type: 'image/jpeg',
 		});
-	} else {
+	} 
+	if (fileType == 'document') {
 		formData.append('file', {
 			uri: file[0].uri,
 			name: file[0].name,
@@ -173,8 +174,15 @@ export const createPost = async (
 			'Content-Type': 'multipart/form-data',
 		},
 	};
-	const url = `/posts?content=${content}&fileType=${fileType}`;
-	return await post<Post>(url, formData, config);
+	if(file==null){
+const url = `/posts?content=${content}&fileType=${fileType}`;
+console.log(url)
+return await post<Post>(url);
+	}else{
+const url = `/posts?content=${content}&fileType=${fileType}`;
+return await post<Post>(url, formData, config);
+	}
+	 
 };
 
 export const getFeed = async (page:number) => {

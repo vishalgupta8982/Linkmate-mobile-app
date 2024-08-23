@@ -1,8 +1,13 @@
-import { Alert } from "react-native";
-import { displayNotification } from "./DisplayNotification";
-import { addConnectionRequest, mergeConnectionRequests, setConnectionRequest, updateConnectionRequests } from "../redux/slices/ConnectionRequestSlice";
-import { useDispatch } from "react-redux";
- 
+import { Alert } from 'react-native';
+import { displayNotification } from './DisplayNotification';
+import {
+	addConnectionRequest,
+	mergeConnectionRequests,
+	setConnectionRequest,
+	updateConnectionRequests,
+} from '../redux/slices/ConnectionRequestSlice';
+import { useDispatch } from 'react-redux';
+
 const WebSocketService = {
 	socket: null,
 
@@ -13,31 +18,36 @@ const WebSocketService = {
 			console.log('WebSocket connection opened');
 		};
 
-		(this.socket.onmessage = (event) => {
+		this.socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			dispatch(updateConnectionRequests(data.data));
 			displayNotification(data.data);
-			this.socket.onclose = () => {
-				console.log('WebSocket connection closed');
-			};
+			this.handleMessage(data);
+		};
 
-			this.socket.onerror = (error) => {
-				console.error('WebSocket error:', error);
-			};
-		}),
-			(this.socket.onclose = () => {
-				console.log('WebSocket connection closed');
-			});
+		this.socket.onclose = (event) => {
+			console.log('WebSocket connection closed');
+			// Reconnect only if the socket was not closed intentionally
+			if (!event.wasClean) {
+				console.log('Attempting to reconnect...');
+				this.reconnect(url, token, dispatch);
+			}
+		};
 
 		this.socket.onerror = (error) => {
 			console.error('WebSocket error:', error);
 		};
 	},
 
-	handleMessage(message) {
-		console.log('Handling message:', message);
-		if (message.action === 'sendRequest') {
-			Alert.alert(message.message);
+	reconnect(url, token, dispatch) {
+		setTimeout(() => {
+			this.connect(url, token, dispatch);
+		}, 5000);  
+	},
+
+	handleMessage(data) {
+		if (data.action === 'sendRequest') {
+			Alert.alert(data.message);
 		}
 	},
 
@@ -48,6 +58,7 @@ const WebSocketService = {
 			console.warn('WebSocket is not open');
 		}
 	},
+
 	disconnect() {
 		if (this.socket) {
 			this.socket.close();

@@ -51,6 +51,7 @@ public class PostsService {
         userDetail.setFirstName(user.getFirstName());
         userDetail.setLastName(user.getLastName());
         userDetail.setHeadline(user.getHeadline());
+        userDetail.setUsername(user.getUsername());
         post.setUserDetail(userDetail);
         if (file != null && !file.isEmpty()) {
             try {
