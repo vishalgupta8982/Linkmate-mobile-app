@@ -48,7 +48,9 @@ public class PostsService {
         PostUserDetail userDetail=new PostUserDetail();
         userDetail.setUserId(userId);
         userDetail.setProfilePicture(user.getProfilePicture());
-        userDetail.setUsername(user.getUsername());
+        userDetail.setFirstName(user.getFirstName());
+        userDetail.setLastName(user.getLastName());
+        userDetail.setHeadline(user.getHeadline());
         post.setUserDetail(userDetail);
         if (file != null && !file.isEmpty()) {
             try {

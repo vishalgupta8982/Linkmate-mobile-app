@@ -36,13 +36,12 @@ export default function HomePageHeader({ navigation }) {
 const getStyles = (colors) =>
 	StyleSheet.create({
 		header: {
-			flex: 1,
 			backgroundColor: colors.BACKGROUND,
 			padding: 5,
 			paddingHorizontal: 15,
 			flexDirection: 'row',
 			justifyContent: 'space-between',
-			alignItems: 'center',
+			 
 		},
 		img: {
 			width: 40,
@@ -51,7 +50,6 @@ const getStyles = (colors) =>
 		},
 		icons: {
 			flexDirection: 'row',
-			alignItems: 'center',
 			width: responsiveWidth(20),
 			justifyContent: 'space-between',
 			marginRight: 10,

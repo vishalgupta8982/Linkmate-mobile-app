@@ -67,6 +67,9 @@ export default function CreatePost({ navigation }) {
     try{
       const response =await createPost(filePath,content,fileType);
        if(response){
+		setContent('')
+		setFilePath(null)
+		setFileType(null)
         navigation.navigate("Home")
         Toast.show('Post uploaded successfully', Toast.SHORT);
        }

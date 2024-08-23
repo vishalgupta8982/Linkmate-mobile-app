@@ -12,5 +12,7 @@ public class PostUserDetail {
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId userId;
     private String profilePicture;
-    private String username;
+    private String firstName;
+    private String lastName;
+    private String headline;
 }

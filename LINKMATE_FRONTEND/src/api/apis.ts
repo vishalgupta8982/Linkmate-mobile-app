@@ -11,6 +11,7 @@ import { ExperiencePayload } from '../types/Payload/ExperiencePayload';
 import { ProjectPayload } from '../types/Payload/ProjectPayload';
 import { Search } from '../types/Response/SearchReponse';
 import { Post } from '../types/Response/PostResponse';
+import { PostDataResponse } from '../types/Response/GetPostResponse';
 
 export const userLogin = async (
 	payload: LoginPayload
@@ -174,4 +175,9 @@ export const createPost = async (
 	};
 	const url = `/posts?content=${content}&fileType=${fileType}`;
 	return await post<Post>(url, formData, config);
+};
+
+export const getFeed = async (page:number) => {
+	const url = `/posts/feed?page=${page}&size=5`;
+	return await get<PostDataResponse>(url);
 };
