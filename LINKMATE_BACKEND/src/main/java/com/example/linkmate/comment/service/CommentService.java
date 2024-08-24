@@ -15,6 +15,7 @@ import com.example.linkmate.post.model.Post;
 import com.example.linkmate.post.repository.PostRepository;
 import com.example.linkmate.user.utils.JwtUtil;
 
+import java.util.*;
 @Service
 public class CommentService {
     
@@ -46,6 +47,9 @@ public class CommentService {
         return savedComment;
     }
 
+    public List<Comment> getComment(ObjectId postId){
+        return commentRepository.findByPostId(postId);
+    }
     public String deleteComment(String token,ObjectId commentId,ObjectId postId){
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
     Optional<Comment> optionalComment = commentRepository.findById(commentId);
