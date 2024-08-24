@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.example.linkmate.post.model.PostUserDetail;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -22,8 +23,7 @@ public class Comment {
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    private ObjectId userId;
+     private PostUserDetail userDetail;
     private String content;
 
     @Indexed
