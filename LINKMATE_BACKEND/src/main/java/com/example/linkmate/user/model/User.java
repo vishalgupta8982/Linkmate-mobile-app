@@ -79,6 +79,7 @@ public class User {
     private List<String> skills = new ArrayList<>();
 
     @JsonView(Views.Internal.class)
+    @JsonSerialize(contentUsing = ToStringSerializer.class)
     private List<ObjectId> posts=new ArrayList<>();
 
     @JsonView(Views.Internal.class)
