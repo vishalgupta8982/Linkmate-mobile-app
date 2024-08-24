@@ -40,7 +40,13 @@ export const globalStyles = (colors) =>
 			color: colors.APP_PRIMARY_LIGHT,
 			fontSize: responsiveFontSize(1.8),
 			marginTop:5,
-			lineHeight:responsiveFontSize(2.8)
+			lineHeight:responsiveFontSize(2.6)
+			 
+		},
+		smallFontDescription: {
+			fontFamily: fonts.Inter_Medium,
+			color: colors.APP_PRIMARY_LIGHT,
+			fontSize: responsiveFontSize(1.6),
 			 
 		},
 	});

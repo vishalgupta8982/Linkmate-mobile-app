@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.bson.types.ObjectId;
 import org.checkerframework.checker.units.qual.s;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +62,7 @@ public class CommentService {
     }
 
     public List<Comment> getComment(ObjectId postId){
-        return commentRepository.findByPostId(postId);
+        return commentRepository.findByPostId(postId, Sort.by(Sort.Direction.DESC, "createdAt"));
     }
     public String deleteComment(String token,ObjectId commentId,ObjectId postId){
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
@@ -80,7 +81,8 @@ public class CommentService {
         return "Not authorized to delete this comment";
     }
     commentRepository.deleteById(commentId);
-
+    post.getComments().remove(commentId);
+    postRepository.save(post);
     return"Comment deleted successfully";
     }
 }

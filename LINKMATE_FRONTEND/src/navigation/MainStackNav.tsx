@@ -1,5 +1,8 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+	createNativeStackNavigator,
+	TransitionPresets,
+} from '@react-navigation/native-stack';
 import SplashScreen from '../screens/SplashScreen';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { useCustomTheme } from '../config/Theme';
@@ -14,6 +17,7 @@ import SearchResult from '../screens/Search/SearchResult';
 import  ViewUserProfile from '../screens/Search/ViewProfile'
 import MyConnections from '../screens/Profile/MyConnections';
 import Notification from '../screens/Notification/Notification';
+import Comment from '../components/Comment';
 
 export type RootStackParamList = {
 	Otp:{email:string,firstName:string,lastName:string,password:string},
@@ -62,6 +66,14 @@ function MainStackNav({ navigation }) {
 				<Stack.Screen name="searchResult" component={SearchResult} />
 				<Stack.Screen name="myConnection" component={MyConnections} />
 				<Stack.Screen name="notification" component={Notification} />
+				<Stack.Screen
+					options={{
+						presentation: 'modal',
+						animation: 'slide_from_bottom',
+					}}
+					name="comment"
+					component={Comment}
+				/>
 				<Stack.Screen name="viewUserProfile" component={ViewUserProfile} />
 				<Stack.Screen name="BottomNavigation" component={BottomNavigation} />
 			</Stack.Navigator>

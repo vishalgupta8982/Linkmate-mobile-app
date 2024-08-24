@@ -58,6 +58,7 @@ import themeReducer from './slices/ThemeSlice';
 import authReducer from './slices/authSlice';
 import userDetailsReducer from './slices/UserDetailsSlice';
 import connectionRequestReducer from './slices/ConnectionRequestSlice';
+import postsReducer from './slices/PostSlice';
 
 // Persist config
 const persistConfig = {
@@ -72,6 +73,7 @@ const rootReducer = combineReducers({
 	auth: authReducer,
 	userDetails: userDetailsReducer,
 	connectionRqst: connectionRequestReducer,
+	posts: postsReducer,
 });
 
 // Create persisted reducer

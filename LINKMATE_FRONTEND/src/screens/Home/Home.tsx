@@ -6,7 +6,7 @@ import {
 	FlatList,
 	ActivityIndicator,
 } from 'react-native';
-import React, { useState,useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, store } from '../../redux/store';
 import { getFeed, userDetails } from '../../api/apis';
@@ -20,6 +20,7 @@ import WebSocketService from '../../utils/WebSocketService';
 import { selectToken } from '../../redux/slices/authSlice';
 import { socketUrl } from '../../api/instance';
 import PostCard from '../../components/PostCard';
+import { setPosts } from '../../redux/slices/PostSlice';
 
 export default function Home({ navigation }) {
 	const theme = useCustomTheme();
@@ -28,9 +29,10 @@ export default function Home({ navigation }) {
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(0);
-	const [feedData, setFeedData] = useState([]);
 	const [hasMore, setHasMore] = useState(true);
 	const token = selectToken(store.getState());
+	const feedData = useSelector((state: RootState) => state.posts.posts);
+	 
 	useEffect(() => {
 		WebSocketService.connect(socketUrl, token, dispatch);
 		return () => {
@@ -54,7 +56,7 @@ export default function Home({ navigation }) {
 		try {
 			const response = await getFeed(page);
 			const newFeedData = response.content;
-			setFeedData([...feedData, ...newFeedData]);
+			dispatch(setPosts([...feedData, ...newFeedData]));
 			setPage(page + 1);
 			setHasMore(newFeedData.length > 0);
 		} catch (err) {
@@ -81,7 +83,7 @@ export default function Home({ navigation }) {
 			<HomePageHeader navigation={navigation} />
 			<FlatList
 				data={feedData}
-				keyExtractor={(item) => item.postId}
+				keyExtractor={(item) => item.postId.toString()}
 				renderItem={({ item }) => (
 					<PostCard navigation={navigation} data={item} />
 				)}

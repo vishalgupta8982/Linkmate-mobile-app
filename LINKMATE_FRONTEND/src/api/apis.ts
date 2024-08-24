@@ -12,6 +12,7 @@ import { ProjectPayload } from '../types/Payload/ProjectPayload';
 import { Search } from '../types/Response/SearchReponse';
 import { Post } from '../types/Response/PostResponse';
 import { PostDataResponse } from '../types/Response/GetPostResponse';
+import { CommentPayload } from '../types/Payload/CommentPayload';
 
 export const userLogin = async (
 	payload: LoginPayload
@@ -160,7 +161,7 @@ export const createPost = async (
 			fileName: 'image',
 			type: 'image/jpeg',
 		});
-	} 
+	}
 	if (fileType == 'document') {
 		formData.append('file', {
 			uri: file[0].uri,
@@ -174,18 +175,33 @@ export const createPost = async (
 			'Content-Type': 'multipart/form-data',
 		},
 	};
-	if(file==null){
-const url = `/posts?content=${content}&fileType=${fileType}`;
-console.log(url)
-return await post<Post>(url);
-	}else{
-const url = `/posts?content=${content}&fileType=${fileType}`;
-return await post<Post>(url, formData, config);
+	if (file == null) {
+		const url = `/posts?content=${content}&fileType=${fileType}`;
+		console.log(url);
+		return await post<Post>(url);
+	} else {
+		const url = `/posts?content=${content}&fileType=${fileType}`;
+		return await post<Post>(url, formData, config);
 	}
-	 
 };
 
-export const getFeed = async (page:number) => {
+export const getFeed = async (page: number) => {
 	const url = `/posts/feed?page=${page}&size=5`;
 	return await get<PostDataResponse>(url);
+};
+export const likedPost = async (postId: String) => {
+	const url = `/posts/like/${postId}`;
+	return await post<String>(url);
+};
+export const getCommentPost = async (postId: String) => {
+	const url = `/posts/comment/${postId}`;
+	return await get<Comment>(url);
+};
+export const postComment = async (payload:CommentPayload) => {
+	const url = `/posts/comment`;
+	return await post<Comment>(url, payload);
+};
+export const deleteComment = async (postId:String,commentId:String) => {
+	const url = `/posts/comment/delete?postId=${postId}&commentId=${commentId}`;
+	return await del<Comment>(url);
 };
