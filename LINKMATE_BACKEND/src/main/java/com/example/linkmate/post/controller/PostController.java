@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.linkmate.post.model.Post;
+import com.example.linkmate.post.model.PostUserDetail;
 import com.example.linkmate.post.service.PostsService;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.service.UserService;
@@ -73,5 +74,10 @@ public class PostController {
             @RequestParam int size) {
         Page<Post> posts = postsService.getFeed(token, page, size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @GetMapping("/likedUserDetail/{postId}")
+    public ResponseEntity<List<PostUserDetail>> likedUserDetail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId postId){
+        return new ResponseEntity<>(postsService.getLikedPostUserDetail(token, postId),HttpStatus.OK);
     }
 }

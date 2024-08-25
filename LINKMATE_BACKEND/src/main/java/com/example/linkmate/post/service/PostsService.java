@@ -3,6 +3,7 @@ package com.example.linkmate.post.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,30 @@ public class PostsService {
             return true;
         }
         return false;
+    }
+    
+    public List<PostUserDetail> getLikedPostUserDetail(String token, ObjectId postId) {
+        ObjectId userId = jwtUtil.getUserIdFromToken(token);
+
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (!postOptional.isPresent()) {
+            throw new RuntimeException("Post not found");
+        }
+
+        List<ObjectId> likedByUserIds = postOptional.get().getLikedBy();
+
+        List<User> users = userRepository.findAllById(likedByUserIds);
+        List<PostUserDetail> postUserDetails = users.stream().map(user -> {
+            PostUserDetail detail = new PostUserDetail();
+            detail.setUserId(user.getUserId());
+            detail.setUsername(user.getUsername());
+            detail.setProfilePicture(user.getProfilePicture());
+            detail.setFirstName(user.getFirstName());
+            detail.setLastName(user.getLastName());
+            detail.setHeadline(user.getHeadline());
+            return detail;
+        }).collect(Collectors.toList());
+        return postUserDetails;
     }
 
     public String likePost(String token, ObjectId postId) {
