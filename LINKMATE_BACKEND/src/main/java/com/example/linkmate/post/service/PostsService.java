@@ -73,15 +73,19 @@ public class PostsService {
 
     public Page<Post> findPostByUserId(String token, int page, int size) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return postRepository.findByUserDetail_UserId(userId, pageable);
     }
 
     public boolean deletePost(String token, ObjectId postId) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Post post = postRepository.findByUserDetail_UserIdAndPostId(userId, postId);
         if (post != null) {
             postRepository.delete(post);
+            user.getPosts().remove(postId);
+            userRepository.save(user);
             return true;
         }
         return false;
