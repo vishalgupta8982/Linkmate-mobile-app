@@ -14,11 +14,19 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Autowired
     @Lazy
-    private MyWebSocketHandler myWebSocketHandler;
+    private MyConnectionRequestWebSocketHandler myConnectionRequestWebSocketHandler;
+
+    @Autowired 
+    @Lazy
+    private MyChatWebSocketHandler myChatWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(myWebSocketHandler, "/ws/connection-requests")
+        registry.addHandler(
+                myConnectionRequestWebSocketHandler, "/ws/connection-requests")
                 .setAllowedOrigins("*");  
+        registry.addHandler(
+                myChatWebSocketHandler, "/ws/chat")
+                .setAllowedOrigins("*");
     }
 }

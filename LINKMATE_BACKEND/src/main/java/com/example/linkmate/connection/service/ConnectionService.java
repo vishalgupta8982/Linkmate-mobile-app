@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.example.linkmate.config.MyWebSocketHandler;
+import com.example.linkmate.config.MyConnectionRequestWebSocketHandler;
 import com.example.linkmate.connection.model.Connection;
 import com.example.linkmate.connection.model.ConnectionRequestDetail;
 import com.example.linkmate.connection.model.ConnectionStatus;
@@ -41,7 +41,7 @@ public class ConnectionService {
 
         @Autowired
         @Lazy
-        private MyWebSocketHandler webSocketHandler;
+        private MyConnectionRequestWebSocketHandler myConnectionRequestWebSocketHandler;
 
         // api for send connnection request
         public Connection sendConnectionRequest(String token, ObjectId connectedUserId) {
@@ -71,7 +71,6 @@ public class ConnectionService {
                 user.getSendConnectionsRequest().add(connectedUserId);
                 userRepository.save(user);
                 userRepository.save(connectedUser);
-
                 ConnectionRequestDetail detail = new ConnectionRequestDetail();
                 detail.setFirstName(user.getFirstName());
                 detail.setLastName(user.getLastName());
@@ -79,7 +78,7 @@ public class ConnectionService {
                 detail.setUsername(user.getUsername());
                 detail.setUserId(userId);
                 detail.setProfilePicture(user.getProfilePicture());
-                webSocketHandler.sendConnectionRequestUpdate(
+                myConnectionRequestWebSocketHandler.sendConnectionRequestUpdate(
                                 connectedUser.getToken(),
                                 detail);
 
