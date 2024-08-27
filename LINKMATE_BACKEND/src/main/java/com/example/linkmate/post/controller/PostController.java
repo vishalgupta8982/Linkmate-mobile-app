@@ -46,9 +46,9 @@ public class PostController {
     }
 
     @GetMapping("/userPosts")
-    public ResponseEntity<Page<Post>> getPostsByUserId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Page<PostResponse>> getPostsByUserId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestParam int page, @RequestParam int size) {
         System.out.println(page+""+size);
-        Page<Post> posts = postsService.findPostByUserId(token,page,size);
+        Page<PostResponse> posts = postsService.findPostByUserId(token,page,size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 

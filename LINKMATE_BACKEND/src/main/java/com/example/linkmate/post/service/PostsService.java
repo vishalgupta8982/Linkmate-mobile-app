@@ -73,11 +73,23 @@ public class PostsService {
         return postRepository.findById(id);
     }
 
-    public Page<Post> findPostByUserId(String token, int page, int size) {
+    public Page<PostResponse> findPostByUserId(String token, int page, int size) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return postRepository.findByUserId(userId, pageable);
+        Page<Post> postPage = postRepository.findByUserId(userId, pageable);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        PostUserDetail postUserDetail = new PostUserDetail();
+        postUserDetail.setUserId(user.getUserId());
+        postUserDetail.setProfilePicture(user.getProfilePicture());
+        postUserDetail.setFirstName(user.getFirstName());
+        postUserDetail.setLastName(user.getLastName());
+        postUserDetail.setHeadline(user.getHeadline());
+        postUserDetail.setUsername(user.getUsername());
+        List<PostResponse> postResponses = postPage.getContent().stream()
+                .map(post -> new PostResponse(post, postUserDetail))
+                .collect(Collectors.toList());
+        return new PageImpl<>(postResponses, pageable, postPage.getTotalElements());
     }
 
     public boolean deletePost(String token, ObjectId postId) {
