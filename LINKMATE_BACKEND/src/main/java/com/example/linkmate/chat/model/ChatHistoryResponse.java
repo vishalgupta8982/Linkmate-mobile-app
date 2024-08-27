@@ -12,6 +12,6 @@ import lombok.Data;
 public class ChatHistoryResponse {
     
     private Page<Chat> chatHistory;
-    private PostUserDetail postUserDetail;
+    private PostUserDetail chatRecieverUserDetail;
 
 }
