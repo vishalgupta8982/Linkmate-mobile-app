@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.linkmate.post.model.Post;
+import com.example.linkmate.post.model.PostResponse;
 import com.example.linkmate.post.model.PostUserDetail;
 import com.example.linkmate.post.service.PostsService;
 import com.example.linkmate.user.model.User;
@@ -29,11 +30,11 @@ public class PostController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<Post> createPost(
+    public ResponseEntity<PostResponse> createPost(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestParam(required = false) String content, @RequestParam String fileType) {
-        Post createdPost = postsService.createPost(content, fileType, file, token);
+        PostResponse createdPost = postsService.createPost(content, fileType, file, token);
         return new ResponseEntity<>(createdPost, HttpStatus.OK);
     }
 
@@ -68,11 +69,11 @@ public class PostController {
     }
 
     @GetMapping("/feed")
-    public ResponseEntity<Page<Post>> getFeed(
+    public ResponseEntity<Page<PostResponse>> getFeed(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam int page,
             @RequestParam int size) {
-        Page<Post> posts = postsService.getFeed(token, page, size);
+        Page<PostResponse> posts = postsService.getFeed(token, page, size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 

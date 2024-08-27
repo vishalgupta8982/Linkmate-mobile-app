@@ -17,22 +17,23 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import lombok.Data;
+
 @Document(collection = "posts")
 @Data
 public class Post {
     @Id
-    @JsonSerialize(using= ToStringSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId postId;
-
- private PostUserDetail userDetail;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private ObjectId userId;
     private String content;
     private String fileUrl;
     private String fileType;
 
-    @Indexed(direction = IndexDirection.DESCENDING)   
+    @Indexed(direction = IndexDirection.DESCENDING)
     private LocalDateTime createdAt;
     @JsonSerialize(contentUsing = ToStringSerializer.class)
-    private List<ObjectId> comments=new ArrayList<>();
+    private List<ObjectId> comments = new ArrayList<>();
     @JsonSerialize(contentUsing = ToStringSerializer.class)
-    private List<ObjectId> likedBy= new ArrayList<>();
+    private List<ObjectId> likedBy = new ArrayList<>();
 }

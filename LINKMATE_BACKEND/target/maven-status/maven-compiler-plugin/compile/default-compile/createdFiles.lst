@@ -19,6 +19,7 @@ com\example\linkmate\chat\controllers\ChatController.class
 com\example\linkmate\chat\repository\ChatRepository.class
 com\example\linkmate\config\WebSocketConfig.class
 com\example\linkmate\post\controller\PostController.class
+com\example\linkmate\post\model\PostResponse.class
 com\example\linkmate\user\model\EmploymentPreference.class
 com\example\linkmate\post\repository\PostRepository.class
 com\example\linkmate\connection\controller\ConnectionController.class
