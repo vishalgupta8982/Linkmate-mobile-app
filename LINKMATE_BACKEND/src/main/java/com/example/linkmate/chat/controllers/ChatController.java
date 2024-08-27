@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.*;
 import com.example.linkmate.chat.model.Chat;
+import com.example.linkmate.chat.model.ChatHistoryResponse;
 import com.example.linkmate.chat.model.AllInteractionDto;
 import com.example.linkmate.chat.services.ChatService;
 
@@ -30,10 +31,10 @@ public class ChatController {
     private ChatService chatService;
 
     @GetMapping("/history")
-    public ResponseEntity<Page<Chat>> getChatHistory(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<ChatHistoryResponse> getChatHistory(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam ObjectId connectionUserId, @RequestParam int page,
             @RequestParam int size) {
-        Page<Chat> chatHistory = chatService.getChatHistory(token, connectionUserId, page, size);
+        ChatHistoryResponse chatHistory = chatService.getChatHistory(token, connectionUserId, page, size);
         return new ResponseEntity<>(chatHistory, HttpStatus.OK);
     }
     @DeleteMapping("/delete/{messageId}")

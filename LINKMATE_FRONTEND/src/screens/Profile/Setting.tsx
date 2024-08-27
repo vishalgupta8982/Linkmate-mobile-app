@@ -35,7 +35,6 @@ export default function Setting({ navigation }) {
 	const handleLogout = async () => {
 		dispatch(clearToken());
 		WebSocketService.disconnect();
-		dispatch(clearUserDetail());
 		await navigation.replace('Login');
 	};
 	return (

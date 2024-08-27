@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import React, { FunctionComponent, useEffect } from 'react';
- 
+ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import MainStackNav from './src/navigation/MainStackNav';
 import { Provider } from 'react-redux';
@@ -14,14 +14,14 @@ const App: FunctionComponent = () => {
 	let persistor = persistStore(store);
   
 	return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-          <SafeAreaProvider>
-            <MainStackNav />
-          </SafeAreaProvider>
-      </PersistGate>
-    </Provider>
-  )
+			<Provider store={store}>
+				<PersistGate loading={null} persistor={persistor}>
+					<SafeAreaProvider>
+						<MainStackNav />
+					</SafeAreaProvider>
+				</PersistGate>
+			</Provider>
+	);
 };
 
 export default App;

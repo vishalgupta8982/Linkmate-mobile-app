@@ -25,9 +25,6 @@ export default function HomePageHeader({ navigation }) {
 				>
 					<Feather name="bell" size={24} color={colors.TEXT} />
 				</TouchableOpacity>
-				<TouchableOpacity activeOpacity={0.4}>
-					<Feather name="send" size={24} color={colors.TEXT} />
-				</TouchableOpacity>
 			</View>
 		</View>
 	);
@@ -51,8 +48,8 @@ const getStyles = (colors) =>
 		},
 		icons: {
 			flexDirection: 'row',
-			width: responsiveWidth(20),
+			width: responsiveWidth(10),
 			justifyContent: 'space-between',
-			marginRight: 10,
+			 
 		},
 	});

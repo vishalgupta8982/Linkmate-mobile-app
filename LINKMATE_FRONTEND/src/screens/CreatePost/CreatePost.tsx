@@ -31,7 +31,7 @@ export default function CreatePost({ navigation }) {
 	const [content, setContent] = useState('');
 	const [filePath, setFilePath] = useState(null);
 	const [fileType, setFileType] = useState('content');
-  const [loading,setLoading]=useState(false)
+	const [loading, setLoading] = useState(false);
 	const chooseImage = () => {
 		ImagePicker.openPicker({
 			cropping: false,
@@ -39,7 +39,7 @@ export default function CreatePost({ navigation }) {
 			compressImageMaxHeight: 800,
 		})
 			.then((image) => {
-				setFileType("image");
+				setFileType('image');
 				setFilePath(image);
 			})
 			.catch((e) => console.log(e));
@@ -59,31 +59,31 @@ export default function CreatePost({ navigation }) {
 			}
 		}
 	};
-  const handlePost=async()=>{
-    setLoading(true)
-    if(content.length<1 && !filePath){
-      Toast.show('Write something to post or choose file', Toast.SHORT);
-	  return;
-    }
-    try{
-      const response = await createPost(
+	const handlePost = async () => {
+		setLoading(true);
+		if (content.length < 1 && !filePath) {
+			Toast.show('Write something to post or choose file', Toast.SHORT);
+			return;
+		}
+		try {
+			const response = await createPost(
 				filePath,
 				encodeURIComponent(content),
 				fileType
 			);
-       if(response){
-		setContent('')
-		setFilePath(null)
-		setFileType(null)
-        navigation.navigate("Home")
-        Toast.show('Post uploaded successfully', Toast.SHORT);
-       }
-    }catch(err){
-      console.error(err)
-    }finally{
-      setLoading(false)
-    }
-  }
+			if (response) {
+				setContent('');
+				setFilePath(null);
+				setFileType(null);
+				navigation.navigate('Home', { fromCreatePost: true });
+				Toast.show('Post uploaded successfully', Toast.SHORT);
+			}
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setLoading(false);
+		}
+	};
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.header}>
@@ -105,6 +105,7 @@ export default function CreatePost({ navigation }) {
 					style={styles.input}
 					placeholderTextColor={colors.APP_PRIMARY_LIGHT}
 					placeholder="Write something here..."
+					value={content}
 					onChangeText={setContent}
 				/>
 			</View>

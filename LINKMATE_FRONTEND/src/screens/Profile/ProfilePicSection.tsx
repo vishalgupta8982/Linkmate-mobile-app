@@ -33,17 +33,21 @@ export default function ProfilePicSection({ navigation, data }) {
 						uri: data?.profilePicture.length > 0 ? data?.profilePicture : null,
 					}}
 				/>
+
 				<View style={styles.countMainCont}>
-					<View style={styles.count}>
-						<Text style={styles.countText}>0</Text>
-						<Text style={styles.countHead}>Posts</Text>
-					</View>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => navigation.navigate('userPosts')}
+					>
+						<View style={styles.count}>
+							<Text style={styles.countText}>{data.posts.length}</Text>
+							<Text style={styles.countHead}>Posts</Text>
+						</View>
+					</TouchableOpacity>
 					<TouchableOpacity
 						activeOpacity={0.4}
 						onPress={() => navigation.navigate('myConnection')}
-					>
-						
-					</TouchableOpacity>
+					></TouchableOpacity>
 					<TouchableOpacity
 						activeOpacity={0.4}
 						onPress={() => navigation.navigate('myConnection')}

@@ -18,6 +18,9 @@ import  ViewUserProfile from '../screens/Search/ViewProfile'
 import MyConnections from '../screens/Profile/MyConnections';
 import Notification from '../screens/Notification/Notification';
 import Comment from '../components/Comment';
+import UserPost from '../screens/Profile/UserPost';
+import Likes from '../components/Likes';
+import UserChatDetail from '../screens/Chat/UserChatDetail';
 
 export type RootStackParamList = {
 	Otp:{email:string,firstName:string,lastName:string,password:string},
@@ -66,6 +69,9 @@ function MainStackNav({ navigation }) {
 				<Stack.Screen name="searchResult" component={SearchResult} />
 				<Stack.Screen name="myConnection" component={MyConnections} />
 				<Stack.Screen name="notification" component={Notification} />
+				<Stack.Screen name="userPosts" component={UserPost} />
+				<Stack.Screen name="likes" component={Likes} />
+				<Stack.Screen name="userChatDetail" component={UserChatDetail} />
 				<Stack.Screen
 					options={{
 						presentation: 'modal',

@@ -13,6 +13,8 @@ import { Search } from '../types/Response/SearchReponse';
 import { Post } from '../types/Response/PostResponse';
 import { PostDataResponse } from '../types/Response/GetPostResponse';
 import { CommentPayload } from '../types/Payload/CommentPayload';
+import { chatInteraction } from '../types/Response/ChatInteractionResponse';
+import { chatHistoryResponse } from '../types/Response/ChatHistoryResponse';
 
 export const userLogin = async (
 	payload: LoginPayload
@@ -197,11 +199,31 @@ export const getCommentPost = async (postId: String) => {
 	const url = `/posts/comment/${postId}`;
 	return await get<Comment>(url);
 };
-export const postComment = async (payload:CommentPayload) => {
+export const postComment = async (payload: CommentPayload) => {
 	const url = `/posts/comment`;
 	return await post<Comment>(url, payload);
 };
-export const deleteComment = async (postId:String,commentId:String) => {
+export const deleteComment = async (postId: String, commentId: String) => {
 	const url = `/posts/comment/delete?postId=${postId}&commentId=${commentId}`;
 	return await del<Comment>(url);
+};
+export const getUserPost = async (page: number) => {
+	const url = `/posts/userPosts?page=${page}&size=5`;
+	return await get<PostDataResponse>(url);
+};
+export const deletePost = async (postId: String) => {
+	const url = `/posts/delete/${postId}`;
+	return await del<String>(url);
+};
+export const getPostLikedUserDetail = async (postId: String) => {
+	const url = `/posts/likedUserDetail/${postId}`;
+	return await get<Search>(url);
+};
+export const getChatInteraction = async () => {
+	const url = `/chat/all-interactions`;
+	return await get<chatInteraction>(url);
+};
+export const getChatHistory = async (userId:String,page:number) => {
+	const url = `/chat/history?connectionUserId=${userId}&page=${page}&size=10`;
+	return await get<chatHistoryResponse>(url);
 };

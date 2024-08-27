@@ -8,7 +8,8 @@ import Home from '../screens/Home/Home';
 import CreatePost from '../screens/CreatePost/CreatePost';
 import Profile from '../screens/Profile/Profile';
 import Search from '../screens/Search/Search';
-
+import Feather from 'react-native-vector-icons/Feather'
+import Chat from '../screens/Chat/Chat';
 const Tab = createBottomTabNavigator();
 
 const BottomNavigation = () => {
@@ -30,6 +31,8 @@ const BottomNavigation = () => {
 						return <Ionicons name={iconName} size={size} color={color} />;
 					} else if (route.name === 'Search') {
 						return <Ionicons name={'search-outline'} size={24} color={color} />;
+					} else if (route.name === 'Chat') {
+						return <Feather name={'message-square'} size={22} color={color} />;
 					} else if (route.name === 'Profile') {
 						return (
 							<MaterialCommunityIcon
@@ -44,12 +47,14 @@ const BottomNavigation = () => {
 			tabBarOptions={{
 				activeTintColor: colors.PRIMARY,
 				inactiveTintColor: colors.TEXT,
+				showLabel: false,
 			}}
 		>
 			<Tab.Screen name="Home" component={Home} />
 			<Tab.Screen name="Search" component={Search} />
 			<Tab.Screen name="Post" component={CreatePost} />
 			<Tab.Screen name="Profile" component={Profile} />
+			<Tab.Screen name="Chat" component={Chat} />
 		</Tab.Navigator>
 	);
 };

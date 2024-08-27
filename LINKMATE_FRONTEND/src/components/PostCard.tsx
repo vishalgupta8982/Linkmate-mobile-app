@@ -10,9 +10,10 @@ import {
 	ScrollView,
 	FlatList,
 } from 'react-native';
+
 import React, { useEffect, useState } from 'react';
 import { useCustomTheme } from '../config/Theme';
-import { getCommentPost, likedPost } from '../api/apis';
+import { deletePost, getCommentPost, likedPost } from '../api/apis';
 import { globalStyles } from '../StylesSheet';
 import { fonts } from '../config/Fonts';
 import moment from 'moment';
@@ -24,6 +25,7 @@ import {
 	responsiveFontSize,
 	responsiveWidth,
 } from 'react-native-responsive-dimensions';
+import Pdf from 'react-native-pdf';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -32,12 +34,14 @@ import Animated, {
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { toggleLike } from '../redux/slices/PostSlice';
+import { removePost, setFeedPosts, setUserPosts, toggleLike } from '../redux/slices/PostSlice';
 import Comment from './Comment';
- 
+import CustomAlertDialog from './CustomAlertDialog';
 
 export default function PostCard({ data, navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
+	const userPosts = useSelector((state: RootState) => state.posts.userPosts);
+	const feedPosts = useSelector((state: RootState) => state.posts.feedPosts);
 	const dispatch = useDispatch();
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -45,6 +49,9 @@ export default function PostCard({ data, navigation }) {
 	const globalStyleSheet = globalStyles(colors);
 	const [readMore, setReadMore] = useState(false);
 	const [imageHeight, setImageHeight] = useState(0);
+	const [pageNumber, setPageNumber] = useState(1);
+	const [totalPages, setTotalPages] = useState(0);
+	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
 	const [commentModalVisible, setCommentModalVisible] = useState(false);
 	useEffect(() => {
 		if (data.fileType == 'image') {
@@ -77,12 +84,31 @@ export default function PostCard({ data, navigation }) {
 	};
 
 	const handleLike = async (postId: String, userId: String) => {
-		dispatch(toggleLike({ postId, userId }));
 		try {
 			await likedPost(postId);
 		} catch (err) {
 			dispatch(toggleLike({ postId, userId }));
 			Toast.show('Something went wrong', Toast.SHORT);
+		}
+	};
+	const handleDelete = async () => {
+		setAlertDialogVisible(false)
+		const deletedUserPost = userPosts.find((post) => post.postId === data.postId);
+		const deletedFeedPost = feedPosts.find(
+			(post) => post.postId === data.postId
+		);
+		dispatch(removePost({ postId: data.postId }));
+		try {
+			const response = await deletePost(data.postId);
+		} catch (err) {
+			console.log(err)
+			Toast.show('Something went wrong', Toast.SHORT);
+			if (deletedUserPost) {
+				dispatch(setUserPosts([...userPosts, deletedUserPost]));
+			}
+			if (deletedFeedPost) {
+				dispatch(setFeedPosts([...feedPosts, deletedFeedPost]));
+			}
 		}
 	};
 	return (
@@ -123,13 +149,20 @@ export default function PostCard({ data, navigation }) {
 								.fromNow()}
 						</Text>
 					</View>
-					<MaterialCommunityIcon
-						marginLeft="auto"
-						name="dots-vertical"
-						color={colors.TEXT}
-						padding={3}
-						size={24}
-					/>
+					{userData?.posts.includes(data.postId) && (
+						<TouchableOpacity
+							style={{ marginLeft: 'auto' }}
+							activeOpacity={0.4}
+							onPress={() => setAlertDialogVisible(true)}
+						>
+							<MaterialCommunityIcon
+								name="dots-vertical"
+								color={colors.TEXT}
+								padding={3}
+								size={24}
+							/>
+						</TouchableOpacity>
+					)}
 				</View>
 			</TouchableOpacity>
 			{data.content && (
@@ -152,9 +185,38 @@ export default function PostCard({ data, navigation }) {
 					source={{ uri: data.fileUrl }}
 				/>
 			)}
+
+			{data.fileType === 'document' && (
+				<>
+					<Pdf
+						source={{
+							uri: data.fileUrl,
+						}}
+						trustAllCerts={Platform.OS === 'ios'}
+						style={styles.pdf}
+						horizontal={true}
+						onLoadComplete={(numberOfPages) => {
+							setTotalPages(numberOfPages);
+						}}
+						onPageChanged={(page) => {
+							setPageNumber(page);
+						}}
+					/>
+					<View style={styles.pageNumber}>
+						<Text style={globalStyleSheet.smallestHead}>
+							Page {pageNumber} of {totalPages}
+						</Text>
+					</View>
+				</>
+			)}
 			<View style={styles.iconCont}>
 				<TouchableOpacity
-					onPress={() => handlePress(data.postId, userData.userId)}
+					onPress={() => {
+						dispatch(
+							toggleLike({ postId: data.postId, userId: userData.userId })
+						);
+						handlePress(data.postId, userData.userId);
+					}}
 				>
 					<Animated.View style={animatedStyle}>
 						{data.likedBy.includes(userData.userId) ? (
@@ -164,26 +226,44 @@ export default function PostCard({ data, navigation }) {
 						)}
 					</Animated.View>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => navigation.navigate("comment",{postId:data.postId})}>
-					<Octicons padding={3} name="comment" size={24} color={colors.TEXT} />
-				</TouchableOpacity>
-				<Octicons padding={3} name="share" size={24} color={colors.TEXT} />
-			</View>
-			<View style={styles.likesCont}>
-				<Text style={globalStyleSheet.smallestHead}>
-					{data.likedBy.length} likes
-				</Text>
 				<TouchableOpacity
 					onPress={() =>
 						navigation.navigate('comment', { postId: data.postId })
 					}
 				>
-				<Text  style={globalStyleSheet.description}>
-					{data.comments.length < 1
-						? 'Write first comment..'
-						: `View all ${data.comments.length} comments`}
-				</Text>
+					<Octicons padding={3} name="comment" size={24} color={colors.TEXT} />
 				</TouchableOpacity>
+				<Octicons padding={3} name="share" size={24} color={colors.TEXT} />
+			</View>
+			<View style={styles.likesCont}>
+				<TouchableOpacity
+					onPress={() =>
+						navigation.navigate('likes', { postId: data.postId })
+					}
+				>
+					<Text style={globalStyleSheet.smallestHead}>
+						{data.likedBy.length} likes
+					</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					onPress={() =>
+						navigation.navigate('comment', { postId: data.postId })
+					}
+				>
+					<Text style={globalStyleSheet.description}>
+						{data.comments.length < 1
+							? 'Write first comment..'
+							: `View all ${data.comments.length} comments`}
+					</Text>
+				</TouchableOpacity>
+				<CustomAlertDialog
+					isOpen={alertDialogVisible}
+					onClose={() => setAlertDialogVisible(false)}
+					title={'Delete post'}
+					message={'Are you sure you want to delete post?'}
+					ButtonText={'Delete'}
+					onConfirm={handleDelete}
+				/>
 			</View>
 		</View>
 	);
@@ -251,7 +331,19 @@ const getStyles = (colors) =>
 			backgroundColor: 'rgba(0,0,0,0.3)',
 		},
 		modalContent: {
-			width: '100%',  
+			width: '100%',
 			borderRadius: 16,
+		},
+		pdf: {
+			flex: 1,
+			width: width,
+			height: height / 2,
+		},
+		pageNumber: {
+			backgroundColor: colors.BACKGORUND,
+			paddingHorizontal: 15,
+			padding: 5,
+			borderBottomWidth: 0.3,
+			borderColor: colors.APP_PRIMARY_LIGHT,
 		},
 	});

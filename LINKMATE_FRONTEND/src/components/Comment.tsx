@@ -45,7 +45,6 @@ export default function Comment({ navigation }) {
 		setLoader(true);
 		try {
 			const response = await getCommentPost(postId);
-			console.log(response);
 			if (response) {
 				setComment(response);
 			}
@@ -92,7 +91,6 @@ export default function Comment({ navigation }) {
 				prevComments.filter((comment) => comment.id !== dltCommentId)
 			);
 			const response = await deleteComment(postId, dltCommentId);
-			console.log(response)
 			if (response) {
 				dispatch(removeCommentFromPost({ postId, commentId: dltCommentId }));
 			}
@@ -104,6 +102,7 @@ export default function Comment({ navigation }) {
 			setDltCommentId('');
 		}
 	};
+	
 	return (
 		<View style={styles.sheet}>
 			{loader && <Loader />}
@@ -161,10 +160,13 @@ export default function Comment({ navigation }) {
 												.fromNow()}
 										</Text>
 									</View>
-									{(userData.userId == item.userDetail.userId ||
+									{(userData.userId === item.userDetail.userId ||
 										userData.posts.includes(item.postId)) && (
 										<TouchableOpacity
-											onPress={() => {setDltCommentId(item.id);setAlertDialogVisible(true)}}
+											onPress={() => {
+												setDltCommentId(item.id);
+												setAlertDialogVisible(true);
+											}}
 											activeOpacity={0.4}
 										>
 											<MaterialCommunityIcon

@@ -42,6 +42,7 @@ export default function Search({ navigation }) {
 	}, [userData]);
 	return (
 		<View style={styles.mainCont}>
+		{loader &&(<Loader/>)}
 			<ScrollView>
 				<TouchableOpacity
 					activeOpacity={0.4}

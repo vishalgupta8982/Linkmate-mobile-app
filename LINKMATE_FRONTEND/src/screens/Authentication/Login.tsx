@@ -6,7 +6,7 @@ import {
 	TouchableOpacity,
 	ScrollView,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	responsiveHeight,
 	responsiveWidth,
@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectToken, setToken } from '../../redux/slices/authSlice';
 import Loader from '../../components/Loader';
 import { persistor, RootState } from '../../redux/store';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import { clearUserDetail, setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Login({ navigation }) {
 	const [email, setEmail] = useState('');
@@ -37,10 +37,11 @@ export default function Login({ navigation }) {
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
+	useEffect(()=>{
+		dispatch(clearUserDetail());
+	},[])
 	const handleLogin = async () => {
-		
 		setLoading(true);
-
 		const payload: LoginPayload = {
 			email: email.trim(),
 			password: password.trim(),

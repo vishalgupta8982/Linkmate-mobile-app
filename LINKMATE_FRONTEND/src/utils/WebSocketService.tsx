@@ -20,14 +20,13 @@ const WebSocketService = {
 
 		this.socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
+			console.log(data)
 			dispatch(updateConnectionRequests(data.data));
 			displayNotification(data.data);
 			this.handleMessage(data);
 		};
-
 		this.socket.onclose = (event) => {
 			console.log('WebSocket connection closed');
-			// Reconnect only if the socket was not closed intentionally
 			if (!event.wasClean) {
 				console.log('Attempting to reconnect...');
 				this.reconnect(url, token, dispatch);

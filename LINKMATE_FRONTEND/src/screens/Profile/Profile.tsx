@@ -22,6 +22,7 @@ import { userDetails } from '../../api/apis';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import Loader from '../../components/Loader';
+import UserPost from './UserPost';
 const HEADER_HEIGHT = 250;
 
 const DATA = [0, 1, 2, 3, 4];

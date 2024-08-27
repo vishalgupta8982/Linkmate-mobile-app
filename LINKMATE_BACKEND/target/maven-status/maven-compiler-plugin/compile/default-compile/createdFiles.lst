@@ -37,6 +37,7 @@ com\example\linkmate\post\service\PostsService.class
 com\example\linkmate\user\model\Education.class
 com\example\linkmate\user\model\Experience.class
 com\example\linkmate\user\repository\UserRepositoryCustom.class
+com\example\linkmate\chat\model\ChatHistoryResponse.class
 com\example\linkmate\chat\services\ChatService.class
 com\example\linkmate\user\service\UserService.class
 com\example\linkmate\user\utils\GenerateUniqueUserName.class

@@ -10,7 +10,7 @@ import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, store } from '../../redux/store';
 import { getFeed, userDetails } from '../../api/apis';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import { useEffect } from 'react';
 import Loader from '../../components/Loader';
@@ -20,19 +20,21 @@ import WebSocketService from '../../utils/WebSocketService';
 import { selectToken } from '../../redux/slices/authSlice';
 import { socketUrl } from '../../api/instance';
 import PostCard from '../../components/PostCard';
-import { setPosts } from '../../redux/slices/PostSlice';
+import { setFeedPosts, setPosts } from '../../redux/slices/PostSlice';
 
 export default function Home({ navigation }) {
+	const route = useRoute();
+	const { fromCreatePost } = route.params || false;
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const dispatch = useDispatch();
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(0);
 	const [hasMore, setHasMore] = useState(true);
+
 	const token = selectToken(store.getState());
-	const feedData = useSelector((state: RootState) => state.posts.posts);
-	 
+	const feedData = useSelector((state: RootState) => state.posts.feedPosts);
 	useEffect(() => {
 		WebSocketService.connect(socketUrl, token, dispatch);
 		return () => {
@@ -56,7 +58,7 @@ export default function Home({ navigation }) {
 		try {
 			const response = await getFeed(page);
 			const newFeedData = response.content;
-			dispatch(setPosts([...feedData, ...newFeedData]));
+			dispatch(setFeedPosts([...feedData, ...newFeedData]));
 			setPage(page + 1);
 			setHasMore(newFeedData.length > 0);
 		} catch (err) {
@@ -67,35 +69,32 @@ export default function Home({ navigation }) {
 	};
 
 	useEffect(() => {
-		setLoading(true);
 		fetchFeed();
 		fetchUserDetails();
 	}, []);
-	useFocusEffect(
-		useCallback(() => {
-			fetchFeed();
-			return () => {};
-		}, [])
-	);
-
+ 
 	return (
 		<View style={styles.mainCont}>
 			<HomePageHeader navigation={navigation} />
-			<FlatList
-				data={feedData}
-				keyExtractor={(item) => item.postId.toString()}
-				renderItem={({ item }) => (
-					<PostCard navigation={navigation} data={item} />
-				)}
-				onEndReached={fetchFeed}
-				onEndReachedThreshold={0.5}
-				ListFooterComponent={
-					<ActivityIndicator size={32} color={colors.PRIMARY} />
-				}
-			/>
+			{loading &&(<Loader/>)}
+			{!loading && (
+				<FlatList
+					data={feedData}
+					keyExtractor={(item) => item.postId.toString()}
+					renderItem={({ item }) => (
+						<PostCard navigation={navigation} data={item} />
+					)}
+					onEndReached={fetchFeed}
+					onEndReachedThreshold={0.5}
+					ListFooterComponent={
+						hasMore && <ActivityIndicator size={32} color={colors.PRIMARY} />
+					}
+				/>
+			)}
 		</View>
 	);
 }
+ 
 
 const getStyles = (colors) =>
 	StyleSheet.create({
