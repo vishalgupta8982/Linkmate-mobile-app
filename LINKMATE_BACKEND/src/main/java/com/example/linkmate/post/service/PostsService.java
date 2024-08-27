@@ -172,4 +172,5 @@ public class PostsService {
 
         return new PageImpl<>(postResponses, pageable, postsPage.getTotalElements());
     }
+
 }
