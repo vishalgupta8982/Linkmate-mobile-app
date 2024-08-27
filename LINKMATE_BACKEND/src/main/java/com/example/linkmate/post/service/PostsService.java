@@ -48,6 +48,14 @@ public class PostsService {
         savedPost.setCreatedAt(LocalDateTime.now());
         savedPost.setFileType(fileType);
         savedPost.setUserId(userId);
+        if (file != null && !file.isEmpty()) {
+            try {
+                String fileUrl = cloudinaryService.uploadFile(file);
+                savedPost.setFileUrl(fileUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Invalid file");
+            }
+        }
         Post post = postRepository.save(savedPost);
         PostUserDetail postUserDetail = new PostUserDetail();
         postUserDetail.setUserId(userId);
@@ -56,14 +64,6 @@ public class PostsService {
         postUserDetail.setLastName(user.getLastName());
         postUserDetail.setHeadline(user.getHeadline());
         postUserDetail.setUsername(user.getUsername());
-        if (file != null && !file.isEmpty()) {
-            try {
-                String fileUrl = cloudinaryService.uploadFile(file);
-                post.setFileUrl(fileUrl);
-            } catch (IOException e) {
-                throw new RuntimeException("Invalid file");
-            }
-        }
         user.getPosts().add(post.getPostId());
         userRepository.save(user);
         return new PostResponse(post, postUserDetail);
