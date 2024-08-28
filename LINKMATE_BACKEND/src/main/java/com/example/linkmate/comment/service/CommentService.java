@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.linkmate.comment.model.Comment;
+import com.example.linkmate.comment.model.CommentResponse;
 import com.example.linkmate.comment.repository.CommentRepository;
 import com.example.linkmate.post.model.Post;
 import com.example.linkmate.post.model.PostUserDetail;
@@ -19,6 +20,7 @@ import com.example.linkmate.user.repository.UserRepository;
 import com.example.linkmate.user.utils.JwtUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 @Service
 public class CommentService {
     
@@ -35,18 +37,11 @@ public class CommentService {
     @Autowired
     private UserRepository userRepository;
 
-    public Comment addComment(String token,Comment comment){
+    public CommentResponse addComment(String token,Comment comment){
         ObjectId userId=jwtUtil.getUserIdFromToken(token);
          User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         comment.setCreatedAt(LocalDateTime.now());
-        PostUserDetail commentUserDetail=new PostUserDetail();
-        commentUserDetail.setUserId(userId);
-        commentUserDetail.setProfilePicture(user.getProfilePicture());
-        commentUserDetail.setFirstName(user.getFirstName());
-        commentUserDetail.setLastName(user.getLastName());
-        commentUserDetail.setHeadline(user.getHeadline());
-        commentUserDetail.setUsername(user.getUsername());
-        comment.setUserDetail(commentUserDetail);
+        comment.setUserId(userId);
         Comment savedComment = commentRepository.save(comment);
         ObjectId commentId = savedComment.getId();
         Optional<Post> postOptional=postRepository.findById(savedComment.getPostId());
@@ -58,12 +53,43 @@ public class CommentService {
         else {
             throw new RuntimeException("Post not found");
         }
-        return savedComment;
+        PostUserDetail commentUserDetail = new PostUserDetail();
+        commentUserDetail.setUserId(userId);
+        commentUserDetail.setProfilePicture(user.getProfilePicture());
+        commentUserDetail.setFirstName(user.getFirstName());
+        commentUserDetail.setLastName(user.getLastName());
+        commentUserDetail.setHeadline(user.getHeadline());
+        commentUserDetail.setUsername(user.getUsername());
+        return new CommentResponse(savedComment, commentUserDetail);
     }
 
-    public List<Comment> getComment(ObjectId postId){
-        return commentRepository.findByPostId(postId, Sort.by(Sort.Direction.DESC, "createdAt"));
-    }
+   public List<CommentResponse> getComment(ObjectId postId) {
+    List<Comment> comments = commentRepository.findByPostId(postId, Sort.by(Sort.Direction.DESC, "createdAt"));
+    Set<ObjectId> userIds = comments.stream()
+        .map(Comment::getUserId)
+        .collect(Collectors.toSet());
+    List<User> users = userRepository.findAllById(userIds);
+    Map<ObjectId, PostUserDetail> userDetailMap = users.stream()
+        .collect(Collectors.toMap(
+            User::getUserId,
+            user -> {
+                PostUserDetail userDetail = new PostUserDetail();
+                userDetail.setUserId(user.getUserId());
+                userDetail.setProfilePicture(user.getProfilePicture());
+                userDetail.setFirstName(user.getFirstName());
+                userDetail.setLastName(user.getLastName());
+                userDetail.setHeadline(user.getHeadline());
+                userDetail.setUsername(user.getUsername());
+                return userDetail;
+            }
+        ));
+    return comments.stream()
+        .map(comment -> new CommentResponse(
+            comment,
+            userDetailMap.get(comment.getUserId())
+        ))
+        .collect(Collectors.toList());
+}
     public String deleteComment(String token,ObjectId commentId,ObjectId postId){
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
     Optional<Comment> optionalComment = commentRepository.findById(commentId);
@@ -77,7 +103,7 @@ public class CommentService {
     }
 
     Comment comment = optionalComment.get();
-    if (!comment.getUserDetail().getUserId().equals(userId) && !post.getUserId().equals(userId)) {
+    if (!comment.getUserId().equals(userId) && !post.getUserId().equals(userId)) {
         return "Not authorized to delete this comment";
     }
     commentRepository.deleteById(commentId);

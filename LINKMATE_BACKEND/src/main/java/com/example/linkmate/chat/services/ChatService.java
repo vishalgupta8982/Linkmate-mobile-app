@@ -30,31 +30,34 @@ public class ChatService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public void saveChatMessage(Chat chatMessage) {
-        chatRepository.save(chatMessage);
+    public Chat saveChatMessage(Chat chatMessage) {
+        Chat chat = chatRepository.save(chatMessage);
+        System.out.println("chatService" + chat);
+        return chat;
+
     }
 
     public ChatHistoryResponse getChatHistory(String token, ObjectId connectionUserId, int page, int size) {
         ObjectId myUserId = jwtUtil.getUserIdFromToken(token);
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC, "createdAt"));
-       Page<Chat> chatHistory=  chatRepository.findChatHistory(myUserId, connectionUserId, pageable);
-       User user = userRepository.findById(connectionUserId).orElseThrow(() -> new RuntimeException("connection User not found"));
-       PostUserDetail postUserDetail=new PostUserDetail();
-         postUserDetail.setFirstName(user.getFirstName());
-         postUserDetail.setLastName(user.getLastName());
-         postUserDetail.setHeadline(user.getHeadline());
-         postUserDetail.setProfilePicture(user.getProfilePicture());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Chat> chatHistory = chatRepository.findChatHistory(myUserId, connectionUserId, pageable);
+        User user = userRepository.findById(connectionUserId)
+                .orElseThrow(() -> new RuntimeException("connection User not found"));
+        PostUserDetail postUserDetail = new PostUserDetail();
+        postUserDetail.setFirstName(user.getFirstName());
+        postUserDetail.setLastName(user.getLastName());
+        postUserDetail.setHeadline(user.getHeadline());
+        postUserDetail.setProfilePicture(user.getProfilePicture());
         postUserDetail.setUsername(user.getUsername());
         postUserDetail.setUserId(user.getUserId());
-        return new ChatHistoryResponse(chatHistory,postUserDetail);
+        return new ChatHistoryResponse(chatHistory, postUserDetail);
     }
 
-    public String deleteMessageForEveryone(String token,ObjectId messageId){
-        if(chatRepository.existsById(messageId)){
+    public String deleteMessageForEveryone(String token, ObjectId messageId) {
+        if (chatRepository.existsById(messageId)) {
             chatRepository.deleteById(messageId);
             return "Message deleted";
-        }
-        else{
+        } else {
             return "message not found";
         }
     }
@@ -72,6 +75,10 @@ public class ChatService {
         return "Messages marked as read.";
     }
 
+    public long getUnreadMessageCount(ObjectId userId, ObjectId connectionId) {
+        return chatRepository.countByReceiverIdAndSenderIdAndIsRead(userId, connectionId, false);
+    }
+
     public List<AllInteractionDto> getAllInteractions(String token) {
         ObjectId myUserId = jwtUtil.getUserIdFromToken(token);
         Optional<User> userOpt = userRepository.findById(myUserId);
@@ -83,6 +90,7 @@ public class ChatService {
             for (ObjectId connectionId : connectionIds) {
                 Optional<Chat> lastChatOpt = chatRepository
                         .findFirstBySenderIdAndReceiverIdOrderByCreatedAtDesc(myUserId, connectionId);
+
                 if (!lastChatOpt.isPresent()) {
                     lastChatOpt = chatRepository.findFirstByReceiverIdAndSenderIdOrderByCreatedAtDesc(myUserId,
                             connectionId);
@@ -102,7 +110,8 @@ public class ChatService {
                     dto.setProfilePicture(connection.getProfilePicture());
                     dto.setLastMessage(lastChat.getMessageContent());
                     dto.setLastMessageDate(lastChat.getCreatedAt());
-
+                    long unreadMessageCount = getUnreadMessageCount(myUserId, connectionId);
+                    dto.setNumberOfUnreadMessage(unreadMessageCount);
                     allInteractions.add(dto);
                 }
             }
@@ -110,4 +119,5 @@ public class ChatService {
 
         return allInteractions;
     }
+
 }

@@ -20,4 +20,5 @@ public class AllInteractionDto {
     private String profilePicture;
     private String lastMessage;
     private LocalDateTime lastMessageDate;
+    private long numberOfUnreadMessage;
 }

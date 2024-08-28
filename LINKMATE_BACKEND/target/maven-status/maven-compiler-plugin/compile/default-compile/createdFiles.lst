@@ -1,3 +1,4 @@
+com\example\linkmate\comment\model\CommentResponse.class
 com\example\linkmate\comment\service\CommentService.class
 com\example\linkmate\user\model\Project.class
 com\example\linkmate\comment\model\Comment.class

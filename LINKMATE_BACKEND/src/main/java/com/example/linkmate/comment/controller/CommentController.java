@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.linkmate.comment.model.Comment;
+import com.example.linkmate.comment.model.CommentResponse;
 import com.example.linkmate.comment.service.CommentService;
 
 @RestController
@@ -29,14 +30,14 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<Comment> addComment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestBody Comment comment){
-        Comment addedComment = commentService.addComment(token,comment);
+    public ResponseEntity<CommentResponse> addComment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestBody Comment comment){
+        CommentResponse addedComment = commentService.addComment(token,comment);
         return ResponseEntity.ok(addedComment);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<List<Comment>> getComment(@PathVariable ObjectId postId){
-        return new ResponseEntity<List<Comment>>(commentService.getComment(postId),HttpStatus.OK);
+    public ResponseEntity<List<CommentResponse>> getComment(@PathVariable ObjectId postId){
+        return new ResponseEntity<List<CommentResponse>>(commentService.getComment(postId),HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")

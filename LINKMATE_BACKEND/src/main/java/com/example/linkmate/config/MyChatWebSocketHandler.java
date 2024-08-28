@@ -14,6 +14,7 @@ import com.example.linkmate.chat.services.ChatService;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -45,44 +46,38 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         String payload = message.getPayload();
-        System.out.println("Received message: " + payload);
-
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             Map<String, Object> messageData = objectMapper.readValue(payload, Map.class);
             Chat chat = new Chat();
             chat.setSenderId(new ObjectId((String) messageData.get("senderId")));
             chat.setReceiverId(new ObjectId((String) messageData.get("receiverId")));
             chat.setMessageContent((String) messageData.get("messageContent"));
-            String messageTypeString = (String) messageData.get("messageType");
-            MessageType messageType = MessageType.valueOf(messageTypeString.toUpperCase());
-            chat.setMessageType(messageType);
+            chat.setMessageType(MessageType.valueOf(((String) messageData.get("messageType")).toUpperCase()));
             chat.setCreatedAt(LocalDateTime.now());
             chat.setRead(false);
             String replyToMessageId = (String) messageData.get("replyToMessageId");
             if (replyToMessageId != null) {
                 chat.setReplyToMessageId(new ObjectId(replyToMessageId));
             }
-            String status = (String) messageData.get("status");
-            if (status != null) {
-                chat.setStatus(status);
-            }
-            chatService.saveChatMessage(chat);
+            chat.setStatus((String) messageData.get("status"));
+            Chat savedChat = chatService.saveChatMessage(chat);
+            String responsePayload = objectMapper.writeValueAsString(savedChat);
             Optional<User> user = userRepository.findById(chat.getReceiverId());
             if (user.isPresent()) {
                 String token = user.get().getToken();
                 WebSocketSession recipientSession = sessions.get(token);
-
                 if (recipientSession != null && recipientSession.isOpen()) {
-                    recipientSession.sendMessage(new TextMessage(payload));
+                    recipientSession.sendMessage(new TextMessage(responsePayload));
                 } else {
                     System.out.println("Recipient session not found or not open.");
                 }
+                session.sendMessage(new TextMessage(responsePayload));
             } else {
                 System.out.println("User not found for ID: " + chat.getReceiverId());
             }
-            String confirmationResponse = "Message sent successfully with ID: " + chat.getMessageId().toString();
-            session.sendMessage(new TextMessage(confirmationResponse));
+
         } catch (Exception e) {
             e.printStackTrace();
             session.sendMessage(new TextMessage("Error processing message: " + e.getMessage()));

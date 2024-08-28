@@ -23,11 +23,17 @@ public class Chat {
 
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId receiverId;
+
     private String messageContent;
+
     private LocalDateTime createdAt;
+
     private boolean isRead;
+
     private MessageType messageType;
+
     private String status;
+
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId replyToMessageId;
 }

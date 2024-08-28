@@ -18,5 +18,7 @@ public interface ChatRepository extends MongoRepository<Chat,ObjectId> {
     Optional<Chat> findFirstBySenderIdAndReceiverIdOrderByCreatedAtDesc(ObjectId senderId, ObjectId receiverId);
 
     Optional<Chat> findFirstByReceiverIdAndSenderIdOrderByCreatedAtDesc(ObjectId receiverId, ObjectId senderId);
+
+    long countByReceiverIdAndSenderIdAndIsRead(ObjectId userId,ObjectId connectedId,boolean isRead);
     
 }  

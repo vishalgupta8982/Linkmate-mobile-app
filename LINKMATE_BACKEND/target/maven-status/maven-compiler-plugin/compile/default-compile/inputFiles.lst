@@ -7,6 +7,7 @@ E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\services\ChatService.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\comment\controller\CommentController.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\comment\model\Comment.java
+E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\comment\model\CommentResponse.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\comment\repository\CommentRepository.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\comment\service\CommentService.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\config\CloudinaryConfig.java

@@ -23,7 +23,8 @@ public class Comment {
     @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId id;
 
-     private PostUserDetail userDetail;
+    @JsonSerialize(using = ToStringSerializer.class)
+     private ObjectId userId;
     private String content;
 
     @Indexed
