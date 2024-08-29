@@ -16,6 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.linkmate.fcmToken.model.FcmToken;
+import com.example.linkmate.fcmToken.repository.FcmTokenRepository;
+import com.example.linkmate.fcmToken.service.FcmTokenService;
 import com.example.linkmate.post.model.Post;
 import com.example.linkmate.post.model.PostResponse;
 import com.example.linkmate.post.model.PostUserDetail;
@@ -39,6 +42,12 @@ public class PostsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FcmTokenService fcmTokenService;
+
+    @Autowired
+    private FcmTokenRepository fcmTokenRepository;
 
     public PostResponse createPost(String content, String fileType, MultipartFile file, String token) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
@@ -145,9 +154,12 @@ public class PostsService {
         } else {
             likedBy.add(userId);
         }
-
         post.setLikedBy(likedBy);
         postRepository.save(post);
+        Optional<FcmToken> fcmToken=fcmTokenRepository.findByUserId(userId);
+        if(fcmToken.isPresent()){
+            fcmTokenService.sendNotification(fcmToken.get().getFcmToken(), "like", "vishal like your post", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlRYwS5A0rCCfblZi-Tt2sj8U7LzDZ1u6x1g&s");
+        }
 
         return "Post updated successfully";
     }
