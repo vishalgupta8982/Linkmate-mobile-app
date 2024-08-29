@@ -109,7 +109,6 @@ public class ChatService {
                     dto.setLastName(connection.getLastName());
                     dto.setProfilePicture(connection.getProfilePicture());
                     dto.setLastMessage(lastChat.getMessageContent());
-                    dto.setLastMessageDate(lastChat.getCreatedAt());
                     long unreadMessageCount = getUnreadMessageCount(myUserId, connectionId);
                     dto.setNumberOfUnreadMessage(unreadMessageCount);
                     allInteractions.add(dto);

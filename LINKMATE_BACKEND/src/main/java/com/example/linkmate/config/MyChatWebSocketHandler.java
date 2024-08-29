@@ -48,22 +48,32 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.registerModule(new JavaTimeModule()); // Register JavaTimeModule for LocalDateTime
+
+            // Deserialize the message payload into a Map
             Map<String, Object> messageData = objectMapper.readValue(payload, Map.class);
+
+            // Create a new Chat object and set its properties
             Chat chat = new Chat();
             chat.setSenderId(new ObjectId((String) messageData.get("senderId")));
             chat.setReceiverId(new ObjectId((String) messageData.get("receiverId")));
             chat.setMessageContent((String) messageData.get("messageContent"));
             chat.setMessageType(MessageType.valueOf(((String) messageData.get("messageType")).toUpperCase()));
-            chat.setCreatedAt(LocalDateTime.now());
+             
             chat.setRead(false);
+
+            // Set optional fields
             String replyToMessageId = (String) messageData.get("replyToMessageId");
             if (replyToMessageId != null) {
                 chat.setReplyToMessageId(new ObjectId(replyToMessageId));
             }
             chat.setStatus((String) messageData.get("status"));
+
+            // Save the Chat message and serialize it to JSON
             Chat savedChat = chatService.saveChatMessage(chat);
             String responsePayload = objectMapper.writeValueAsString(savedChat);
+
+            // Send the response to the appropriate WebSocket session
             Optional<User> user = userRepository.findById(chat.getReceiverId());
             if (user.isPresent()) {
                 String token = user.get().getToken();

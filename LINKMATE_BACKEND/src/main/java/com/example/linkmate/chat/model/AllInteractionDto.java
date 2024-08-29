@@ -3,11 +3,13 @@ package com.example.linkmate.chat.model;
 import lombok.Data;
 
 import org.bson.types.ObjectId;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
-import java.time.LocalDateTime;
+ 
+import java.util.Date;
 
 
 @Data
@@ -19,6 +21,7 @@ public class AllInteractionDto {
     private String lastName;
     private String profilePicture;
     private String lastMessage;
-    private LocalDateTime lastMessageDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private Date createdAt=new Date();
     private long numberOfUnreadMessage;
 }
