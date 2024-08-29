@@ -39,4 +39,15 @@ public class FcmTokenService {
         return "Fcm token saved successfully";
     }
 
+    public String deleteFcmToken(String token) {
+        ObjectId userId = jwtUtil.getUserIdFromToken(token);
+        Optional<FcmToken> existingToken = fcmTokenRepository.findByUserId(userId);
+        if (existingToken.isPresent()) {
+            fcmTokenRepository.delete(existingToken.get());
+            return "Fcm token deleted successfully";
+        } else {
+            return "Fcm token not found";
+        }
+    }
+
 }
