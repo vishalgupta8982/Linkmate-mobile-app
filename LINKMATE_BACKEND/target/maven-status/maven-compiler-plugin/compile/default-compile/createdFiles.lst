@@ -5,7 +5,9 @@ com\example\linkmate\comment\model\Comment.class
 com\example\linkmate\chat\model\Chat.class
 com\example\linkmate\connection\model\ConnectionStatus.class
 com\example\linkmate\connection\model\ConnectionRequestDetail.class
+com\example\linkmate\fcmToken\service\FcmTokenService.class
 com\example\linkmate\config\MyConnectionRequestWebSocketHandler.class
+com\example\linkmate\fcmToken\repository\FcmTokenRepository.class
 com\example\linkmate\chat\model\AllInteractionDto.class
 com\example\linkmate\user\model\Views$Credential.class
 com\example\linkmate\user\repository\UserRepositoryImpl.class
@@ -26,9 +28,11 @@ com\example\linkmate\post\repository\PostRepository.class
 com\example\linkmate\connection\controller\ConnectionController.class
 com\example\linkmate\config\CloudinaryConfig.class
 com\example\linkmate\user\model\Views$Internal.class
+com\example\linkmate\config\FirebaseConfig.class
 com\example\linkmate\filter\JwtRequestFilter.class
 com\example\linkmate\user\model\Views$Public.class
 com\example\linkmate\user\controller\UserController.class
+com\example\linkmate\fcmToken\model\FcmToken.class
 com\example\linkmate\user\service\OtpService.class
 com\example\linkmate\user\service\CloudinaryService.class
 com\example\linkmate\comment\controller\CommentController.class
@@ -47,6 +51,7 @@ com\example\linkmate\user\dto\UserUpdateDto.class
 com\example\linkmate\user\model\Views$Search.class
 com\example\linkmate\user\Config\MailConfig.class
 com\example\linkmate\core\Exception\GlobalExceptionHandler.class
+com\example\linkmate\fcmToken\controller\FcmTokenController.class
 com\example\linkmate\user\model\Views.class
 com\example\linkmate\connection\service\ConnectionService.class
 com\example\linkmate\core\Exception\UsernameAlreadyExistsException.class

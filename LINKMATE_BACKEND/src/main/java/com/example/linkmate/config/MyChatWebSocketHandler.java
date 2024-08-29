@@ -59,7 +59,7 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
             chat.setReceiverId(new ObjectId((String) messageData.get("receiverId")));
             chat.setMessageContent((String) messageData.get("messageContent"));
             chat.setMessageType(MessageType.valueOf(((String) messageData.get("messageType")).toUpperCase()));
-             
+
             chat.setRead(false);
 
             // Set optional fields
