@@ -113,7 +113,6 @@ export default function Projects({ navigation }) {
 	};
 	const handleAddProject = async () => {
 		const payload: ProjectPayload = newProject;
-		console.log(payload);
 		setLoader(true);
 		if (
 			payload.name.length < 1 ||
@@ -127,7 +126,6 @@ export default function Projects({ navigation }) {
 		toggleModal();
 		try {
 			const response = await addProject(payload);
-			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				setLoader(false);
@@ -167,7 +165,6 @@ export default function Projects({ navigation }) {
 			...newProject,
 			projectId: editingProjectId,
 		};
-		console.log(payload);
 		setLoader(true);
 		if (
 			payload.name.length < 1 ||

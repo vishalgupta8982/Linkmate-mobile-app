@@ -18,8 +18,8 @@ import { AppButton } from '../../components/AppButton';
 import { fonts } from '../../config/Fonts';
 import { useCustomTheme } from '../../config/Theme';
 import { useState } from 'react';
-import { SignUpPayload } from '../../types/Payload/SignUpPayload';
-import { userLogin } from '../../api/apis';
+import messaging from '@react-native-firebase/messaging';
+import { saveFcmToken, userLogin } from '../../api/apis';
 import Toast from 'react-native-simple-toast';
 import { LoginPayload } from '../../types/Payload/LoginPayload';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,11 +37,9 @@ export default function Login({ navigation }) {
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
-	useEffect(()=>{
-		dispatch(clearUserDetail());
-	},[])
 	const handleLogin = async () => {
 		setLoading(true);
+		dispatch(clearUserDetail());
 		const payload: LoginPayload = {
 			email: email.trim(),
 			password: password.trim(),
@@ -54,9 +52,9 @@ export default function Login({ navigation }) {
 
 		try {
 			const response = await userLogin(payload);
-
 			if (response?.token) {
 				dispatch(setToken(response.token));
+				await saveFcmToken(await messaging().getToken());
 				Toast.show('Login successfull', Toast.SHORT);
 				navigation.replace('BottomNavigation');
 			}

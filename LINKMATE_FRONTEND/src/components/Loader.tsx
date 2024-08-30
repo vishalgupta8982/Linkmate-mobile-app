@@ -21,10 +21,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		position: 'absolute',
 		zIndex: 1000,
-		backgroundColor: 'rgba(0, 0, 0, 0.1)',
-		height: responsiveHeight(100),
-		width: responsiveWidth(100),
 		justifyContent: 'center',
+		left: '45%',
+		top: '48%',
 	},
 });
 

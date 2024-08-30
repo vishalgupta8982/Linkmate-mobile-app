@@ -74,7 +74,6 @@ export default function Education({ navigation }) {
 		try {
 			setLoader(true);
 			const response = await deleteEducation(id);
-			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				Toast.show('Deleted successfully', Toast.SHORT);
@@ -104,7 +103,6 @@ export default function Education({ navigation }) {
 	};
 	const handleAddEducation = async () => {
 		const payload: EducationPayload = newEducation;
-		console.log(payload);
 		setLoader(true);
 		if (
 			payload.institution.length < 1 ||
@@ -159,7 +157,6 @@ export default function Education({ navigation }) {
 			...newEducation,
 			educationId: editingEducationId,
 		};
-		console.log(payload);
 		setLoader(true);
 		if (
 			payload.institution.length < 1 ||
@@ -174,7 +171,6 @@ export default function Education({ navigation }) {
 		toggleModal();
 		try {
 			const response = await updateEducation(editingEducationId, payload);
-			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				setLoader(false);

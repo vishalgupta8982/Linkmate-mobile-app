@@ -1,8 +1,5 @@
 export interface verifyOtpResponse {
-	userId: {
-		timestamp: number;
-		date: string;
-	};
+	userId:string;
 	username: string;
 	email: string;
 	password: string;

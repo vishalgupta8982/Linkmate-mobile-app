@@ -2,29 +2,44 @@ import notifee, {
 	AndroidImportance,
 	AndroidStyle,
 } from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
+import { saveFcmToken } from '../api/apis';
 
-export const displayNotification = async (remoteMessage:Array) => {
-	console.log("remoteMessage",remoteMessage)
-	// Create a notification channel
+export const initMessaging = async () => {
+	try {
+		await messaging().requestPermission();
+		messaging().onMessage(async (remoteMessage) => {
+			await displayNotification(remoteMessage.data);
+		});
+
+		messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+			await displayNotification(remoteMessage.data);
+		});
+	} catch (error) {
+		console.error('Error initializing messaging:', error);
+	}
+};
+
+export const displayNotification = async (remoteMessage: any) => {
+	console.log('remoteMessage', remoteMessage);
 	const channelId = await notifee.createChannel({
 		id: 'default',
 		name: 'Default Channel',
 		importance: AndroidImportance.HIGH,
+		sound: 'default',
 	});
-
-	// Request notification permissions
 	await notifee.requestPermission();
-
-	// Configure Android-specific settings
 	const androidConfig = {
 		channelId,
 		importance: AndroidImportance.HIGH,
- 	};
-		androidConfig.largeIcon =`${remoteMessage[0].profilePicture}`;
-	// Display the notification
+			sound: 'default',  
+	};
+	if (remoteMessage.image) {
+		androidConfig.largeIcon = remoteMessage.image;
+	}
 	await notifee.displayNotification({
-		title: 'New Connection Request!',
-		body: `${remoteMessage[0].firstName+" "+remoteMessage[0].lastName} wants to connect with you.`,
+		title: remoteMessage.title,
+		body: remoteMessage.body,
 		android: androidConfig,
 	});
 };

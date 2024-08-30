@@ -62,8 +62,7 @@ public class ChatService {
         }
     }
 
-    public String messageRead(String token, ObjectId connectionUserId) {
-        ObjectId userId = jwtUtil.getUserIdFromToken(token);
+    public String messageRead(ObjectId userId, ObjectId connectionUserId) {
         List<Chat> unreadChats = chatRepository.findUnreadMessagesBetweenUsers(userId, connectionUserId);
         if (unreadChats == null || unreadChats.isEmpty()) {
             return "No unread messages found.";

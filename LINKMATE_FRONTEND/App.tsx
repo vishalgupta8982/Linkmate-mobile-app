@@ -10,9 +10,12 @@ import { persistStore } from 'redux-persist';
 import WebSocketService from './src/utils/WebSocketService';
 import { socketUrl } from './src/api/instance';
 import { selectToken } from './src/redux/slices/authSlice';
+import { initMessaging } from './src/utils/DisplayNotification';
 const App: FunctionComponent = () => {
 	let persistor = persistStore(store);
-  
+  useEffect(() => {
+		initMessaging();
+	}, []);
 	return (
 			<Provider store={store}>
 				<PersistGate loading={null} persistor={persistor}>

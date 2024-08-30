@@ -1,18 +1,23 @@
 package com.example.linkmate.fcmToken.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.linkmate.fcmToken.model.FcmToken;
 import com.example.linkmate.fcmToken.repository.FcmTokenRepository;
-import com.example.linkmate.user.repository.UserRepository;
+import com.example.linkmate.firebase.service.FirebaseAuthService;
 import com.example.linkmate.user.utils.JwtUtil;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 
 @Service
 public class FcmTokenService {
@@ -22,6 +27,11 @@ public class FcmTokenService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private FirebaseAuthService firebaseAuthService;
+
+    private static final String FIREBASE_URL = "https://fcm.googleapis.com/v1/projects/linkmate-87eab/messages:send";
 
     public String saveFcmToken(String token, String fcmToken) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
@@ -50,32 +60,34 @@ public class FcmTokenService {
         }
     }
 
-    public void sendNotification(String token, String title, String body, String imageUrl) {
-        try {
-            Notification notification = Notification.builder()
-                    .setTitle(title)
-                    .setBody(body)
-                    .setImage(imageUrl)
-                    .build();
-            Message message = Message.builder()
-                    .setToken(token)
-                    .setNotification(notification)
-                    .build();
-            // Message message = Message.builder()
-            // .setToken(token)
-            // .setNotification(notification)
-            // .putData("largeIcon", largeIconUrl)
-            // .putData("action1_title", action1Title)
-            // .putData("action1_id", action1Id)
-            // .putData("action2_title", action2Title)
-            // .putData("action2_id", action2Id)
-            // .build();
+    public void sendNotification(String token, String title, String body, String imageUrl) throws IOException {
+        String accessToken = firebaseAuthService.getAccessToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.set("Content-Type", "application/json");
+        String payload = "{"
+                + "\"message\": {"
+                + "\"token\": \"" + token + "\","
+                + "\"data\": {"
+                + "\"title\": \"" + title + "\","
+                + "\"body\": \"" + body + "\","
+                + "\"image\": \"" + imageUrl + "\","
+                + "\"key1\": \"value1\","
+                + "\"key2\": \"value2\""
+                + "}"
+                + "}"
+                + "}";
+        HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
-            String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("Successfully sent message: " + response);
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Send HTTP POST request
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(FIREBASE_URL, HttpMethod.POST, requestEntity,
+                String.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("Successfully sent message: " + response.getBody());
+        } else {
+            System.err.println("Failed to send message: " + response.getStatusCode());
         }
     }
-
 }

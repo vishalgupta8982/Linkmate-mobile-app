@@ -6,52 +6,96 @@ import {
 	TouchableOpacity,
 	FlatList,
 	ActivityIndicator,
+	TextInput,
+	KeyboardAvoidingView,
 } from 'react-native';
+import moment from 'moment-timezone';
+import Feather from 'react-native-vector-icons/Feather';
 import React, { useEffect, useState, useRef } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useCustomTheme } from '../../config/Theme';
 import { fonts } from '../../config/Fonts';
-import { useRoute } from '@react-navigation/native';
 import { globalStyles } from '../../StylesSheet';
-import { getChatHistory } from '../../api/apis';
-import { useSelector } from 'react-redux';
+import { deleteMessageForEveryOne, getChatHistory } from '../../api/apis';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../components/Loader';
+import WebSocketService from '../../utils/WebSocketService';
 import { RootState } from '../../redux/store';
 import {
 	responsiveFontSize,
 	responsiveHeight,
 	responsiveWidth,
 } from 'react-native-responsive-dimensions';
-import { height, width } from '../../config/Dimension';
-import { AppButton } from '../../components/AppButton';
-
-export default function UserChatDetail({ navigation }) {
+import ChatUserDetailHeader from './ChatUserDetailHeader';
+import {
+	addMessages,
+	deleteStoreMessage,
+	markMessagesAsRead,
+	selectChatPageByUser,
+	selectChatUserDetailsById,
+	selectHasMoreByUser,
+	selectMessagesByUser,
+} from '../../redux/slices/ChatSlice';
+import { RootStackParamList } from 'navigation/MainStackNav';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import MainHeader from './MainHeader';
+import CustomAlertDialog from '../../components/CustomAlertDialog';
+ 
+type Tprops = NativeStackScreenProps<RootStackParamList, 'userChatDetail'>;
+export default function UserChatDetail({ navigation, route }: Tprops) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
-	const route = useRoute();
+	const { userId } = route.params;
+	const dispatch = useDispatch();
 	const flatListRef = useRef(null);
-	const { data } = route.params;
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
-	const [loading, setLoading] = useState(false);
-	const [page, setPage] = useState(0);
-	const [hasMore, setHasMore] = useState(true);
-	const [chatHistory, setChatHistory] = useState([]);
-	const [initialLoad, setInitialLoad] = useState(true);
+	const [message, setMessage] = useState('');
+	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
+	const [deleteMessageId,setDeleteMessageId]=useState('')
+	const chatHistory = useSelector((state: RootState) =>
+		selectMessagesByUser(state, userId)
+	);
+	const recieverUserDetail = useSelector((state: RootState) =>
+		selectChatUserDetailsById(state, userId)
+	);
+	const page = useSelector((state: RootState) =>
+		selectChatPageByUser(state, userId)
+	);
+	const hasMore = useSelector((state: RootState) =>
+		selectHasMoreByUser(state, userId)
+	);
+	const [initialLoad, setInitialLoad] = useState(
+		recieverUserDetail ? false : true
+	);
 	const fetchChat = async () => {
-		if (loading || !hasMore) return;
+		if (!hasMore) return;
 		try {
-			const response = await getChatHistory(data.userId, page);
-			console.log(response);
-			if (response.content.length > 0) {
-				setChatHistory((prevChatHistory) => [
-					...prevChatHistory,
-					...response.content,
-				]);
-				setPage(page + 1);
-				setHasMore(response.content.length > 0);
+			const response = await getChatHistory(userId, page);
+			if (response.chatHistory.content.length > 0) {
+				dispatch(
+					addMessages({
+						userId: response.chatRecieverUserDetail.userId,
+						messages: response.chatHistory.content,
+						chatUserDetail: response.chatRecieverUserDetail,
+						page: page + 1,
+						hasMore: response.chatHistory.content.length > 0,
+					})
+				);
+				if(initialLoad){
+					handleReadMessage()
+				}
 			} else {
-				setHasMore(false);
+				dispatch(
+					addMessages({
+						userId: response.chatRecieverUserDetail.userId,
+						messages: [],
+						chatUserDetail: response.chatRecieverUserDetail,
+						page: page,
+						hasMore: false,
+					})
+				);
 			}
 		} catch (err) {
 			console.error(err);
@@ -59,56 +103,60 @@ export default function UserChatDetail({ navigation }) {
 			if (initialLoad) setInitialLoad(false);
 		}
 	};
-
-	useEffect(() => {
-		fetchChat();
-	}, []);
-
-	const renderProfileHeader = () => (
-		<View style={styles.profileView}>
-			<Image
-				style={styles.chatProfile}
-				source={{ uri: data.profilePicture }} 
-			/>
-			<Text style={globalStyleSheet.smallHead}>
-				{data.firstName + ' ' + data.lastName}
-			</Text>
-		</View>
-	);
+	 useEffect(() => {
+			if (!recieverUserDetail) {
+				setInitialLoad(true);
+				fetchChat();
+			}
+		}, []);
+	const deleteMessage = async () => {
+		setAlertDialogVisible(false)
+		try {
+			const response = await deleteMessageForEveryOne(deleteMessageId);
+			dispatch(deleteStoreMessage({userId,messageId:deleteMessageId}))
+				setDeleteMessageId('')
+				 
+		} catch (err) {
+			console.error(err);
+		}
+	};
+const handleReadMessage=()=>{
+const readMessage = {
+	 readerId:userId,
+	 userId:userData.userId
+};
+WebSocketService.sendChatMessage('MESSAGE_TYPE_READ', readMessage);
+}
+ 
+	const handleSendChatMessage = () => {
+		const chatMessage = {
+			senderId: userData?.userId,
+			receiverId: userId,
+			messageContent: message,
+			messageType: 'TEXT',
+		};
+		WebSocketService.sendChatMessage('MESSAGE_TYPE_CHAT',chatMessage);
+		setMessage('');
+	};
+	 useEffect(() => {
+				if (
+					chatHistory.length > 0 &&
+					chatHistory[0].senderId !== userData?.userId
+				) {
+					 handleReadMessage();
+				}
+			}, [chatHistory[0]]);
 	return (
 		<View style={styles.mainCont}>
-			<View style={styles.header}>
-				<TouchableOpacity
-					style={styles.profile}
-					activeOpacity={0.4}
-					onPress={() => navigation.goBack()}
-				>
-					<AntDesign name="arrowleft" size={22} color={colors.TEXT} />
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={styles.profile}
-					activeOpacity={0.4}
-					onPress={() =>
-						navigation.navigate('viewUserProfile', {
-							username: data.username,
-						})
-					}
-				>
-					<Image style={styles.img} source={{ uri: data.profilePicture }} />
-					<View>
-						<Text style={globalStyleSheet.smallHead}>
-							{data.firstName + ' ' + data.lastName}
-						</Text>
-						<Text style={globalStyleSheet.smalllestHead}>@{data.username}</Text>
-					</View>
-				</TouchableOpacity>
-			</View>
-			<View>
-				{!loading && (
+			{initialLoad && <Loader />}
+			{!initialLoad && (
+				<>
+					<MainHeader userId={userId} navigation={navigation} />
 					<FlatList
 						data={chatHistory}
 						style={styles.messageCont}
-						keyExtractor={(item) => item.id}
+						keyExtractor={(item) => item.messageId}
+						initialNumToRender={20}
 						onEndReached={() => {
 							if (!initialLoad) {
 								fetchChat();
@@ -123,7 +171,7 @@ export default function UserChatDetail({ navigation }) {
 							hasMore ? (
 								<ActivityIndicator size={32} color={colors.PRIMARY} />
 							) : (
-								renderProfileHeader
+								<ChatUserDetailHeader navigation={navigation} userId={userId} />
 							)
 						}
 						renderItem={({ item }) => (
@@ -135,53 +183,94 @@ export default function UserChatDetail({ navigation }) {
 										: styles.recieverMessage,
 								]}
 							>
-								<Text
-									style={
-										userData.userId == item.senderId
-											? styles.senderMessageText
-											: styles.recieverMessageText
-									}
+								<TouchableOpacity
+									activeOpacity={1}
+									onLongPress={() => {
+										if (userData.userId === item.senderId) {
+											setDeleteMessageId(item.messageId);
+											setAlertDialogVisible(true);
+										}
+									}}
 								>
-									{item.messageContent}
-								</Text>
+									<View
+										style={
+											userData.userId == item.senderId
+												? styles.senderMessageCont
+												: styles.recieverMessageCont
+										}
+									>
+										<Text
+											style={
+												userData.userId == item.senderId
+													? styles.senderMessageText
+													: styles.recieverMessageText
+											}
+										>
+											{item.messageContent}
+										</Text>
+										<Text
+											style={
+												userData.userId == item.senderId
+													? styles.senderTime
+													: styles.recieverTime
+											}
+										>
+											{moment
+												.parseZone(item.createdAt)
+												.tz('Asia/Kolkata')
+												.format('hh:mm A')}
+										</Text>
+									</View>
+									{chatHistory[0].messageId === item.messageId &&
+										item.read &&
+										userData?.userId === item.senderId && (
+											<Text style={styles.seen}>Seen</Text>
+										)}
+								</TouchableOpacity>
 							</View>
 						)}
 					/>
-				)}
-			</View>
+					<View style={styles.inputCont}>
+						<TextInput
+							selectionColor={colors.PRIMARY}
+							placeholderTextColor={colors.TEXT}
+							style={styles.input}
+							placeholder="Type message here.."
+							value={message}
+							onChangeText={setMessage}
+						/>
+
+						<TouchableOpacity activeOpacity={1} onPress={handleSendChatMessage}>
+							<View style={styles.sendIcon}>
+								<Feather name="send" color={colors.WHITE} size={18} />
+							</View>
+						</TouchableOpacity>
+					</View>
+				</>
+			)}
+			<CustomAlertDialog
+				isOpen={alertDialogVisible}
+				onClose={() => setAlertDialogVisible(false)}
+				title={'Delete comment'}
+				message={'Are you sure you want to delete message for everyone?'}
+				ButtonText={'Delete'}
+				onConfirm={deleteMessage}
+			/>
 		</View>
 	);
 }
-const getStyles = (colors) =>
+const getStyles = (colors: any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,
 			backgroundColor: colors.MAIN_BACKGROUND,
 		},
-		header: {
-			flexDirection: 'row',
-			alignItems: 'center',
-			backgroundColor: colors.BACKGROUND,
-			padding: 10,
-		},
-		profile: {
-			flexDirection: 'row',
-			alignItems: 'center',
-		},
-		img: {
-			height: 50,
-			width: 50,
-			borderRadius: 25,
-			borderWidth: 0.2,
-			borderColor: colors.APP_PRIMARY,
-			marginHorizontal: 10,
-		},
 		messageCont: {
 			paddingHorizontal: 15,
-			marginBottom: responsiveHeight(15),
+			marginBottom: responsiveHeight(8),
 		},
 		message: {
-			marginVertical: 3,
+			marginVertical: 6,
 			maxWidth: responsiveWidth(70),
 		},
 		senderMessage: {
@@ -190,38 +279,68 @@ const getStyles = (colors) =>
 		recieverMessage: {
 			alignSelf: 'flex-start',
 		},
-		senderMessageText: {
+		senderMessageCont: {
 			backgroundColor: colors.PRIMARY,
-			color: colors.TEXT,
+			padding: 8,
+			borderTopLeftRadius: 20,
+			borderTopRightRadius: 20,
+			borderBottomLeftRadius: 20,
+		},
+		recieverMessageCont: {
+			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
+			borderTopLeftRadius: 20,
+			borderTopRightRadius: 20,
+			borderBottomRightRadius: 20,
+			padding: 8,
+		},
+		senderMessageText: {
+			color: colors.WHITE,
 			fontSize: responsiveFontSize(2),
-			padding: 10,
-			borderTopLeftRadius: 25,
-			borderTopRightRadius: 25,
-			borderBottomLeftRadius: 25,
 			textAlign: 'right',
+			fontFamily: fonts.Inter_Regular,
 		},
 		recieverMessageText: {
-			backgroundColor: colors.BACKGROUND,
 			color: colors.TEXT,
 			fontSize: responsiveFontSize(2),
-			padding: 10,
-			borderTopLeftRadius: 25,
-			borderTopRightRadius: 25,
-			borderBottomRightRadius: 25,
+			fontFamily: fonts.Inter_Regular,
 		},
-		profileView: {
-			borderBottomWidth: 0.3,
-			borderColor: colors.APP_PRIMARY_LIGHT,
+		recieverTime: {
+			fontSize: 8,
+			color: colors.APP_PRIMARY_LIGHT,
+		},
+		senderTime: {
+			fontSize: 8,
+			color: colors.WHITE,
+			textAlign: 'right',
+		},
+		seen: {
+			color: colors.TEXT,
+			fontSize: responsiveFontSize(1.4),
+			fontFamily: fonts.Inter_Medium,
+			textAlign:'right'
+		},
+		inputCont: {
+			flexDirection: 'row',
 			alignItems: 'center',
-			paddingVertical: 5,
-            marginTop:responsiveHeight(30)
+			position: 'absolute',
+			bottom: 10,
+			left: 10,
+			right: 10,
+			justifyContent: 'center',
 		},
-		chatProfile: {
-			height: 100,
-			width: 100,
-			borderRadius: 50,
-			borderWidth: 0.2,
-			borderColor: colors.APP_PRIMARY_LIGHT,
-			marginBottom: 5,
+		input: {
+			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
+			padding: 10,
+			paddingHorizontal: 20,
+			fontSize: 16,
+			borderRadius: 30,
+			width: '85%',
+			marginRight: 5,
+			color: colors.TEXT,
+		},
+		sendIcon: {
+			padding: 10,
+			backgroundColor: colors.PRIMARY,
+			borderRadius: 40,
 		},
 	});

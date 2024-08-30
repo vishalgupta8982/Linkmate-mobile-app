@@ -21,8 +21,9 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 import { RootStackParamList } from '../../navigation/MainStackNav';
 import { useRef } from 'react';
+import messaging from '@react-native-firebase/messaging';
 import { OtpPayload } from '../../types/Payload/OtpPayload';
-import { userRegister, verifyOtp } from '../../api/apis';
+import { saveFcmToken, userRegister, verifyOtp } from '../../api/apis';
 import { setToken } from '../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import Loader from '../../components/Loader';
@@ -51,6 +52,8 @@ export default function Otp({ navigation, route }: Tprops) {
 			const response = await verifyOtp(payload);
 			if (response?.data?.token) {
 				dispatch(setToken(response.data.token));
+				const fcmToken = await messaging().getToken();
+				await saveFcmToken(fcmToken);
 				Toast.show('Account created successfull', Toast.SHORT);
 				navigation.replace('BottomNavigation');
 			}

@@ -53,7 +53,6 @@ export default function EditProfile({ navigation }) {
 			compressImageMaxHeight: 800,
 		})
 			.then((image) => {
-				console.log(image);
 				uploadImg(image.path);
 			})
 			.catch((e) => console.log(e));
@@ -104,10 +103,14 @@ export default function EditProfile({ navigation }) {
 	const deleteProfile = async () => {
 		setLoader(true);
 		const payload: UpdatePayload = {
-			profilePicture: '',
+			profilePicture:
+				'https://res.cloudinary.com/dytlgwywf/image/upload/v1724740525/oj07r3ukubdynzjyje01.jpg',
 		};
 		setImageModalVisible(false);
-		if (userData?.profilePicture == '') {
+		if (
+			userData?.profilePicture ==
+			'https://res.cloudinary.com/dytlgwywf/image/upload/v1724740525/oj07r3ukubdynzjyje01.jpg'
+		) {
 			setLoader(false);
 			Toast.show('Profile not exist', Toast.SHORT);
 			return;
@@ -128,7 +131,6 @@ export default function EditProfile({ navigation }) {
 		setLoader(true);
 		try {
 			const response = await updateProfilePicture(uri);
-			console.log(response);
 			dispatch(setUserDetails(response));
 			Toast.show('Updated successfully', Toast.SHORT);
 			setLoader(false);
@@ -182,10 +184,7 @@ export default function EditProfile({ navigation }) {
 					<Image
 						style={styles.pic}
 						source={{
-							uri:
-								userData?.profilePicture.length > 0
-									? userData?.profilePicture
-									: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8XHcngVONWqKATB8hOuO0GhItmIXIfGflTKqMuLSt6dV73i3caFKmfLcGUGUI5oC1658&usqp=CAU',
+							uri: userData?.profilePicture,
 						}}
 					/>
 				</TouchableOpacity>

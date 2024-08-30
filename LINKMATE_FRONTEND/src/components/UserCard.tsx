@@ -43,7 +43,6 @@ export default function UserCard({ userData, navigation }) {
 		setLoading(true);
 		try {
 			const response = await revertConnectionRequest(id);
-			console.log(response)
 			if (response) {
 				setRequest(false);
 				Toast.show('Connection request cancelled', Toast.SHORT);

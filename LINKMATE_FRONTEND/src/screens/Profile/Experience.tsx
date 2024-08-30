@@ -93,7 +93,6 @@ export default function Experience({ navigation }) {
 		try {
 			setLoader(true);
 			const response = await deleteExperience(id);
-			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				Toast.show('Deleted successfully', Toast.SHORT);
@@ -137,7 +136,6 @@ export default function Experience({ navigation }) {
 
 	const handleAddExperience = async () => {
 		const payload = newExperience;
-		console.log(payload);
 		setLoader(true);
 		if (
 			payload.company.length < 1 ||
@@ -151,7 +149,6 @@ export default function Experience({ navigation }) {
 		toggleModal();
 		try {
 			const response = await addExperience(payload);
-			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				setLoader(false);
@@ -169,7 +166,7 @@ export default function Experience({ navigation }) {
 			...newExperience,
 			experienceId: editingExperienceId,
 		};
-		console.log(payload);
+
 		setLoader(true);
 		if (
 			payload.company.length < 1 ||
@@ -183,7 +180,6 @@ export default function Experience({ navigation }) {
 		toggleModal();
 		try {
 			const response = await updateExperience(editingExperienceId, payload);
-			console.log(response);
 			if (response) {
 				dispatch(setUserDetails(response));
 				setLoader(false);

@@ -43,7 +43,7 @@ export default function Overview({ navigation }) {
 		try {
 			setLoader(true);
 			const response = await deleteSkill(skill);
-			console.log(response);
+
 			if (response) {
 				dispatch(setUserDetails(response));
 				Toast.show('Deleted successfully', Toast.SHORT);

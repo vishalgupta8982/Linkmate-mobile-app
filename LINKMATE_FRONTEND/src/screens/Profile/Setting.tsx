@@ -22,7 +22,11 @@ import { persistor } from '../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearUserDetail } from '../../redux/slices/UserDetailsSlice';
 import WebSocketService from '../../utils/WebSocketService';
+import { deleteFcmToken } from '../../api/apis';
+import Loader from '../../components/Loader';
+import { height } from '../../config/Dimension';
 export default function Setting({ navigation }) {
+	const [loader, setLoader] = useState(false);
 	const dispatch = useDispatch();
 	const currentTheme = useSelector((state) => state.theme.theme);
 	const theme = useCustomTheme();
@@ -33,14 +37,19 @@ export default function Setting({ navigation }) {
 		dispatch(toggleTheme());
 	};
 	const handleLogout = async () => {
+		setLoader(true);
+		setAlertDialogVisible(false)
+		await deleteFcmToken();
 		dispatch(clearToken());
 		WebSocketService.disconnect();
-		await navigation.replace('Login');
+		setLoader(false);
+		navigation.replace('Login');
 	};
 	return (
 		<ScrollView style={styles.mainCont}>
 			<StackHeader title="Settings" navigation={navigation} />
 			<View style={styles.headCont}>
+				{loader && <Loader />}
 				<View style={styles.iconName}>
 					<FontAwesome name="moon-o" size={16} color={colors.TEXT} />
 					<Text style={styles.head}>Dark Mode</Text>

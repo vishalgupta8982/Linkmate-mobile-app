@@ -1,35 +1,9 @@
 {
-	 
 	"compilerOptions": {
 		"jsx": "react",
 		"strict": true,
-		"allowSyntheticDefaultImports": true,
-		"target": "ES2020",
-		"module": "CommonJS",
-		"lib": ["ES2020", "DOM"],
-		"allowJs": true,
-		"checkJs": false,
-		"jsx": "react",
-		"declaration": true,
-		"sourceMap": true,
-		"outDir": "./dist",
-		"rootDir": "./src",
-		"strict": true,
-		"noImplicitAny": true,
-		"strictNullChecks": true,
-		"strictFunctionTypes": true,
-		"strictBindCallApply": true,
-		"strictPropertyInitialization": true,
-		"noImplicitThis": true,
-		"alwaysStrict": true,
-		"moduleResolution": "node",
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": true
+		"allowSyntheticDefaultImports": true
 	},
-	"include": ["src/**/*" , "search"],
-  "exclude": ["node_modules", "dist"]
+	"include": ["src/**/*", "search", "custom.d.ts"],
+	"exclude": ["node_modules", "dist"]
 }

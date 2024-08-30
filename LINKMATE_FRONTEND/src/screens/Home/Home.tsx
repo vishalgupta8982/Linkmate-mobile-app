@@ -18,13 +18,18 @@ import { useCustomTheme } from '../../config/Theme';
 import HomePageHeader from './HomePageHeader';
 import WebSocketService from '../../utils/WebSocketService';
 import { selectToken } from '../../redux/slices/authSlice';
-import { socketUrl } from '../../api/instance';
+import {
+	chatSocketUrl,
+	connectionSocketUrl,
+	socketUrl,
+} from '../../api/instance';
 import PostCard from '../../components/PostCard';
 import { setFeedPosts, setPosts } from '../../redux/slices/PostSlice';
 
 export default function Home({ navigation }) {
 	const route = useRoute();
 	const { fromCreatePost } = route.params || false;
+	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
@@ -36,7 +41,18 @@ export default function Home({ navigation }) {
 	const token = selectToken(store.getState());
 	const feedData = useSelector((state: RootState) => state.posts.feedPosts);
 	useEffect(() => {
-		WebSocketService.connect(socketUrl, token, dispatch);
+		WebSocketService.connectConnection(
+			connectionSocketUrl,
+			token,
+			dispatch,
+			userData?.userId
+		);
+		WebSocketService.connectChat(
+			chatSocketUrl,
+			token,
+			dispatch,
+			userData?.userId
+		);
 		return () => {
 			if (WebSocketService.socket) {
 				WebSocketService.socket.close();
@@ -48,7 +64,7 @@ export default function Home({ navigation }) {
 			const response = await userDetails();
 			dispatch(setUserDetails(response));
 		} catch (err) {
-			console.error(err);
+			console.error('User detail', err);
 		} finally {
 			setLoading(false);
 		}
@@ -69,18 +85,18 @@ export default function Home({ navigation }) {
 	};
 
 	useEffect(() => {
-		fetchFeed();
 		fetchUserDetails();
+		fetchFeed();
 	}, []);
- 
+
 	return (
 		<View style={styles.mainCont}>
+			{loading&&(<Loader/>)}
 			<HomePageHeader navigation={navigation} />
-			{loading &&(<Loader/>)}
-			{!loading && (
+			{!loading && userData && (
 				<FlatList
 					data={feedData}
-					keyExtractor={(item) => item.postId.toString()}
+					keyExtractor={(item) => item.post.postId}
 					renderItem={({ item }) => (
 						<PostCard navigation={navigation} data={item} />
 					)}
@@ -94,7 +110,6 @@ export default function Home({ navigation }) {
 		</View>
 	);
 }
- 
 
 const getStyles = (colors) =>
 	StyleSheet.create({

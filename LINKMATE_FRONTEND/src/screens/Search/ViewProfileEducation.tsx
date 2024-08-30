@@ -14,22 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import moment from 'moment';
 import Loader from '../../components/Loader';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { addEducation, deleteEducation, updateEducation } from '../../api/apis';
-import Toast from 'react-native-simple-toast';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
-import {
-	responsiveFontSize,
-	responsiveHeight,
-} from 'react-native-responsive-dimensions';
-import { fonts } from '../../config/Fonts';
-import AppTextField from '../../components/AppTextField';
-import { AppButton } from '../../components/AppButton';
-import { EducationPayload } from '../../types/Payload/EducationPayload';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import AppPickerField from '../../components/AppPickerField';
 export default function ViewProfileEducation({ navigation, userData }) {
 	const theme = useCustomTheme();
 	const dispatch = useDispatch();

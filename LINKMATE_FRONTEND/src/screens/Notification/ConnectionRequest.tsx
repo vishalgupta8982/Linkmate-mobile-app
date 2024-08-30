@@ -52,7 +52,6 @@ export default function ConnectionRequest({ navigation }) {
 	};
 
 	const handleAcceptRequest = async (senderId: string) => {
-		console.log(senderId);
 		try {
 			const response = await acceptConnectionRequest(senderId);
 			if (response) {
@@ -64,7 +63,6 @@ export default function ConnectionRequest({ navigation }) {
 		}
 	};
 	const handleRejectRequest = async (senderId: string) => {
-		console.log(senderId);
 		try {
 			const response = await rejectConnectionRequest(senderId);
 			if (response) {

@@ -25,26 +25,32 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import { RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { post } from '../api/instance';
-import { addCommentToPost, removeCommentFromPost } from '../redux/slices/PostSlice';
+import {
+	addCommentToPost,
+	removeCommentFromPost,
+} from '../redux/slices/PostSlice';
+
 import CustomAlertDialog from './CustomAlertDialog';
+import { CommentResponse } from '../types/Response/CommentResponse';
 export default function Comment({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const route = useRoute();
-	const dispatch=useDispatch()
+	const dispatch = useDispatch();
 	const { postId } = route.params || {};
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [content, setContent] = useState('');
-	const [comment, setComment] = useState([]);
+	const [comments, setComments] = useState<CommentResponse[]>([]);
 	const [loader, setLoader] = useState(false);
 	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
-	const [dltCommentId,setDltCommentId]=useState('')
+	const [dltCommentId, setDltCommentId] = useState('');
 	const fetchComment = async () => {
 		setLoader(true);
 		try {
 			const response = await getCommentPost(postId);
+			console.log(response);
 			if (response) {
 				setComment(response);
 			}
@@ -61,7 +67,7 @@ export default function Comment({ navigation }) {
 		setLoader(true);
 		if (content.length < 1) {
 			Toast.show('Write Something first..', Toast.SHORT);
-			setLoader(false);  
+			setLoader(false);
 			return;
 		}
 		const payload = {
@@ -70,14 +76,13 @@ export default function Comment({ navigation }) {
 		};
 		try {
 			const response = await postComment(payload);
-			console.log('Response from postComment:', response);
 			if (response) {
 				setContent('');
 				setComment((prevComments) => [response, ...prevComments]);
-				dispatch(addCommentToPost({ postId, commentId: response.id }));
+				dispatch(addCommentToPost({ postId, commentId: response.comment.id }));
 			}
 		} catch (err) {
-			console.log('Error in addComment:', err);
+			console.error('Error in addComment:', err);
 		} finally {
 			setLoader(false);
 		}
@@ -88,7 +93,7 @@ export default function Comment({ navigation }) {
 		try {
 			const previousComments = [...comment];
 			setComment((prevComments) =>
-				prevComments.filter((comment) => comment.id !== dltCommentId)
+				prevComments.filter((comment) => comment.comment.id !== dltCommentId)
 			);
 			const response = await deleteComment(postId, dltCommentId);
 			if (response) {
@@ -97,12 +102,12 @@ export default function Comment({ navigation }) {
 		} catch (err) {
 			Toast.show('Something went wrong', Toast.SHORT);
 			setComment(previousComments);
-			console.log(err);
+			console.error(err);
 		} finally {
 			setDltCommentId('');
 		}
 	};
-	
+
 	return (
 		<View style={styles.sheet}>
 			{loader && <Loader />}
@@ -121,15 +126,15 @@ export default function Comment({ navigation }) {
 				maxToRenderPerBatch={10}
 				updateCellsBatchingPeriod={50}
 				removeClippedSubviews={true}
-				keyExtractor={(item) => item.id.toString()}
+				keyExtractor={(item) => item.comment.id}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>
 							navigation.navigate(
-								userData.username === item.userDetail.username
+								userData.username === item.commentUserDetail.username
 									? 'Profile'
 									: 'viewUserProfile',
-								{ username: item.userDetail.username }
+								{ username: item.commentUserDetail.username }
 							)
 						}
 						activeOpacity={0.4}
@@ -137,34 +142,34 @@ export default function Comment({ navigation }) {
 						<View style={styles.commentBox}>
 							<Image
 								style={styles.img}
-								source={{ uri: item.userDetail.profilePicture }}
+								source={{ uri: item.commentUserDetail.profilePicture }}
 							/>
 							<View style={styles.userDetail}>
 								<View style={styles.nameIcon}>
 									<View style={styles.nameCont}>
 										<Text style={globalStyleSheet.smallestHead}>
-											{item.userDetail.firstName +
+											{item.commentUserDetail.firstName +
 												' ' +
-												item.userDetail.lastName}
+												item.commentUserDetail.lastName}
 										</Text>
 										<Text
 											numberOfLines={1}
 											ellipsizeMode="tail"
 											style={globalStyleSheet.smallFontDescription}
 										>
-											{item.userDetail.headline}
+											{item.commentUserDetail.headline}
 										</Text>
 										<Text style={globalStyleSheet.smallFontDescription}>
-											{moment(item.createdAt + '+00:00')
+											{moment(item.comment.createdAt + '+00:00')
 												.utcOffset('+05:30')
 												.fromNow()}
 										</Text>
 									</View>
-									{(userData.userId === item.userDetail.userId ||
-										userData.posts.includes(item.postId)) && (
+									{(userData.userId === item.commentUserDetail.userId ||
+										userData.posts.includes(item.commment.postId)) && (
 										<TouchableOpacity
 											onPress={() => {
-												setDltCommentId(item.id);
+												setDltCommentId(item.comment.id);
 												setAlertDialogVisible(true);
 											}}
 											activeOpacity={0.4}
@@ -179,7 +184,9 @@ export default function Comment({ navigation }) {
 										</TouchableOpacity>
 									)}
 								</View>
-								<Text style={globalStyleSheet.description}>{item.content}</Text>
+								<Text style={globalStyleSheet.description}>
+									{item.comment.content}
+								</Text>
 							</View>
 						</View>
 					</TouchableOpacity>

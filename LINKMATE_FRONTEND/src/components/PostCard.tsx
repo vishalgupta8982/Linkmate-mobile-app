@@ -34,7 +34,12 @@ import Animated, {
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { removePost, setFeedPosts, setUserPosts, toggleLike } from '../redux/slices/PostSlice';
+import {
+	removePost,
+	setFeedPosts,
+	setUserPosts,
+	toggleLike,
+} from '../redux/slices/PostSlice';
 import Comment from './Comment';
 import CustomAlertDialog from './CustomAlertDialog';
 
@@ -54,13 +59,13 @@ export default function PostCard({ data, navigation }) {
 	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
 	const [commentModalVisible, setCommentModalVisible] = useState(false);
 	useEffect(() => {
-		if (data.fileType == 'image') {
-			Image.getSize(data.fileUrl, (width, height) => {
+		if (data.post.fileType == 'image') {
+			Image.getSize(data.post.fileUrl, (width, height) => {
 				const aspectRatio = height / width;
 				setImageHeight(width * aspectRatio);
 			});
 		}
-	}, [data.fileUrl, data.fileType]);
+	}, [data.post.fileUrl, data.post.fileType]);
 
 	const scale = useSharedValue(1);
 	const translateY = useSharedValue(0);
@@ -92,16 +97,18 @@ export default function PostCard({ data, navigation }) {
 		}
 	};
 	const handleDelete = async () => {
-		setAlertDialogVisible(false)
-		const deletedUserPost = userPosts.find((post) => post.postId === data.postId);
-		const deletedFeedPost = feedPosts.find(
-			(post) => post.postId === data.postId
+		setAlertDialogVisible(false);
+		const deletedUserPost = userPosts.find(
+			(post) => post.post.postId === data.post.postId
 		);
-		dispatch(removePost({ postId: data.postId }));
+		const deletedFeedPost = feedPosts.find(
+			(post) => post.post.postId === data.post.postId
+		);
+		dispatch(removePost({ postId: data.post.postId }));
 		try {
-			const response = await deletePost(data.postId);
+			const response = await deletePost(data.post.postId);
 		} catch (err) {
-			console.log(err)
+			console.error(err);
 			Toast.show('Something went wrong', Toast.SHORT);
 			if (deletedUserPost) {
 				dispatch(setUserPosts([...userPosts, deletedUserPost]));
@@ -117,7 +124,7 @@ export default function PostCard({ data, navigation }) {
 				activeOpacity={0.4}
 				onPress={() =>
 					navigation.navigate(
-						userData.username == data.userDetail.username
+						userData.username == data.postUserDetail.username
 							? 'Profile'
 							: 'viewUserProfile',
 						{
@@ -129,27 +136,29 @@ export default function PostCard({ data, navigation }) {
 				<View style={styles.imgCont}>
 					<Image
 						style={styles.img}
-						source={{ uri: data.userDetail.profilePicture }}
+						source={{ uri: data.postUserDetail.profilePicture }}
 					/>
 					<View>
 						<Text style={globalStyleSheet.smallerHead}>
-							{data.userDetail.firstName + ' ' + data.userDetail.lastName}
+							{data.postUserDetail.firstName +
+								' ' +
+								data.postUserDetail.lastName}
 						</Text>
 						<Text
 							numberOfLines={1}
 							ellipsizeMode="tail"
 							style={styles.headline}
 						>
-							{data.userDetail.headline}
+							{data.postUserDetail.headline}
 						</Text>
 						<Text style={styles.time}>
 							<AntDesign name="clockcircleo" size={10} color={colors.TEXT} />{' '}
-							{moment(data.createdAt + '+00:00')
+							{moment(data.post.createdAt + '+00:00')
 								.utcOffset('+05:30')
 								.fromNow()}
 						</Text>
 					</View>
-					{userData?.posts.includes(data.postId) && (
+					{userData?.posts.includes(data.post.postId) && (
 						<TouchableOpacity
 							style={{ marginLeft: 'auto' }}
 							activeOpacity={0.4}
@@ -165,32 +174,35 @@ export default function PostCard({ data, navigation }) {
 					)}
 				</View>
 			</TouchableOpacity>
-			{data.content && (
+			{data.post.content && (
 				<View style={styles.contentCont}>
-					{data.content.length < 80 ||
+					{data.post.content.length < 80 ||
 					readMore ||
-					data.fileType == 'content' ? (
-						<Text style={globalStyleSheet.description}> {data.content} </Text>
+					data.post.fileType == 'content' ? (
+						<Text style={globalStyleSheet.description}>
+							{' '}
+							{data.post.content}{' '}
+						</Text>
 					) : (
 						<Text style={globalStyleSheet.description}>
-							{data.content.slice(0, 80)}...{'  '}
+							{data.post.content.slice(0, 80)}...{'  '}
 							<Text onPress={() => setReadMore(true)}> Read more </Text>
 						</Text>
 					)}
 				</View>
 			)}
-			{data.fileType == 'image' && (
+			{data.post.fileType == 'image' && (
 				<Image
 					style={[styles.mainfile, { height: imageHeight / 2 }]}
-					source={{ uri: data.fileUrl }}
+					source={{ uri: data.post.fileUrl }}
 				/>
 			)}
 
-			{data.fileType === 'document' && (
+			{data.post.fileType === 'document' && (
 				<>
 					<Pdf
 						source={{
-							uri: data.fileUrl,
+							uri: data.post.fileUrl,
 						}}
 						trustAllCerts={Platform.OS === 'ios'}
 						style={styles.pdf}
@@ -213,13 +225,13 @@ export default function PostCard({ data, navigation }) {
 				<TouchableOpacity
 					onPress={() => {
 						dispatch(
-							toggleLike({ postId: data.postId, userId: userData.userId })
+							toggleLike({ postId: data.post.postId, userId: userData.userId })
 						);
-						handlePress(data.postId, userData.userId);
+						handlePress(data.post.postId, userData.userId);
 					}}
 				>
 					<Animated.View style={animatedStyle}>
-						{data.likedBy.includes(userData.userId) ? (
+						{data.post.likedBy.includes(userData.userId) ? (
 							<AntDesign name="like1" size={28} color={colors.RED} />
 						) : (
 							<AntDesign name="like2" size={28} color={colors.TEXT} />
@@ -228,7 +240,7 @@ export default function PostCard({ data, navigation }) {
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() =>
-						navigation.navigate('comment', { postId: data.postId })
+						navigation.navigate('comment', { postId: data.post.postId })
 					}
 				>
 					<Octicons padding={3} name="comment" size={24} color={colors.TEXT} />
@@ -238,22 +250,22 @@ export default function PostCard({ data, navigation }) {
 			<View style={styles.likesCont}>
 				<TouchableOpacity
 					onPress={() =>
-						navigation.navigate('likes', { postId: data.postId })
+						navigation.navigate('likes', { postId: data.post.postId })
 					}
 				>
 					<Text style={globalStyleSheet.smallestHead}>
-						{data.likedBy.length} likes
+						{data.post.likedBy.length} likes
 					</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					onPress={() =>
-						navigation.navigate('comment', { postId: data.postId })
+						navigation.navigate('comment', { postId: data.post.postId })
 					}
 				>
 					<Text style={globalStyleSheet.description}>
-						{data.comments.length < 1
+						{data.post.comments.length < 1
 							? 'Write first comment..'
-							: `View all ${data.comments.length} comments`}
+							: `View all ${data.post.comments.length} comments`}
 					</Text>
 				</TouchableOpacity>
 				<CustomAlertDialog

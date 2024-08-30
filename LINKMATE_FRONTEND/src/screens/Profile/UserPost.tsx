@@ -51,13 +51,14 @@ export default function UserPost({ navigation }) {
 	useEffect(() => {
 		fetchFeed();  
 	}, []);
+	console.log(userPostData)
 
 	return (
 		<View style={styles.mainCont}>
         <StackHeader title="My Posts" navigation={navigation} />
 			<FlatList
 				data={userPostData}
-				keyExtractor={(item) => item.postId.toString()}
+				keyExtractor={(item) => item.post.postId}
 				renderItem={({ item }) => (
 					<PostCard navigation={navigation} data={item} />
 				)}

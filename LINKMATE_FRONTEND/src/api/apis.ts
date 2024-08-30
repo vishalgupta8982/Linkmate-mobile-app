@@ -15,6 +15,7 @@ import { PostDataResponse } from '../types/Response/GetPostResponse';
 import { CommentPayload } from '../types/Payload/CommentPayload';
 import { chatInteraction } from '../types/Response/ChatInteractionResponse';
 import { chatHistoryResponse } from '../types/Response/ChatHistoryResponse';
+import { CommentResponse } from '../types/Response/CommentResponse';
 
 export const userLogin = async (
 	payload: LoginPayload
@@ -32,7 +33,15 @@ export const verifyOtp = async (payload: OtpPayload) => {
 	const url = `/users/verify-otp?otp=${payload.otp}`;
 	return await post<verifyOtpResponse>(url, payload);
 };
-
+export const saveFcmToken = async (fcmToken: string) => {
+	console.log(fcmToken)
+	const url = `/fcmToken/save?fcmToken=${fcmToken}`;
+	return await post<string>(url);
+};
+export const deleteFcmToken = async () => {
+	const url = `/fcmToken/delete`;
+	return await del<string>(url);
+};
 export const userDetails = async () => {
 	const url = '/users/user-details';
 	return await get<User>(url);
@@ -80,7 +89,6 @@ export const addSkill = async (skill: string[]) => {
 	return await put<User>(url, skill);
 };
 export const addEducation = async (payload: EducationPayload) => {
-	console.log(payload);
 	const url = '/users/update/education';
 	return await put<User>(url, [payload]);
 };
@@ -103,7 +111,6 @@ export const updateExperience = async (
 	experienceId: string,
 	payload: ExperiencePayload
 ) => {
-	console.log(payload);
 	const url = `/users/update/experience`;
 	return await put<User>(url, [payload]);
 };
@@ -179,7 +186,6 @@ export const createPost = async (
 	};
 	if (file == null) {
 		const url = `/posts?content=${content}&fileType=${fileType}`;
-		console.log(url);
 		return await post<Post>(url);
 	} else {
 		const url = `/posts?content=${content}&fileType=${fileType}`;
@@ -197,15 +203,15 @@ export const likedPost = async (postId: String) => {
 };
 export const getCommentPost = async (postId: String) => {
 	const url = `/posts/comment/${postId}`;
-	return await get<Comment>(url);
+	return await get<CommentResponse>(url);
 };
 export const postComment = async (payload: CommentPayload) => {
 	const url = `/posts/comment`;
-	return await post<Comment>(url, payload);
+	return await post<CommentResponse>(url, payload);
 };
 export const deleteComment = async (postId: String, commentId: String) => {
 	const url = `/posts/comment/delete?postId=${postId}&commentId=${commentId}`;
-	return await del<Comment>(url);
+	return await del<CommentResponse>(url);
 };
 export const getUserPost = async (page: number) => {
 	const url = `/posts/userPosts?page=${page}&size=5`;
@@ -223,7 +229,11 @@ export const getChatInteraction = async () => {
 	const url = `/chat/all-interactions`;
 	return await get<chatInteraction>(url);
 };
-export const getChatHistory = async (userId:String,page:number) => {
+export const getChatHistory = async (userId: String, page: number) => {
 	const url = `/chat/history?connectionUserId=${userId}&page=${page}&size=10`;
 	return await get<chatHistoryResponse>(url);
+};
+export const deleteMessageForEveryOne = async (messageId: String) => {
+	const url = `/chat/delete/${messageId}`;
+	return await del<String>(url);
 };

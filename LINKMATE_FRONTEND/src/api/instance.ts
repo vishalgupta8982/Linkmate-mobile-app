@@ -3,10 +3,13 @@ import { store } from '../redux/store';
 import { selectToken } from '../redux/slices/authSlice';
 
 const baseURL = 'https://linkmate.onrender.com/api/';
-// export const socketUrl="wss://linkmate.onrender.com/ws/connection-requests"
-export const socketUrl = 'ws://192.168.21.101:8083/ws/chat';
-// const baseURL = 'http://192.168.21.101:8083';
-
+// export const connectionSocketUrl =
+// 	'wss://linkmate.onrender.com/ws/connection-requests';
+// export const chatSocketUrl = 'wss://linkmate.onrender.com/ws/chat';
+export const connectionSocketUrl =
+	'ws://192.168.205.101:8083/ws/connection-requests';
+export const chatSocketUrl = 'ws://192.168.205.101:8083/ws/chat';
+// const baseURL = 'http://192.168.205.101:8083';
 
 const axiosInstance = axios.create({
 	baseURL: baseURL,
@@ -34,10 +37,8 @@ const apiCall = async <T>(apiFunc: () => Promise<any>): Promise<T> => {
 	} catch (error) {
 		let errorMessage = 'An unexpected error occurred';
 		if (axios.isAxiosError(error)) {
-			  errorMessage =
-					error.response?.data?.message ||
-					error.response?.data ||
-					error.message;
+			errorMessage =
+				error.response?.data?.message || error.response?.data || error.message;
 			console.error('Axios error:', errorMessage);
 		} else {
 			console.error('Unexpected error:', error);

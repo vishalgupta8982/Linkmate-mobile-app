@@ -1,15 +1,12 @@
 package com.example.linkmate.connection.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.example.linkmate.config.MyConnectionRequestWebSocketHandler;
@@ -17,12 +14,12 @@ import com.example.linkmate.connection.model.Connection;
 import com.example.linkmate.connection.model.ConnectionRequestDetail;
 import com.example.linkmate.connection.model.ConnectionStatus;
 import com.example.linkmate.connection.repository.ConnectionRepository;
+import com.example.linkmate.notification.service.NotificationService;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
 import com.example.linkmate.user.service.UserService;
 import com.example.linkmate.user.utils.JwtUtil;
-import com.google.cloud.firestore.Firestore;
-import com.google.firebase.cloud.FirestoreClient;
+
 
 @Service
 public class ConnectionService {
@@ -38,6 +35,9 @@ public class ConnectionService {
 
         @Autowired
         private JwtUtil jwtUtil;
+
+        @Autowired
+        private NotificationService notificationService;
 
         @Autowired
         @Lazy
@@ -81,7 +81,7 @@ public class ConnectionService {
                 myConnectionRequestWebSocketHandler.sendConnectionRequestUpdate(
                                 connectedUser.getToken(),
                                 detail);
-
+                notificationService.sendNotification(connectedUserId,userId,  "Sent you a connection request");
                 return connectionRepository.save(connection);
         }
 
@@ -110,7 +110,7 @@ public class ConnectionService {
                 connectedUser.getConnections().add(userId);
                 userRepository.save(user);
                 userRepository.save(connectedUser);
-
+                notificationService.sendNotification(connectedUserId, userId, "Accepted your invite");
                 return connection;
         }
 

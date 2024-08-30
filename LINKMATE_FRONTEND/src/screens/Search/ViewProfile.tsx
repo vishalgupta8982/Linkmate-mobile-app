@@ -21,9 +21,11 @@ import { getSearchUserDetail, revertConnectionRequest, sendConnectionRequest } f
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Loader from '../../components/Loader';
+import { RootStackParamList } from 'navigation/MainStackNav';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 const HEADER_HEIGHT = 250;
-
-const ViewProfile: React.FC = ({ navigation,route }) => {
+type Tprops = NativeStackScreenProps<RootStackParamList, 'viewUserProfile'>;
+const ViewProfile=({ navigation,route }:Tprops) => {
     const {username}=route.params
 	const theme = useCustomTheme();
 	const { colors } = theme;

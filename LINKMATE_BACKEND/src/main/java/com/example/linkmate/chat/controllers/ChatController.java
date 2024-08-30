@@ -42,9 +42,9 @@ public class ChatController {
         return new ResponseEntity<>(chatService.deleteMessageForEveryone(token, messageId),HttpStatus.OK);
     }
 
-    @PutMapping("/mark-read/{connnectionUserId}")
-    public ResponseEntity<String> readMessage(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId connnectionUserId){
-        return new ResponseEntity<>(chatService.messageRead(token, connnectionUserId),HttpStatus.OK);
+    @PutMapping("/mark-read")
+    public ResponseEntity<String> readMessage(@RequestParam ObjectId userId,@RequestParam ObjectId connnectionUserId){
+        return new ResponseEntity<>(chatService.messageRead(userId, connnectionUserId),HttpStatus.OK);
     }
 
     @GetMapping("/all-interactions")

@@ -3,7 +3,7 @@ import { RootState } from '../store';
 import { User } from '../../types/compoundTypes';
 
 interface UserDetailsState {
-	user: User | null;
+	user: User | null ;
 }
 
 const initialState: UserDetailsState = {

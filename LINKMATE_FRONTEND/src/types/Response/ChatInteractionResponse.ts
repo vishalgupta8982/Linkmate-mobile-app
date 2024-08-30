@@ -6,4 +6,5 @@ export interface chatInteraction {
 	profilePicture: String;
 	lastMessage: String;
 	lastMessageDate: String;
+	numberOfUnreadMessage:number;
 }

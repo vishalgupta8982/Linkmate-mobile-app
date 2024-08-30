@@ -15,7 +15,12 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-       InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase-service-account.json");
+        if (FirebaseApp.getApps().isEmpty()) {
+            InputStream serviceAccount = getClass().getClassLoader()
+                    .getResourceAsStream("firebase-service-account.json");
+            if (serviceAccount == null) {
+                throw new IOException("Service account file not found");
+            }
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -23,5 +28,7 @@ public class FirebaseConfig {
                     .build();
 
             return FirebaseApp.initializeApp(options);
+        }
+        return FirebaseApp.getInstance();
     }
 }

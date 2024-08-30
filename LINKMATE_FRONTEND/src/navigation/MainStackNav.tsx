@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-	createNativeStackNavigator,
-	TransitionPresets,
-} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../screens/SplashScreen';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { useCustomTheme } from '../config/Theme';
@@ -14,7 +11,7 @@ import EditProfile from '../screens/Profile/EditProfile';
 import ViewProfile from '../screens/Profile/ViewProfile';
 import Setting from '../screens/Profile/Setting';
 import SearchResult from '../screens/Search/SearchResult';
-import  ViewUserProfile from '../screens/Search/ViewProfile'
+import ViewUserProfile from '../screens/Search/ViewProfile';
 import MyConnections from '../screens/Profile/MyConnections';
 import Notification from '../screens/Notification/Notification';
 import Comment from '../components/Comment';
@@ -23,14 +20,28 @@ import Likes from '../components/Likes';
 import UserChatDetail from '../screens/Chat/UserChatDetail';
 
 export type RootStackParamList = {
-	Otp:{email:string,firstName:string,lastName:string,password:string},
-	profile:undefined;
-	viewProfile:{image:string}
+	Splash: undefined;
+	SignUp: undefined;
+	Login: undefined;
+	Otp: { email: string; firstName: string; lastName: string; password: string };
+	EditProfile: undefined;
+	setting: undefined;
+	searchResult: undefined;
+	myConnection: undefined;
+	userPosts: undefined;
+	notification: undefined;
+	profile: undefined;
+	BottomNavigation: undefined;
+	likes: undefined;
+	comment: undefined;
+	viewProfile: { image: string };
+	userChatDetail: { userId: string };
+	viewUserProfile: { username: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function MainStackNav({ navigation }) {
+function MainStackNav() {
 	const theme = useCustomTheme();
 	const MyTheme = {
 		...DefaultTheme,

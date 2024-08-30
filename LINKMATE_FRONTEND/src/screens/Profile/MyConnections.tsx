@@ -54,7 +54,6 @@ export default function MyConnections({ navigation }) {
 			}
 		} catch (err) {}
 	};
-	console.log(removeConnectionId);
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
 			activeOpacity={0.4}

@@ -25,7 +25,7 @@ export default function Chat({ navigation }) {
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
-	const [chatInteraction, setChatInteraction] = useState([]);
+	const [chatInteraction, setChatInteraction] = useState<chatInteraction[]>();
 	const [loader, setLoader] = useState(true);
 	const fetchInteraction = async () => {
 		try {
@@ -50,7 +50,9 @@ export default function Chat({ navigation }) {
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						activeOpacity={0.4}
-						onPress={() => navigation.navigate('userChatDetail',{data:item})}
+						onPress={() =>
+							navigation.navigate('userChatDetail', { userId: item.userId })
+						}
 					>
 						<View style={styles.list}>
 							<Image style={styles.img} source={{ uri: item.profilePicture }} />
@@ -111,7 +113,7 @@ const getStyles = (colors) =>
 		},
 		message: {
 			fontFamily: fonts.Inter_Medium,
-			color: colors.APP_PRIMARY,
+			color: colors.APP_PRIMARY_LIGHT,
 			fontSize: responsiveFontSize(1.8),
 			width: responsiveWidth(70),
 		},

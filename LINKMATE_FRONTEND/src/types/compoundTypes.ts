@@ -26,10 +26,7 @@ export interface Project{
 }
 
 export interface User {
-	userId: {
-		timestamp: number;
-		date: string;
-	};
+	userId:string;
 	username: string;
 	email: string;
 	firstName: string;
@@ -44,6 +41,6 @@ export interface User {
 	projects: Project[];
 	skills: string[];
 	sendConnectionsRequest: string[];
-	createdAt: string | null;
+	createdAt: string ;
 	updatedAt: string | null;
 }
