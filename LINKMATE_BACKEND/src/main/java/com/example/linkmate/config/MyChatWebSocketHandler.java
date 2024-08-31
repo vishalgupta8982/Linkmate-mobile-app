@@ -113,8 +113,6 @@
 //     }
 // }
 
-
-
 package com.example.linkmate.config;
 
 import org.springframework.web.socket.CloseStatus;
@@ -198,7 +196,7 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
             WebSocketSession receiverSession = sessions.get(receiverToken);
             if (receiverSession != null && receiverSession.isOpen()) {
                 Map<String, String> response = new HashMap<>();
-                response.put("status", responseMessage); 
+                response.put("status", responseMessage);
                 response.put("messageType", "MESSAGE_READ");
                 response.put("userId", userId.toString());
                 String responsePayload = new ObjectMapper().writeValueAsString(response);
@@ -210,9 +208,9 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
             System.out.println("User not found for ID: " + connectionUserId);
         }
     }
-    
+
     private void handleChatMessage(Map<String, Object> messageData) throws IOException {
-        
+
         try {
             Chat chat = new Chat();
             chat.setSenderId(new ObjectId((String) messageData.get("senderId")));

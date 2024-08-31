@@ -12,6 +12,7 @@ import com.example.linkmate.chat.model.Chat;
 import com.example.linkmate.chat.model.ChatHistoryResponse;
 import com.example.linkmate.chat.model.AllInteractionDto;
 import com.example.linkmate.chat.repository.ChatRepository;
+import com.example.linkmate.notification.service.NotificationService;
 import com.example.linkmate.post.model.PostUserDetail;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
@@ -30,9 +31,12 @@ public class ChatService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public Chat saveChatMessage(Chat chatMessage) {
         Chat chat = chatRepository.save(chatMessage);
-        System.out.println("chatService" + chat);
+        notificationService.sendNotification(chat.getReceiverId(), chat.getSenderId(), chat.getMessageContent());
         return chat;
 
     }
