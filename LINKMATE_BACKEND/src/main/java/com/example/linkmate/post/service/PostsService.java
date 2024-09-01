@@ -80,8 +80,7 @@ public class PostsService {
         return postRepository.findById(id);
     }
 
-    public Page<PostResponse> findPostByUserId(String token, int page, int size) {
-        ObjectId userId = jwtUtil.getUserIdFromToken(token);
+    public Page<PostResponse> findPostByUserId(ObjectId userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Post> postPage = postRepository.findByUserId(userId, pageable);
         User user = userRepository.findById(userId)

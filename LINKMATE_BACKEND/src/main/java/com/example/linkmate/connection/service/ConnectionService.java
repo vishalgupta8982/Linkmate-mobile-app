@@ -179,8 +179,7 @@ public class ConnectionService {
                 return "Connection removed successfully";
         }
 
-        public List<User> getConnections(String token) {
-                ObjectId userId = jwtUtil.getUserIdFromToken(token);
+        public List<User> getConnections(ObjectId userId) {
                 List<Connection> connections = connectionRepository.findByUserIdOrConnectedUserIdAndStatus(userId,
                                 ConnectionStatus.ACCEPTED);
                 return connections.stream()

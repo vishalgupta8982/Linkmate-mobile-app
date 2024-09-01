@@ -66,9 +66,9 @@ public class ConnectionController {
     }
 
     @JsonView(Views.Search.class)
-    @GetMapping("/my-connections")
-    public ResponseEntity<List<User>> getConnections(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        return new ResponseEntity<>(connectionService.getConnections(token),HttpStatus.OK);
+    @GetMapping("/my-connections/{userId}")
+    public ResponseEntity<List<User>> getConnections(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId userId) {
+        return new ResponseEntity<>(connectionService.getConnections(userId),HttpStatus.OK);
     }
 
     @JsonView(Views.Search.class)

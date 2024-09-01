@@ -45,10 +45,10 @@ public class PostController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/userPosts")
-    public ResponseEntity<Page<PostResponse>> getPostsByUserId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestParam int page, @RequestParam int size) {
+    @GetMapping("/userPosts/{userId}")
+    public ResponseEntity<Page<PostResponse>> getPostsByUserId(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestParam int page, @RequestParam int size,@PathVariable ObjectId userId) {
         System.out.println(page+""+size);
-        Page<PostResponse> posts = postsService.findPostByUserId(token,page,size);
+        Page<PostResponse> posts = postsService.findPostByUserId(userId,page,size);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
