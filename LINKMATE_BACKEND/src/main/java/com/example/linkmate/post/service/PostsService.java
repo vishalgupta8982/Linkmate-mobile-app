@@ -162,8 +162,9 @@ public class PostsService {
         if (page < 0 || size <= 0) {
             throw new IllegalArgumentException("Page number must be non-negative and size must be positive.");
         }
+
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));  
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -172,7 +173,6 @@ public class PostsService {
 
         Page<Post> postsPage = postRepository.findByUserIdIn(connections, pageable);
 
-        // Transform Post to PostResponse with user details
         List<PostResponse> postResponses = postsPage.stream().map(post -> {
             User postUser = userRepository.findById(post.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -187,7 +187,8 @@ public class PostsService {
 
             return new PostResponse(post, postUserDetail);
         }).collect(Collectors.toList());
-
+ 
+        Collections.shuffle(postResponses);
         return new PageImpl<>(postResponses, pageable, postsPage.getTotalElements());
     }
 

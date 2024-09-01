@@ -1,7 +1,6 @@
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\controllers\ChatController.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\model\AllInteractionDto.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\model\Chat.java
-E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\model\ChatHistoryResponse.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\model\MessageType.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\repository\ChatRepository.java
 E:\Linkmate Mobile App\LINKMATE_BACKEND\src\main\java\com\example\linkmate\chat\services\ChatService.java

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.linkmate.chat.model.Chat;
-import com.example.linkmate.chat.model.ChatHistoryResponse;
 import com.example.linkmate.chat.model.AllInteractionDto;
 import com.example.linkmate.chat.repository.ChatRepository;
 import com.example.linkmate.notification.service.NotificationService;
@@ -41,7 +40,7 @@ public class ChatService {
 
     }
 
-    public ChatHistoryResponse getChatHistory(String token, ObjectId connectionUserId, int page, int size) {
+    public Page<Chat> getChatHistory(String token, ObjectId connectionUserId, int page, int size) {
         ObjectId myUserId = jwtUtil.getUserIdFromToken(token);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Chat> chatHistory = chatRepository.findChatHistory(myUserId, connectionUserId, pageable);
@@ -54,7 +53,7 @@ public class ChatService {
         postUserDetail.setProfilePicture(user.getProfilePicture());
         postUserDetail.setUsername(user.getUsername());
         postUserDetail.setUserId(user.getUserId());
-        return new ChatHistoryResponse(chatHistory, postUserDetail);
+        return chatHistory;
     }
 
     public String deleteMessageForEveryone(String token, ObjectId messageId) {
