@@ -132,7 +132,7 @@ public class UserService {
     }
 
     // service for update education
-    public String updateUserEducation(String username, List<Education> educations) {
+    public List<Education> updateUserEducation(String username, List<Education> educations) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -161,11 +161,11 @@ public class UserService {
 
         existingUser.setEducations(existingEducations);
         userRepository.save(existingUser);
-        return "Updated successfully";
+        return existingEducations;
     }
 
     // service for update experience
-    public String updateUserExperience(String username, List<Experience> experiences) {
+    public List<Experience> updateUserExperience(String username, List<Experience> experiences) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -198,11 +198,11 @@ public class UserService {
 
         existingUser.setExperiences(existingExperiences);
        userRepository.save(existingUser);
-        return "Updated successfully";
+        return existingExperiences;
     }
 
     // service for update experience
-    public String updateUserProjects(String username, List<Project> projects) {
+    public List<Project> updateUserProjects(String username, List<Project> projects) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -236,7 +236,7 @@ public class UserService {
 
         existingUser.setProjects(existingProjects);
          userRepository.save(existingUser);
-        return "Updated successfully";
+        return existingProjects;
     }
 
     // service for update skills

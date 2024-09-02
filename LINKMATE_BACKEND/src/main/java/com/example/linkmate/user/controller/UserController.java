@@ -190,7 +190,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
             }
 
-            String updatedUser = userService.updateUserEducation(username, educations);
+             List<Education> updatedUser = userService.updateUserEducation(username, educations);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -212,7 +212,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
             }
 
-            String updatedUser = userService.updateUserExperience(username, experiences);
+             List<Experience> updatedUser = userService.updateUserExperience(username, experiences);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -234,7 +234,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
             }
 
-            String updatedUser = userService.updateUserProjects(username, projects);
+            List<Project> updatedUser = userService.updateUserProjects(username, projects);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
