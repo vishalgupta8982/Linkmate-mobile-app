@@ -5,10 +5,10 @@ import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
+import java.util.*;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
@@ -91,16 +91,17 @@ public class UserService {
     }
 
     // service for update user detail
-    public User updateUserDetails(String username, UserUpdateDto userUpdateDto) {
+    public Object updateUserDetails(String username, UserUpdateDto userUpdateDto) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+        final boolean[] isUsernameUpdated = { false };
         Optional.ofNullable(userUpdateDto.getUsername()).ifPresent(newUsername -> {
             if (findByUserName(newUsername).isPresent()) {
-                throw new UsernameAlreadyExistsException("Username '" + newUsername + "' already exists.");
+                throw new UsernameAlreadyExistsException("Username '" + newUsername + "already exists.");
             }
             existingUser.setUsername(newUsername);
+            isUsernameUpdated[0] = true;  
         });
-
         Optional.ofNullable(userUpdateDto.getEmail()).ifPresent(existingUser::setEmail);
         Optional.ofNullable(userUpdateDto.getPassword())
                 .ifPresent(password -> existingUser.setPassword(passwordEncoder.encode(password)));
@@ -109,9 +110,13 @@ public class UserService {
         Optional.ofNullable(userUpdateDto.getHeadline()).ifPresent(existingUser::setHeadline);
         Optional.ofNullable(userUpdateDto.getLocation()).ifPresent(existingUser::setLocation);
         Optional.ofNullable(userUpdateDto.getAbout()).ifPresent(existingUser::setAbout);
-        Optional.ofNullable(userUpdateDto.getProfilePicture()).ifPresent(existingUser::setProfilePicture);
-
-        return userRepository.save(existingUser);
+        userRepository.save(existingUser);
+        if (isUsernameUpdated[0]) {
+            String token = jwtUtil.generateToken(existingUser.getUsername(),existingUser.getUserId().toString());  
+            return Map.of("token", token);  
+        } else {
+            return "User updated successfully"; 
+        }
     }
 
     // service for update profile pic

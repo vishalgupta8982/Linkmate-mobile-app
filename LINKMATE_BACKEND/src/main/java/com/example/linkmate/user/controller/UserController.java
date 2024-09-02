@@ -133,19 +133,13 @@ public class UserController {
     }
 
     // api for update user detail
-    @JsonView(Views.Internal.class)
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestBody UserUpdateDto userUpdateDto) {
         try {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
-            User updatedUser = userService.updateUserDetails(currentUsername, userUpdateDto);
-            if (!currentUsername.equals(updatedUser.getUsername())) {
-                String newToken = jwtUtil.generateToken(updatedUser.getUsername(),updatedUser.getUserId().toString());
-                updatedUser.setToken(newToken);
-            }
-
+            Object updatedUser = userService.updateUserDetails(currentUsername, userUpdateDto);
             return ResponseEntity.ok(updatedUser);
         } catch (UsernameAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists");
@@ -339,9 +333,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
-// search user
-@JsonView(Views.Search.class)
- @GetMapping("/search")
+
+    // search user
+    @JsonView(Views.Search.class)
+    @GetMapping("/search")
     public List<User> searchUsers(@RequestParam String query) {
         if (query == null || query.trim().isEmpty()) {
             return new ArrayList<>();
