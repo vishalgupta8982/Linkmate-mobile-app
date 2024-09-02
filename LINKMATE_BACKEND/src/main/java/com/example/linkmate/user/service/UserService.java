@@ -125,6 +125,7 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setProfilePicture(profilePictureUrl);
+            userRepository.save(user);
             return Map.of("profilePicture",profilePictureUrl);
         }
         return null;
