@@ -190,7 +190,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
             }
 
-            User updatedUser = userService.updateUserEducation(username, educations);
+            String updatedUser = userService.updateUserEducation(username, educations);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -212,7 +212,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
             }
 
-            User updatedUser = userService.updateUserExperience(username, experiences);
+            String updatedUser = userService.updateUserExperience(username, experiences);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -234,7 +234,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
             }
 
-            User updatedUser = userService.updateUserProjects(username, projects);
+            String updatedUser = userService.updateUserProjects(username, projects);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -252,7 +252,7 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
 
-            User updatedUser = userService.updateUserSkills(currentUsername, skills);
+            String updatedUser = userService.updateUserSkills(currentUsername, skills);
 
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {

@@ -132,7 +132,7 @@ public class UserService {
     }
 
     // service for update education
-    public User updateUserEducation(String username, List<Education> educations) {
+    public String updateUserEducation(String username, List<Education> educations) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -160,11 +160,12 @@ public class UserService {
         }
 
         existingUser.setEducations(existingEducations);
-        return userRepository.save(existingUser);
+        userRepository.save(existingUser);
+        return "Updated successfully";
     }
 
     // service for update experience
-    public User updateUserExperience(String username, List<Experience> experiences) {
+    public String updateUserExperience(String username, List<Experience> experiences) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -196,11 +197,12 @@ public class UserService {
         }
 
         existingUser.setExperiences(existingExperiences);
-        return userRepository.save(existingUser);
+       userRepository.save(existingUser);
+        return "Updated successfully";
     }
 
     // service for update experience
-    public User updateUserProjects(String username, List<Project> projects) {
+    public String updateUserProjects(String username, List<Project> projects) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -233,23 +235,23 @@ public class UserService {
         }
 
         existingUser.setProjects(existingProjects);
-        return userRepository.save(existingUser);
+         userRepository.save(existingUser);
+        return "Updated successfully";
     }
 
     // service for update skills
-    public User updateUserSkills(String username, List<String> newSkills) {
+    public String updateUserSkills(String username, List<String> newSkills) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-
         List<String> currentSkills = existingUser.getSkills();
         if (currentSkills == null) {
             currentSkills = new ArrayList<>();
         }
         Set<String> skillsSet = new HashSet<>(currentSkills);
         skillsSet.addAll(newSkills);
-
         existingUser.setSkills(new ArrayList<>(skillsSet));
-        return userRepository.save(existingUser);
+        userRepository.save(existingUser);
+        return "Added successfully";
     }
 
     // service for delete education
