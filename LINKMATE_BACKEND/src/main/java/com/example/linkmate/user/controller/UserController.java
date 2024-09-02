@@ -166,7 +166,7 @@ public class UserController {
             if (profilePictureUrl == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to upload profile picture");
             }
-            User updatedUser = userService.updateProfilePicture(currentUsername, profilePictureUrl);
+            Object updatedUser = userService.updateProfilePicture(currentUsername, profilePictureUrl);
             if (updatedUser == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
             }

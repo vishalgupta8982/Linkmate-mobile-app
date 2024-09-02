@@ -120,12 +120,12 @@ public class UserService {
     }
 
     // service for update profile pic
-    public User updateProfilePicture(String username, String profilePictureUrl) {
+    public Object updateProfilePicture(String username, String profilePictureUrl) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setProfilePicture(profilePictureUrl);
-            return userRepository.save(user);
+            return Map.of("profilePicture",profilePictureUrl);
         }
         return null;
     }
