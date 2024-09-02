@@ -255,7 +255,7 @@ public class UserService {
     }
 
     // service for delete education
-    public User deleteEducationById(String username, String educationId) {
+    public String deleteEducationById(String username, String educationId) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -270,14 +270,14 @@ public class UserService {
             }
             existingUser.setEducations(educations);
             userRepository.save(existingUser);
-            return existingUser;
+            return "deleted successfully";
         } else {
             throw new NotFoundException("Education with ID " + educationId + " not found.");
         }
     }
 
     // service for delete experience
-    public User deleteExperienceById(String username, String experienceId) {
+    public String deleteExperienceById(String username, String experienceId) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -292,13 +292,13 @@ public class UserService {
 
             existingUser.setExperiences(experiences);
             userRepository.save(existingUser);
-            return existingUser;
+            return "deleted successfully";
         } else {
             throw new NotFoundException("Experience list is empty or not initialized.");
         }
     }
     // service for delete project
-    public User deleteProjectById(String username, String projectId) {
+    public String deleteProjectById(String username, String projectId) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -313,14 +313,14 @@ public class UserService {
 
             existingUser.setProjects(projects);
             userRepository.save(existingUser);
-            return existingUser;
+            return "deleted successfully";
         } else {
             throw new NotFoundException("Project list is empty or not initialized.");
         }
     }
 
     // service for delete skills
-    public User deleteSkillByName(String username, String skillName) {
+    public String deleteSkillByName(String username, String skillName) {
         User existingUser = findByUserName(username)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -329,7 +329,7 @@ public class UserService {
             if (skills.remove(skillName)) {
                 existingUser.setSkills(skills);
                 userRepository.save(existingUser);
-                return existingUser;
+                return "deleted successfully";
             } else {
                 throw new RuntimeException("Skill '" + skillName + "' not found.");
             }

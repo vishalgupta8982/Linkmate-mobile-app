@@ -271,7 +271,7 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
 
-            User user = userService.deleteEducationById(currentUsername, educationId);
+            String user = userService.deleteEducationById(currentUsername, educationId);
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException | NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -289,7 +289,7 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
 
-            User user = userService.deleteExperienceById(currentUsername, experienceId);
+            String user = userService.deleteExperienceById(currentUsername, experienceId);
             return ResponseEntity.ok(user);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -307,7 +307,7 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
 
-            User user = userService.deleteProjectById(currentUsername, projectId);
+            String user = userService.deleteProjectById(currentUsername, projectId);
             return ResponseEntity.ok(user);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -325,7 +325,7 @@ public class UserController {
             String jwtToken = token.replace("Bearer ", "");
             String currentUsername = jwtUtil.getUserNameFromToken(jwtToken);
 
-            User user = userService.deleteSkillByName(currentUsername, skill);
+            String user = userService.deleteSkillByName(currentUsername, skill);
             return ResponseEntity.ok(user);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
