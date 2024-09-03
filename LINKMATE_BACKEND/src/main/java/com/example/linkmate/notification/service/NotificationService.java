@@ -55,7 +55,8 @@ public class NotificationService {
         });
     }
 
-    public List<Notification> getAllNotifications(ObjectId userId) {
+    public List<Notification> getAllNotifications(String token) {
+        ObjectId userId = jwtUtil.getUserIdFromToken(token);
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         return notificationRepository.findByUserIdSortedByCreatedAt(userId, sort);
     }

@@ -25,8 +25,8 @@ public class NotificationController {
     private NotificationService notificationService;
 
     @GetMapping
-    public List<Notification> getNotifications(@RequestParam ObjectId userId) {
-        return notificationService.getAllNotifications(userId);
+    public List<Notification> getNotifications(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        return notificationService.getAllNotifications(token);
     }
 
     @PutMapping("/read")
