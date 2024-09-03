@@ -2,6 +2,7 @@ com\example\linkmate\comment\model\CommentResponse.class
 com\example\linkmate\comment\service\CommentService.class
 com\example\linkmate\user\model\Project.class
 com\example\linkmate\comment\model\Comment.class
+com\example\linkmate\notification\repository\NotificationRepository.class
 com\example\linkmate\chat\model\Chat.class
 com\example\linkmate\connection\model\ConnectionStatus.class
 com\example\linkmate\connection\model\ConnectionRequestDetail.class
@@ -14,11 +15,13 @@ com\example\linkmate\user\repository\UserRepositoryImpl.class
 com\example\linkmate\user\utils\JwtUtil.class
 com\example\linkmate\core\Exception\UserNotFoundException.class
 com\example\linkmate\post\model\Post.class
+com\example\linkmate\notification\model\Notification.class
 com\example\linkmate\core\Exception\NotFoundException.class
 com\example\linkmate\connection\model\Connection.class
 com\example\linkmate\user\service\CustomUserDetailsService.class
 com\example\linkmate\post\model\PostUserDetail.class
 com\example\linkmate\chat\controllers\ChatController.class
+com\example\linkmate\notification\controller\NotificationController.class
 com\example\linkmate\chat\repository\ChatRepository.class
 com\example\linkmate\config\WebSocketConfig.class
 com\example\linkmate\post\controller\PostController.class
@@ -32,6 +35,7 @@ com\example\linkmate\user\model\Views$Internal.class
 com\example\linkmate\config\FirebaseConfig.class
 com\example\linkmate\filter\JwtRequestFilter.class
 com\example\linkmate\user\model\Views$Public.class
+com\example\linkmate\notification\model\NotificationType.class
 com\example\linkmate\user\controller\UserController.class
 com\example\linkmate\fcmToken\model\FcmToken.class
 com\example\linkmate\user\service\OtpService.class

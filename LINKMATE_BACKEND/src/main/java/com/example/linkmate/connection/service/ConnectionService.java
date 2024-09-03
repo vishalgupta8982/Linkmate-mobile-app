@@ -14,12 +14,12 @@ import com.example.linkmate.connection.model.Connection;
 import com.example.linkmate.connection.model.ConnectionRequestDetail;
 import com.example.linkmate.connection.model.ConnectionStatus;
 import com.example.linkmate.connection.repository.ConnectionRepository;
+import com.example.linkmate.notification.model.NotificationType;
 import com.example.linkmate.notification.service.NotificationService;
 import com.example.linkmate.user.model.User;
 import com.example.linkmate.user.repository.UserRepository;
 import com.example.linkmate.user.service.UserService;
 import com.example.linkmate.user.utils.JwtUtil;
-
 
 @Service
 public class ConnectionService {
@@ -81,13 +81,12 @@ public class ConnectionService {
                 myConnectionRequestWebSocketHandler.sendConnectionRequestUpdate(
                                 connectedUser.getToken(),
                                 detail);
-                notificationService.sendNotification(connectedUserId,userId,  "Sent you a connection request");
+                notificationService.sendNotification(connectedUserId, userId, "Sent you a connection request");
                 return connectionRepository.save(connection);
         }
 
         // api for accept connnection request
         public Connection acceptConnectionRequest(String token, ObjectId connectedUserId) {
-                // Extract userId from the token
                 ObjectId userId = jwtUtil.getUserIdFromToken(token);
                 User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
                 User connectedUser = userRepository.findById(connectedUserId)
@@ -100,16 +99,15 @@ public class ConnectionService {
                 if (connection.getStatus() != ConnectionStatus.PENDING) {
                         throw new RuntimeException("Connection request is not pending");
                 }
-
                 connection.setStatus(ConnectionStatus.ACCEPTED);
                 connectionRepository.save(connection);
-
                 user.getConnections().add(connectedUserId);
                 user.getConnectionsRequest().remove(connectedUserId);
                 connectedUser.getSendConnectionsRequest().remove(userId);
                 connectedUser.getConnections().add(userId);
                 userRepository.save(user);
                 userRepository.save(connectedUser);
+                notificationService.createNotification(connectedUserId,user.getProfilePicture(),user.getUsername(),null,NotificationType.CONNECTED);
                 notificationService.sendNotification(connectedUserId, userId, "Accepted your invite");
                 return connection;
         }
@@ -176,6 +174,9 @@ public class ConnectionService {
                 connectedUser.getConnections().remove(userId);
                 userRepository.save(user);
                 userRepository.save(connectedUser);
+                notificationService.deleteNotificationByType(userId,NotificationType.CONNECTED,connectedUser.getUsername() );
+                notificationService.deleteNotificationByType(
+                                connectedUserId,NotificationType.CONNECTED, user.getUsername() );
                 return "Connection removed successfully";
         }
 
