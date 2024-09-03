@@ -1,6 +1,7 @@
 package com.example.linkmate.notification.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class NotificationService {
         notification.setUserName(username != null ? username : null);
         notification.setPost(post != null ? post : null);
         notification.setNotificationType(notificationType);
+        notification.setCreatedAt(LocalDateTime.now());
         return notificationRepository.save(notification);
     }
 
