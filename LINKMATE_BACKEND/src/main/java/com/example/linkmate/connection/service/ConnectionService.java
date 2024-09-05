@@ -85,7 +85,6 @@ public class ConnectionService {
                 return connectionRepository.save(connection);
         }
 
-        // api for accept connnection request
         public Connection acceptConnectionRequest(String token, ObjectId connectedUserId) {
                 ObjectId userId = jwtUtil.getUserIdFromToken(token);
                 User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
@@ -134,7 +133,6 @@ public class ConnectionService {
         }
 
         public String cancelConnectionRequest(String token, ObjectId connectedUserId) {
-                // Extract userId from the token
                 ObjectId userId = jwtUtil.getUserIdFromToken(token);
                 User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
                 User connectedUser = userRepository.findById(
