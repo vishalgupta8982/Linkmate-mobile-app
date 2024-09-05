@@ -91,20 +91,13 @@ public class ChatService {
             List<ObjectId> connectionIds = userOpt.get().getConnections();
 
             for (ObjectId connectionId : connectionIds) {
-                Optional<Chat> lastChatOpt = chatRepository
-                        .findFirstBySenderIdAndReceiverIdOrderByCreatedAtDesc(myUserId, connectionId);
-
-                if (!lastChatOpt.isPresent()) {
-                    lastChatOpt = chatRepository.findFirstByReceiverIdAndSenderIdOrderByCreatedAtDesc(myUserId,
-                            connectionId);
-                }
-
+                Pageable pageable = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdAt"));
+                List<Chat> chats = chatRepository.findLatestMessageBetween(myUserId, connectionId, pageable);
+                Chat lastChat = chats.isEmpty() ? null : chats.get(0);
                 Optional<User> connectionOpt = userRepository.findById(connectionId);
 
-                if (lastChatOpt.isPresent() && connectionOpt.isPresent()) {
-                    Chat lastChat = lastChatOpt.get();
+                if (lastChat != null && connectionOpt.isPresent()) {
                     User connection = connectionOpt.get();
-
                     AllInteractionDto dto = new AllInteractionDto();
                     dto.setUserId(connection.getUserId());
                     dto.setUsername(connection.getUsername());

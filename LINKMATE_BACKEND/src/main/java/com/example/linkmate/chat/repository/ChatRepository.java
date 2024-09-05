@@ -15,9 +15,8 @@ public interface ChatRepository extends MongoRepository<Chat,ObjectId> {
     @Query("{ $or: [ { 'senderId': ?0, 'receiverId': ?1, 'isRead': false }, { 'senderId': ?1, 'receiverId': ?0, 'isRead': false } ] }")
     List<Chat> findUnreadMessagesBetweenUsers(ObjectId myUserId, ObjectId connectionUserId);
 
-    Optional<Chat> findFirstBySenderIdAndReceiverIdOrderByCreatedAtDesc(ObjectId senderId, ObjectId receiverId);
-
-    Optional<Chat> findFirstByReceiverIdAndSenderIdOrderByCreatedAtDesc(ObjectId receiverId, ObjectId senderId);
+    @Query(value = "{ $or: [ { senderId: ?0, receiverId: ?1 }, { senderId: ?1, receiverId: ?0 } ] }", sort = "{ 'createdAt': -1 }")
+    List<Chat> findLatestMessageBetween(ObjectId senderId, ObjectId receiverId, Pageable pageable);
 
     long countByReceiverIdAndSenderIdAndIsRead(ObjectId userId,ObjectId connectedId,boolean isRead);
     
