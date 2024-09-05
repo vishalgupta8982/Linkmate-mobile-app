@@ -34,6 +34,7 @@ public class ChatService {
     private NotificationService notificationService;
 
     public Chat saveChatMessage(Chat chatMessage) {
+        chatMessage.setStatus("sent");
         Chat chat = chatRepository.save(chatMessage);
         notificationService.sendNotification(chat.getReceiverId(), chat.getSenderId(), chat.getMessageContent());
         return chat;
@@ -117,8 +118,9 @@ public class ChatService {
                 }
             }
         }
-
+        Collections.reverse(allInteractions);
         return allInteractions;
+       
     }
 
 }

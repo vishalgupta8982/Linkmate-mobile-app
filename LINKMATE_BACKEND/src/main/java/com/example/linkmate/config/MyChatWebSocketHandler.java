@@ -212,21 +212,23 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
     private void handleChatMessage(Map<String, Object> messageData) throws IOException {
 
         try {
+            Map<String, Object> contentMap = (Map<String, Object>) messageData.get("content");
+            System.out.println(contentMap);
             Chat chat = new Chat();
-            chat.setSenderId(new ObjectId((String) messageData.get("senderId")));
-            chat.setReceiverId(new ObjectId((String) messageData.get("receiverId")));
-            chat.setMessageContent((String) messageData.get("messageContent"));
-            chat.setMessageType(MessageType.valueOf(((String) messageData.get("messageType")).toUpperCase()));
+            chat.setSenderId(new ObjectId((String) contentMap.get("senderId")));
+            chat.setReceiverId(new ObjectId((String) contentMap.get("receiverId")));
+            chat.setMessageContent((String) contentMap.get("messageContent"));
+            chat.setMessageType(MessageType.valueOf(((String) contentMap.get("messageType")).toUpperCase()));
             chat.setRead(false);
-            String replyToMessageId = (String) messageData.get("replyToMessageId");
+            String replyToMessageId = (String) contentMap.get("replyToMessageId");
             if (replyToMessageId != null) {
                 chat.setReplyToMessageId(new ObjectId(replyToMessageId));
             }
-            chat.setStatus((String) messageData.get("status"));
             Chat savedChat = chatService.saveChatMessage(chat);
             Map<String, Object> responsePayloadMap = new HashMap<>();
             responsePayloadMap.put("messageType", "MESSAGE_TYPE_CHAT");
             responsePayloadMap.put("chat", savedChat);
+            responsePayloadMap.put("tempId", messageData.get("tempMessageId"));
 
             ObjectMapper objectMapper = new ObjectMapper();
             String responsePayload = objectMapper.writeValueAsString(responsePayloadMap);

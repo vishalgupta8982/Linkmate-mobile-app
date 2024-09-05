@@ -34,8 +34,8 @@ public class NotificationController {
         notificationService.markAllNotificationsAsRead(token);
     }
     @DeleteMapping("/{id}")
-    public void deleteNotification(@PathVariable ObjectId id) {
-        notificationService.deleteNotification(id);
+    public String deleteNotification(@PathVariable ObjectId id) {
+       return notificationService.deleteNotification(id);
     }
     @GetMapping("/count/unread")
     public long countUnreadNotifications(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {

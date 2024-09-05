@@ -63,8 +63,9 @@ public class NotificationService {
         return notificationRepository.findByUserIdSortedByCreatedAt(userId, sort);
     }
 
-    public void deleteNotification(ObjectId id) {
+    public String deleteNotification(ObjectId id) {
         notificationRepository.deleteById(id);
+        return "deleted successfully";
     }
 
     public void deleteNotificationByType(ObjectId userId, NotificationType notificationType, String userName) {
