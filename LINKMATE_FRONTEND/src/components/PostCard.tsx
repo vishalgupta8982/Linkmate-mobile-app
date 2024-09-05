@@ -1,15 +1,4 @@
-import {
-	View,
-	Text,
-	StyleSheet,
-	Image,
-	TouchableOpacity,
-	Modal,
-	TouchableWithoutFeedback,
-	TextInput,
-	ScrollView,
-	FlatList,
-} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 import React, { useEffect, useState } from 'react';
 import { useCustomTheme } from '../config/Theme';
@@ -40,10 +29,19 @@ import {
 	setUserPosts,
 	toggleLike,
 } from '../redux/slices/PostSlice';
-import Comment from './Comment';
 import CustomAlertDialog from './CustomAlertDialog';
+import { removePostId, storePostId } from '../redux/slices/UserDetailsSlice';
+import { PostDataResponse } from '../types/Response/GetPostResponse';
+import { NavigationProp } from '@react-navigation/native';
+import { Post } from '../types/Response/PostResponse';
 
-export default function PostCard({ data, navigation }) {
+export default function PostCard({
+	data,
+	navigation,
+}: {
+	data: Post;
+	navigation: NavigationProp<any>;
+}) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const userPosts = useSelector((state: RootState) => state.posts.userPosts);
 	const feedPosts = useSelector((state: RootState) => state.posts.feedPosts);
@@ -76,7 +74,7 @@ export default function PostCard({ data, navigation }) {
 		};
 	});
 
-	const handlePress = (postId, userId) => {
+	const handlePress = (postId: string, userId: string) => {
 		scale.value = withSpring(1.2, { damping: 2, stiffness: 80 });
 		translateY.value = withSpring(-15, { damping: 2, stiffness: 80 });
 
@@ -98,6 +96,7 @@ export default function PostCard({ data, navigation }) {
 	};
 	const handleDelete = async () => {
 		setAlertDialogVisible(false);
+		const dltPostId = data.post.postId;
 		const deletedUserPost = userPosts.find(
 			(post) => post.post.postId === data.post.postId
 		);
@@ -105,6 +104,7 @@ export default function PostCard({ data, navigation }) {
 			(post) => post.post.postId === data.post.postId
 		);
 		dispatch(removePost({ postId: data.post.postId }));
+		dispatch(removePostId(data.post.postId));
 		try {
 			const response = await deletePost(data.post.postId);
 		} catch (err) {
@@ -116,6 +116,7 @@ export default function PostCard({ data, navigation }) {
 			if (deletedFeedPost) {
 				dispatch(setFeedPosts([...feedPosts, deletedFeedPost]));
 			}
+			dispatch(storePostId(dltPostId));
 		}
 	};
 	return (
@@ -167,7 +168,7 @@ export default function PostCard({ data, navigation }) {
 							<MaterialCommunityIcon
 								name="dots-vertical"
 								color={colors.TEXT}
-								padding={3}
+								style={styles.icon}
 								size={24}
 							/>
 						</TouchableOpacity>
@@ -193,7 +194,7 @@ export default function PostCard({ data, navigation }) {
 			)}
 			{data.post.fileType == 'image' && (
 				<Image
-					style={[styles.mainfile, { height: imageHeight / 2 }]}
+					style={{ height: imageHeight / 2 }}
 					source={{ uri: data.post.fileUrl }}
 				/>
 			)}
@@ -243,9 +244,19 @@ export default function PostCard({ data, navigation }) {
 						navigation.navigate('comment', { postId: data.post.postId })
 					}
 				>
-					<Octicons padding={3} name="comment" size={24} color={colors.TEXT} />
+					<Octicons
+						style={styles.icon}
+						name="comment"
+						size={24}
+						color={colors.TEXT}
+					/>
 				</TouchableOpacity>
-				<Octicons padding={3} name="share" size={24} color={colors.TEXT} />
+				<Octicons
+					style={styles.icon}
+					name="share"
+					size={24}
+					color={colors.TEXT}
+				/>
 			</View>
 			<View style={styles.likesCont}>
 				<TouchableOpacity
@@ -281,7 +292,7 @@ export default function PostCard({ data, navigation }) {
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors: any) =>
 	StyleSheet.create({
 		mainCont: {
 			backgroundColor: colors.BACKGROUND,
@@ -357,5 +368,8 @@ const getStyles = (colors) =>
 			padding: 5,
 			borderBottomWidth: 0.3,
 			borderColor: colors.APP_PRIMARY_LIGHT,
+		},
+		icon: {
+			padding: 4,
 		},
 	});

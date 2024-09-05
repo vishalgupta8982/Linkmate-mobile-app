@@ -27,45 +27,36 @@ export default function SignUp({ navigation }) {
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStylesSheet = globalStyles(colors);
-	const[firstName,setFirstName]=useState('')
-	const[lastName,setLastName]=useState('')
-	const[email,setEmail]=useState('')
-	const[password,setPassword]=useState('')
-	 const[loading,setLoading]=useState(false)
-	const handleSignUp=async()=>{
+	const [firstName, setFirstName] = useState('');
+	const [lastName, setLastName] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [loading, setLoading] = useState(false);
+	const handleSignUp = async () => {
 		setLoading(true);
-		if(password.length<8){
+		if (password.length < 8) {
 			Toast.show('Password must be a 8 character', Toast.SHORT);
 			setLoading(false);
-			return
+			return;
 		}
-const payload: SignUpPayload= {
-	firstName:firstName.trim(),
-	lastName:lastName.trim(),
-	email: email.trim(),
-	password: password.trim()}
-	if (
-		payload.firstName.length < 1 ||
-		payload.lastName.length < 1 ||
-		payload.email.length < 1 
-	) {
-		Toast.show('All fields are required', Toast.SHORT);
-		setLoading(false);
-		return;
-	}
-	try {
-				const response = await userRegister(payload);
-
-				if (response) {
-					Toast.show('OTP sent successfully', Toast.SHORT);
-					navigation.replace('Otp',{email,firstName,lastName,password});
-				}
-			} catch (err) {
-				Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
-			} finally {
-				setLoading(false);
+		const payload: SignUpPayload = {
+			firstName: firstName.trim(),
+			lastName: lastName.trim(),
+			email: email.trim(),
+			password: password.trim(),
+		};
+		try {
+			const response = await userRegister(payload);
+			if (response) {
+				Toast.show('OTP sent successfully', Toast.SHORT);
+				navigation.replace('Otp', { email, firstName, lastName, password });
 			}
-}; 
+		} catch (err) {
+			Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+		} finally {
+			setLoading(false);
+		}
+	};
 	return (
 		<ScrollView>
 			{loading && <Loader />}
@@ -86,11 +77,18 @@ const payload: SignUpPayload= {
 					<AppTextField onChangeText={setLastName} label="Last Name" />
 					<AppTextField onChangeText={setEmail} label="Email" />
 					<AppTextField
-						onChangeText={setPassword}
 						label="Password"
+						readOnly={false}
 						secureTextEntry={true}
+						value={password}
+						onChangeText={setPassword}
+						marginBottom={10}
 					/>
-					<AppButton onPress={handleSignUp} title="Signup" />
+					<AppButton
+						onPress={handleSignUp}
+						disabled={email.length < 1 || password.length < 1 || firstName.length<1 || lastName.length<1}
+						title="Signup"
+					/>
 					<View style={styles.registerCont}>
 						<Text style={styles.not}>Already have a account? </Text>
 						<TouchableOpacity onPress={() => navigation.replace('Login')}>
@@ -104,11 +102,11 @@ const payload: SignUpPayload= {
 }
 const getStyles = (colors) =>
 	StyleSheet.create({
-		mainCont: { 
+		mainCont: {
 			flex: 1,
 			backgroundColor: colors.BACKGROUND,
 			padding: responsiveWidth(5),
-			height:responsiveHeight(100)
+			height: responsiveHeight(100),
 		},
 
 		logo: {

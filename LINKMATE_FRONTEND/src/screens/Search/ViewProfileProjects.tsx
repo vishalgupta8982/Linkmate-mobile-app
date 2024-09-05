@@ -46,7 +46,6 @@ export default function ViewProfileProjects({ navigation, userData }) {
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [loader, setLoader] = useState(false);
-
 	return (
 		<View style={styles.mainCont}>
 			{loader && <Loader />}

@@ -38,7 +38,7 @@ public class ChatController {
     }
     @DeleteMapping("/delete/{messageId}")
     public ResponseEntity<String> deleteMessageForEveryone(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@PathVariable ObjectId messageId){
-        return new ResponseEntity<>(chatService.deleteMessageForEveryone(token, messageId),HttpStatus.OK);
+        return new ResponseEntity<>(chatService.deleteMessageForEveryone( messageId),HttpStatus.OK);
     }
 
     @PutMapping("/mark-read")

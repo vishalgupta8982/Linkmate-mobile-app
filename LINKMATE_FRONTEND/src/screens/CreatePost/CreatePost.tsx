@@ -10,7 +10,7 @@ import React, { useState } from 'react';
 import { useCustomTheme } from '../../config/Theme';
 import { globalStyles } from '../../StylesSheet';
 import { fonts } from '../../config/Fonts';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import { RootState } from '../../redux/store';
 import { height, width } from '../../config/Dimension';
@@ -22,9 +22,12 @@ import Toast from 'react-native-simple-toast';
 import DocumentPicker from 'react-native-document-picker';
 import { createPost } from '../../api/apis';
 import Loader from '../../components/Loader';
+import { setCreatePost } from '../../redux/slices/PostSlice';
+import {  storePostId } from '../../redux/slices/UserDetailsSlice';
 export default function CreatePost({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
+	const dispatch = useDispatch();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
@@ -72,10 +75,12 @@ export default function CreatePost({ navigation }) {
 				fileType
 			);
 			if (response) {
+				dispatch(setCreatePost(response));
+				dispatch(storePostId(response.post.postId))
 				setContent('');
 				setFilePath(null);
 				setFileType(null);
-				navigation.navigate('Home', { fromCreatePost: true });
+				navigation.navigate('Home');
 				Toast.show('Post uploaded successfully', Toast.SHORT);
 			}
 		} catch (err) {
@@ -217,7 +222,7 @@ const getStyles = (colors: any) =>
 		selectImg: {
 			width: 150,
 			height: 150,
-			borderRadius: 10,
+			borderRadius: 20,
 			margin: 10,
 			marginTop: 40,
 			objectFit: 'contain',
@@ -235,12 +240,13 @@ const getStyles = (colors: any) =>
 		},
 		pdf: {
 			borderWidth: 1,
-			borderColor: 'red',
+			borderColor: colors.RED,
 			padding: 10,
 			paddingHorizontal: 10,
 			flexDirection: 'row',
 			marginTop: 20,
 			width: '80%',
 			margin: 20,
+			borderRadius: 10,
 		},
 	});

@@ -19,7 +19,7 @@ import { responsiveFontSize } from 'react-native-responsive-dimensions';
 import { fonts } from '../../config/Fonts';
 import Loader from '../../components/Loader';
 import Toast from 'react-native-simple-toast';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import {  removeSkill, setUserDetails, storeSkill } from '../../redux/slices/UserDetailsSlice';
 import { addSkill, deleteSkill } from '../../api/apis';
 import CustomAlertDialog from '../../components/CustomAlertDialog';
 import AppTextField from '../../components/AppTextField';
@@ -40,17 +40,14 @@ export default function Overview({ navigation }) {
 
 	const handleDltSkill = async () => {
 		setAlertDialogVisible(false);
+		const prevData=userData;
+		dispatch(removeSkill(skill))
 		try {
-			setLoader(true);
 			const response = await deleteSkill(skill);
-
-			if (response) {
-				dispatch(setUserDetails(response));
-				Toast.show('Deleted successfully', Toast.SHORT);
-				setLoader(false);
-			}
+			console.log(response)
 		} catch (err) {
-			setLoader(false);
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
 			console.error(err);
 		}
 	};
@@ -74,19 +71,18 @@ export default function Overview({ navigation }) {
 			Toast.show('Please enter a skill', Toast.SHORT);
 			return;
 		}
-		setLoader(true)
+			const prevUserData = userData;
+		dispatch(storeSkill(newSkill.trim()));
 		toggleModal();
 		try{
-			const response=await addSkill([newSkill])
-			if(response){
-				dispatch(setUserDetails(response))
-				setLoader(false);
-setNewSkill('');
-Toast.show('Skill added successfully', Toast.SHORT);
-			}
+			const response = await addSkill([newSkill.trim()]);
 		}catch(err){
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevUserData))
 			console.error(err)
-			setLoader(false);
+		}
+		finally{
+			setNewSkill('')
 		}
 	};
 

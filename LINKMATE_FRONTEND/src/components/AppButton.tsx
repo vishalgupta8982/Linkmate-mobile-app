@@ -18,6 +18,7 @@ export const AppButton = ({
 	icon,
 	width,
 	marginBottom,
+	bg,
 }: {
 	onPress: () => void;
 	title: string;
@@ -26,18 +27,27 @@ export const AppButton = ({
 	icon?: any;
 	width?: number;
 	marginBottom?: number;
+	bg?:any;
 }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
+	const backgroundColor = disabled
+		? colors.APP_PRIMARY_LIGHT 
+		: bg
+		? bg 
+		: colors.PRIMARY;
 	return (
 		<TouchableOpacity
 			onPress={onPress}
+			activeOpacity={0.4}
+			disabled={disabled}
 			style={[
 				styles.appButtonContainer,
 				{
 					width: width ? responsiveWidth(width) : responsiveWidth(90),
 					marginBottom: marginBottom ? marginBottom : 10,
+					backgroundColor: backgroundColor,
 				},
 			]}
 		>
@@ -47,7 +57,7 @@ export const AppButton = ({
 		</TouchableOpacity>
 	);
 };
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		appButtonContainer: {
 			backgroundColor: colors.PRIMARY,

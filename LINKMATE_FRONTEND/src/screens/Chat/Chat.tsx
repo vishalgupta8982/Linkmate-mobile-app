@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useCustomTheme } from '../../config/Theme';
 import ChatHeader from './ChatHeader';
-import { getChatInteraction } from '../../api/apis';
+import { getChatInteraction, userDetails } from '../../api/apis';
 import { chatInteraction } from '../../types/Response/ChatInteractionResponse';
 import { globalStyles } from '../../StylesSheet';
 import {
@@ -20,7 +20,10 @@ import { fonts } from '../../config/Fonts';
 import moment from 'moment';
 import { width } from '../../config/Dimension';
 import Loader from '../../components/Loader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 export default function Chat({ navigation }) {
+	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
@@ -40,6 +43,7 @@ export default function Chat({ navigation }) {
 	useEffect(() => {
 		fetchInteraction();
 	}, []);
+	console.log(chatInteraction);
 	return (
 		<View style={styles.mainCont}>
 			<ChatHeader navigation={navigation} />
@@ -51,7 +55,7 @@ export default function Chat({ navigation }) {
 					<TouchableOpacity
 						activeOpacity={0.4}
 						onPress={() =>
-							navigation.navigate('userChatDetail', { userId: item.userId })
+							navigation.navigate('userChatDetail', { userDetails: item })
 						}
 					>
 						<View style={styles.list}>
@@ -62,7 +66,7 @@ export default function Chat({ navigation }) {
 										{item.firstName + ' ' + item.lastName}
 									</Text>
 									<Text style={globalStyleSheet.smallFontDescription}>
-										{moment(item.lastMessageDate).calendar(null, {
+										{moment(item.lastMessage.createdAt).calendar(null, {
 											sameDay: 'h:mm A',
 											nextDay: '[Tomorrow] ',
 											nextWeek: 'ddd ',
@@ -77,7 +81,12 @@ export default function Chat({ navigation }) {
 									ellipsizeMode={'tail'}
 									style={styles.message}
 								>
-									{item.lastMessage}
+									{item.lastMessage.senderId == userData.userId
+										? item.lastMessage.read
+											? 'seen'
+											: 'sent'
+										: item.lastMessage.messageContent}
+									 
 								</Text>
 							</View>
 						</View>

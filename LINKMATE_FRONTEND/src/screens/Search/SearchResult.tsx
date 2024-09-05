@@ -169,12 +169,21 @@ export default function SearchResult({ navigation }) {
 										</TouchableOpacity>
 									)}
 								{isConnected && (
-									<Feather
-										name="send"
-										color={colors.TEXT}
-										size={16}
-										padding={4}
-									/>
+									<TouchableOpacity
+										activeOpacity={0.4}
+										onPress={() =>
+											navigation.navigate('userChatDetail', {
+												userDetails: item,
+											})
+										}
+									>
+										<Feather
+											name="send"
+											color={colors.TEXT}
+											size={16}
+											padding={6}
+										/>
+									</TouchableOpacity>
 								)}
 							</View>
 						</TouchableOpacity>

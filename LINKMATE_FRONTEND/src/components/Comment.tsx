@@ -2,7 +2,6 @@ import {
 	View,
 	Text,
 	StyleSheet,
-	ScrollView,
 	FlatList,
 	TextInput,
 	Image,
@@ -15,8 +14,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { fonts } from '../config/Fonts';
-import { useRoute } from '@react-navigation/native';
-import { height, width } from '../config/Dimension';
+import { useRoute, NavigationProp } from '@react-navigation/native';
 import { globalStyles } from '../StylesSheet';
 import Toast from 'react-native-simple-toast';
 import moment from 'moment';
@@ -24,7 +22,6 @@ import Loader from './Loader';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { post } from '../api/instance';
 import {
 	addCommentToPost,
 	removeCommentFromPost,
@@ -32,7 +29,8 @@ import {
 
 import CustomAlertDialog from './CustomAlertDialog';
 import { CommentResponse } from '../types/Response/CommentResponse';
-export default function Comment({ navigation }) {
+import { height } from '../config/Dimension';
+export default function Comment({ navigation}) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const route = useRoute();
 	const dispatch = useDispatch();
@@ -42,15 +40,14 @@ export default function Comment({ navigation }) {
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [content, setContent] = useState('');
-	const [comments, setComments] = useState<CommentResponse[]>([]);
+	const [comment, setComment] = useState<CommentResponse[]>([]);
 	const [loader, setLoader] = useState(false);
 	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
 	const [dltCommentId, setDltCommentId] = useState('');
 	const fetchComment = async () => {
 		setLoader(true);
 		try {
-			const response = await getCommentPost(postId);
-			console.log(response);
+			const response= await getCommentPost(postId);
 			if (response) {
 				setComment(response);
 			}
@@ -120,6 +117,11 @@ export default function Comment({ navigation }) {
 					color={colors.TEXT}
 				/>
 			</TouchableOpacity>
+			{comment.length < 1 && !loader && (
+				<View style={styles.noCommentContainer}>
+					<Text style={styles.noComment}>No comment yet</Text>
+				</View>
+			)}
 			<FlatList
 				data={comment}
 				initialNumToRender={4}
@@ -131,7 +133,7 @@ export default function Comment({ navigation }) {
 					<TouchableOpacity
 						onPress={() =>
 							navigation.navigate(
-								userData.username === item.commentUserDetail.username
+								userData?.username === item.commentUserDetail.username
 									? 'Profile'
 									: 'viewUserProfile',
 								{ username: item.commentUserDetail.username }
@@ -165,8 +167,8 @@ export default function Comment({ navigation }) {
 												.fromNow()}
 										</Text>
 									</View>
-									{(userData.userId === item.commentUserDetail.userId ||
-										userData.posts.includes(item.commment.postId)) && (
+									{(userData?.userId === item.commentUserDetail.userId ||
+										userData?.posts?.includes(item.comment.postId)) && (
 										<TouchableOpacity
 											onPress={() => {
 												setDltCommentId(item.comment.id);
@@ -178,7 +180,7 @@ export default function Comment({ navigation }) {
 												marginLeft="auto"
 												name="dots-vertical"
 												color={colors.TEXT}
-												padding={3}
+												padding={5}
 												size={18}
 											/>
 										</TouchableOpacity>
@@ -217,11 +219,21 @@ export default function Comment({ navigation }) {
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		sheet: {
 			backgroundColor: colors.BACKGROUND,
 			flex: 1,
+		},
+		noCommentContainer: {
+			justifyContent: 'center',
+			alignItems: 'center',
+			height: height - height / 4,
+		},
+		noComment: {
+			fontSize: 22,
+			color: colors.TEXT,
+			fontFamily: fonts.Inter_Medium,
 		},
 		commentBox: {
 			paddingHorizontal: 15,

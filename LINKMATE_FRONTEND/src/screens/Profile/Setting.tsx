@@ -18,7 +18,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/ThemeSlice';
 import { useState } from 'react';
 import { clearToken } from '../../redux/slices/authSlice';
-import { persistor } from '../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { clearUserDetail } from '../../redux/slices/UserDetailsSlice';
 import WebSocketService from '../../utils/WebSocketService';
@@ -37,13 +36,18 @@ export default function Setting({ navigation }) {
 		dispatch(toggleTheme());
 	};
 	const handleLogout = async () => {
-		setLoader(true);
-		setAlertDialogVisible(false)
-		await deleteFcmToken();
-		dispatch(clearToken());
-		WebSocketService.disconnect();
-		setLoader(false);
-		navigation.replace('Login');
+		try {
+			setAlertDialogVisible(false);
+			await deleteFcmToken();
+			WebSocketService.disconnect();
+			dispatch({ type: 'RESET' });
+			await AsyncStorage.clear();
+			setLoader(true);
+			setLoader(false);
+			navigation.replace('Login');
+		} catch (err) {
+			console.error('logout', err);
+		}
 	};
 	return (
 		<ScrollView style={styles.mainCont}>
@@ -70,7 +74,7 @@ export default function Setting({ navigation }) {
 			<TouchableOpacity
 				style={styles.headCont}
 				onPress={() => setAlertDialogVisible(true)}
-				activeOpaceity={0.4}
+				activeOpacity={0.4}
 			>
 				<View style={styles.iconName}>
 					<MaterialIcons name="logout" size={16} color={colors.TEXT} />
@@ -88,7 +92,7 @@ export default function Setting({ navigation }) {
 		</ScrollView>
 	);
 }
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,

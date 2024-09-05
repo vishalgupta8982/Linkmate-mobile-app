@@ -51,6 +51,7 @@ export default function ViewProfilePicSection({ navigation, searchUserData }) {
 			console.error(err);
 		}
 	};
+	console.log(searchUserData)
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.profile}>
@@ -64,16 +65,36 @@ export default function ViewProfilePicSection({ navigation, searchUserData }) {
 					}}
 				/>
 				<View style={styles.countMainCont}>
-					<View style={styles.count}>
-						<Text style={styles.countText}>0</Text>
-						<Text style={styles.countHead}>Posts</Text>
-					</View>
-					<View style={styles.count}>
-						<Text style={styles.countText}>
-							{searchUserData.connections?.length}
-						</Text>
-						<Text style={styles.countHead}>Connections</Text>
-					</View>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() =>
+							navigation.navigate('userPosts', {
+								userId: searchUserData.userId,
+							})
+						}
+					>
+						<View style={styles.count}>
+							<Text style={styles.countText}>
+								{searchUserData.posts.length}
+							</Text>
+							<Text style={styles.countHead}>Posts</Text>
+						</View>
+					</TouchableOpacity>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() =>
+							navigation.navigate('myConnection', {
+								userId: searchUserData.userId,
+							})
+						}
+					>
+						<View style={styles.count}>
+							<Text style={styles.countText}>
+								{searchUserData.connections?.length}
+							</Text>
+							<Text style={styles.countHead}>Connections</Text>
+						</View>
+					</TouchableOpacity>
 				</View>
 			</View>
 			<View style={styles.headlineCont}>
@@ -101,17 +122,21 @@ export default function ViewProfilePicSection({ navigation, searchUserData }) {
 						</Text>
 					</TouchableOpacity>
 				)}
-				{userData?.connections.includes(searchUserData.userData) && (
+				{userData?.connections.includes(searchUserData.userId) && (
 					<TouchableOpacity
 						activeOpacity={0.4}
-						onPress={() => handelCancelRequest(searchUserData.userId)}
+						onPress={() =>
+							navigation.navigate('userChatDetail', {
+								userDetails: searchUserData,
+							})
+						}
 					>
 						<Text style={styles.button}>
 							<Feather name="send" size={14} color={colors.WHITE} /> Message
 						</Text>
 					</TouchableOpacity>
 				)}
-				{!userData?.connections.includes(searchUserData.userData) &&
+				{!userData?.connections.includes(searchUserData.userId) &&
 					!request &&
 					!userData?.sendConnectionsRequest.includes(searchUserData.userId) && (
 						<TouchableOpacity

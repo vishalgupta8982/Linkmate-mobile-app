@@ -1,13 +1,13 @@
 export interface CommentResponse {
 	comment: {
-		id: String;
-		userId: String;
+		id: string;
+		userId: string;
 		content: string;
 		postId: string;
 		createdAt: string;
 	};
 	commentUserDetail: {
-		userId: String;
+		userId: string;
 		firstName: string;
 		lastName: string;
 		username: string ;

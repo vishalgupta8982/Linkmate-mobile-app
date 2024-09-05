@@ -25,20 +25,7 @@ interface Pageable {
 	paged: boolean;
 	unpaged: boolean;
 }
-
-interface Pagination {
-	totalPages: number;
-	totalElements: number;
-	size: number;
-	content: ChatContent[];
-	number: number;
-	sort: Sort;
-	first: boolean;
-	last: boolean;
-	numberOfElements: number;
-	pageable: Pageable;
-	empty: boolean;
-}
+ 
 
 interface ChatReceiverUserDetail {
 	userId: string;
@@ -50,6 +37,15 @@ interface ChatReceiverUserDetail {
 }
 
 export interface ChatHistoryResponse {
-	chatHistory: Pagination;
-	chatRecieverUserDetail: ChatReceiverUserDetail;
+	totalPages: number;
+	totalElements: number;
+	size: number;
+	content: ChatContent[];
+	number: number;
+	sort: Sort;
+	first: boolean;
+	last: boolean;
+	numberOfElements: number;
+	pageable: Pageable;
+	empty: boolean;
 }

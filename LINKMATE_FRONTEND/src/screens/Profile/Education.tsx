@@ -19,7 +19,11 @@ import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { addEducation, deleteEducation, updateEducation } from '../../api/apis';
 import Toast from 'react-native-simple-toast';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import {
+	addOrUpdateEducation,
+	removeEducation,
+	setUserDetails,
+} from '../../redux/slices/UserDetailsSlice';
 import {
 	responsiveFontSize,
 	responsiveHeight,
@@ -71,16 +75,13 @@ export default function Education({ navigation }) {
 	};
 
 	const handleDltEdu = async (id: string) => {
+		const prevData = userData;
+		dispatch(removeEducation(id));
 		try {
-			setLoader(true);
 			const response = await deleteEducation(id);
-			if (response) {
-				dispatch(setUserDetails(response));
-				Toast.show('Deleted successfully', Toast.SHORT);
-				setLoader(false);
-			}
 		} catch (err) {
-			setLoader(false);
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
 			console.error(err);
 		}
 	};
@@ -117,9 +118,8 @@ export default function Education({ navigation }) {
 		toggleModal();
 		try {
 			const response = await addEducation(payload);
-			console.log(response);
 			if (response) {
-				dispatch(setUserDetails(response));
+				dispatch(addOrUpdateEducation(response[0]));
 				setLoader(false);
 				Toast.show('Education added successfully', Toast.SHORT);
 			}
@@ -157,28 +157,26 @@ export default function Education({ navigation }) {
 			...newEducation,
 			educationId: editingEducationId,
 		};
-		setLoader(true);
 		if (
 			payload.institution.length < 1 ||
 			payload.degree.length < 1 ||
 			payload.field.length < 1 ||
 			payload.description.length < 1
 		) {
-			setLoader(false);
 			Toast.show('All fields are required', Toast.SHORT);
 			return;
 		}
 		toggleModal();
+		const prevData = userData;
+		dispatch(addOrUpdateEducation(payload));
 		try {
 			const response = await updateEducation(editingEducationId, payload);
-			if (response) {
-				dispatch(setUserDetails(response));
-				setLoader(false);
-				Toast.show('Education updated successfully', Toast.SHORT);
-			}
 		} catch (err) {
 			console.error(err);
 			setLoader(false);
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
+			dispatch(setUserDetails(prevData));
 		} finally {
 			setNewEducation({
 				institution: '',

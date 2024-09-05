@@ -5,39 +5,42 @@ import {
 	ScrollView,
 	FlatList,
 	ActivityIndicator,
+	RefreshControl,
 } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, store } from '../../redux/store';
-import { getFeed, getUserPost, getUserPoST, userDetails } from '../../api/apis';
-import { useFocusEffect } from '@react-navigation/native';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import { getUserPost } from '../../api/apis';
 import { useEffect } from 'react';
 import Loader from '../../components/Loader';
 import { useCustomTheme } from '../../config/Theme';
-import WebSocketService from '../../utils/WebSocketService';
-import { selectToken } from '../../redux/slices/authSlice';
-import { socketUrl } from '../../api/instance';
 import PostCard from '../../components/PostCard';
-import { setPosts, setUserPosts } from '../../redux/slices/PostSlice';
+import {  setUserPosts } from '../../redux/slices/PostSlice';
 import StackHeader from '../../components/StackHeader';
+import { useRoute } from '@react-navigation/native';
 export default function UserPost({ navigation }) {
 	const theme = useCustomTheme();
+	const route=useRoute()
+	const {userId}=route.params
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(0);
 	const [hasMore, setHasMore] = useState(true);
-	const token = selectToken(store.getState());
 	const userPostData = useSelector((state: RootState) => state.posts.userPosts);
-	const fetchFeed = async () => {
-		if (loading || !hasMore) return;
+	const fetchUserPost = async (page:number,hasMore:boolean) => {
+		if ( !hasMore) return;
 		try {
-			setLoading(true); 
-			const response = await getUserPost(page);
+			const response = await getUserPost(userId,page);
 			const newUserPostData = response.content;
-			dispatch(setUserPosts([...userPostData, ...newUserPostData]));
+			if (newUserPostData)
+				if (page == 0) {
+					dispatch(setUserPosts([ ...newUserPostData]));
+				} 
+				else{
+					dispatch(setUserPosts([...userPostData, ...newUserPostData]));
+				}
 			setPage(page + 1);
 			setHasMore(newUserPostData.length > 0);
 			
@@ -49,25 +52,34 @@ export default function UserPost({ navigation }) {
 	};
 
 	useEffect(() => {
-		fetchFeed();  
+		setLoading(true)
+		fetchUserPost(page,hasMore);  
 	}, []);
-	console.log(userPostData)
 
 	return (
 		<View style={styles.mainCont}>
-        <StackHeader title="My Posts" navigation={navigation} />
-			<FlatList
-				data={userPostData}
-				keyExtractor={(item) => item.post.postId}
-				renderItem={({ item }) => (
-					<PostCard navigation={navigation} data={item} />
-				)}
-				onEndReached={fetchFeed}
-				onEndReachedThreshold={0.5}
-				ListFooterComponent={
-					hasMore && <ActivityIndicator size={32} color={colors.PRIMARY} />
-				}
-			/>
+			<StackHeader title="My Posts" navigation={navigation} />
+			{loading && <Loader />}
+			{!loading && (
+				<FlatList
+					data={userPostData}
+					keyExtractor={(item) => item.post.postId}
+					renderItem={({ item }) => (
+						<PostCard navigation={navigation} data={item} />
+					)}
+					refreshControl={
+						<RefreshControl
+							refreshing={loading}
+							onRefresh={() => fetchUserPost(0, true)}
+						/>
+					}
+					onEndReached={() => fetchUserPost(page, hasMore)}
+					onEndReachedThreshold={0.5}
+					ListFooterComponent={
+						hasMore && userPostData.length>1 && <ActivityIndicator size={32} color={colors.PRIMARY} />
+					}
+				/>
+			)}
 		</View>
 	);
 }

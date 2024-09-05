@@ -18,6 +18,7 @@ import Comment from '../components/Comment';
 import UserPost from '../screens/Profile/UserPost';
 import Likes from '../components/Likes';
 import UserChatDetail from '../screens/Chat/UserChatDetail';
+import {  userDetails } from '../types/basicTypes';
 
 export type RootStackParamList = {
 	Splash: undefined;
@@ -32,10 +33,10 @@ export type RootStackParamList = {
 	notification: undefined;
 	profile: undefined;
 	BottomNavigation: undefined;
-	likes: undefined;
+	likes: {postId:string};
 	comment: undefined;
 	viewProfile: { image: string };
-	userChatDetail: { userId: string };
+	userChatDetail: { userDetails: userDetails };
 	viewUserProfile: { username: string };
 };
 

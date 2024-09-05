@@ -4,6 +4,7 @@ import {
 	StyleSheet,
 	ScrollView,
 	TouchableOpacity,
+	RefreshControl,
 } from 'react-native';
 import React from 'react';
 import { searchUser } from '../../api/apis';
@@ -42,21 +43,26 @@ export default function Search({ navigation }) {
 	}, [userData]);
 	return (
 		<View style={styles.mainCont}>
-		{loader &&(<Loader/>)}
-			<ScrollView>
-				<TouchableOpacity
-					activeOpacity={0.4}
-					onPress={() => navigation.navigate('searchResult')}
-				>
-					<View style={styles.searchCont}>
-						<Ionicons name="search" color={colors.PRIMARY} size={15} />
-						<Text style={styles.type}> Type here to search...</Text>
-					</View>
-				</TouchableOpacity>
+			{loader && <Loader />}
+			<TouchableOpacity
+				activeOpacity={0.4}
+				onPress={() => navigation.navigate('searchResult')}
+			>
+				<View style={styles.searchCont}>
+					<Ionicons name="search" color={colors.PRIMARY} size={15} />
+					<Text style={styles.type}> Type here to search...</Text>
+				</View>
+			</TouchableOpacity>
 
-				{loader ? (
-					<Loader />
-				) : (
+			{!loader && (
+				<ScrollView
+					refreshControl={
+						<RefreshControl
+							refreshing={loader}
+							onRefresh={() => getSuggestion()}
+						/>
+					}
+				>
 					<View style={styles.container}>
 						{suggestion.map(
 							(item, index) =>
@@ -65,13 +71,13 @@ export default function Search({ navigation }) {
 								)
 						)}
 					</View>
-				)}
-			</ScrollView>
+				</ScrollView>
+			)}
 		</View>
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,
@@ -97,6 +103,6 @@ const getStyles = (colors) =>
 		container: {
 			flexDirection: 'row',
 			flexWrap: 'wrap',
-			justifyContent: 'space-between', // Ensures cards are spaced evenly
+			justifyContent: 'space-between',  
 		},
 	});

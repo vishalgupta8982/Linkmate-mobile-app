@@ -3,7 +3,6 @@ import React from 'react'
 import { useCustomTheme } from '../config/Theme';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { fonts } from '../config/Fonts';
-import { width } from '../config/Dimension';
 
 export default function OutlineButton({
 	title,
@@ -13,7 +12,7 @@ export default function OutlineButton({
 }: {
 	onPress: any;
 	title: string;
-	icon: any;
+	icon?: any;
 	width?:number;
 }) {
 	const theme = useCustomTheme();
@@ -33,7 +32,7 @@ export default function OutlineButton({
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		outlineButton: {
 			padding: 5,

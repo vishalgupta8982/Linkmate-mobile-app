@@ -61,7 +61,7 @@ const Profile: React.FC = ({ navigation }) => {
 
 	return (
 		<View style={styles.cont}>
-			{!loader && <Loader />}
+			{loader && <Loader />}
 			<Tabs.Container
 				renderHeader={(props) => <ProfileTopPart navigation={navigation} />}
 				headerHeight={HEADER_HEIGHT}

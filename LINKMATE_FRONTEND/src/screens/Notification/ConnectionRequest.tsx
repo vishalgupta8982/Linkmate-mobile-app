@@ -26,6 +26,7 @@ import { RootState, store } from '../../redux/store';
 import { socketUrl } from '../../api/instance';
 import { useDispatch, useSelector } from 'react-redux';
 import {  addConnectionRequests, clearConnectionRequests } from '../../redux/slices/ConnectionRequestSlice';
+import { addConnection } from '../../redux/slices/UserDetailsSlice';
 export default function ConnectionRequest({ navigation }) {
 	const request = useSelector(
 		(state: RootState) => state.connectionRqst.connectionRequests
@@ -35,7 +36,6 @@ export default function ConnectionRequest({ navigation }) {
 	},[request])
 	const theme = useCustomTheme();
 	const dispatch = useDispatch();
-	const token = selectToken(store.getState());
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
@@ -44,21 +44,26 @@ export default function ConnectionRequest({ navigation }) {
 	const fetchConnectionRequest = async () => {
 		try {
 			const response = await getAllConnectionRequest();
+			 
 			if(response)
 				 dispatch(response.length>0?addConnectionRequests(response):clearConnectionRequests());
 		} catch (err) {
 			console.error(err);
 		}
 	};
-
+ 
 	const handleAcceptRequest = async (senderId: string) => {
+		const prevConnectionRequest=[...connectionRequest]
+		const updateConnectionRequest=connectionRequest.filter((item)=>item.userId!=senderId)
+		setConnectionRequest(updateConnectionRequest);
 		try {
 			const response = await acceptConnectionRequest(senderId);
 			if (response) {
-				Toast.show('Request accepted', Toast.SHORT);
-				fetchConnectionRequest();
+				dispatch(addConnection({userId:senderId}))
 			}
 		} catch (err) {
+			setConnectionRequest(prevConnectionRequest);
+			Toast.show('Something went wrong', Toast.SHORT);
 			console.error(err);
 		}
 	};
@@ -137,7 +142,6 @@ export default function ConnectionRequest({ navigation }) {
 const getStyles = (colors) =>
 	StyleSheet.create({
 		mainCont: {
-			flex: 1,
 			backgroundColor: colors.MAIN_BACKGROUND,
 		},
 		list: {

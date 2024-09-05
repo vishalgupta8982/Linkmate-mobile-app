@@ -27,7 +27,11 @@ import {
 	updateProject,
 } from '../../api/apis';
 import Toast from 'react-native-simple-toast';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import {
+	addOrUpdateProject,
+	removeProject,
+	setUserDetails,
+} from '../../redux/slices/UserDetailsSlice';
 import {
 	responsiveFontSize,
 	responsiveHeight,
@@ -80,17 +84,13 @@ export default function Projects({ navigation }) {
 	};
 
 	const handleDltProject = async (id: string) => {
+		const prevData = userData;
+		dispatch(removeProject(id));
 		try {
-			setLoader(true);
 			const response = await deleteProject(id);
-			console.log(response);
-			if (response) {
-				dispatch(setUserDetails(response));
-				Toast.show('Deleted successfully', Toast.SHORT);
-				setLoader(false);
-			}
 		} catch (err) {
-			setLoader(false);
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
 			console.error(err);
 		}
 	};
@@ -127,7 +127,7 @@ export default function Projects({ navigation }) {
 		try {
 			const response = await addProject(payload);
 			if (response) {
-				dispatch(setUserDetails(response));
+				dispatch(addOrUpdateProject(response[0]));
 				setLoader(false);
 				Toast.show('Project added successfully', Toast.SHORT);
 			}
@@ -165,7 +165,6 @@ export default function Projects({ navigation }) {
 			...newProject,
 			projectId: editingProjectId,
 		};
-		setLoader(true);
 		if (
 			payload.name.length < 1 ||
 			payload.skills.length < 1 ||
@@ -176,16 +175,14 @@ export default function Projects({ navigation }) {
 			return;
 		}
 		toggleModal();
+		const prevUserData = userData;
+		dispatch(addOrUpdateProject(payload));
 		try {
 			const response = await updateProject(editingProjectId, payload);
-			if (response) {
-				dispatch(setUserDetails(response));
-				setLoader(false);
-				Toast.show('Project updated successfully', Toast.SHORT);
-			}
 		} catch (err) {
 			console.error(err);
-			setLoader(false);
+			dispatch(setUserDetails(prevUserData));
+			Toast.show('Something went wrong', Toast.SHORT);
 		} finally {
 			setNewProject({
 				name: '',

@@ -24,7 +24,10 @@ import AppTextField from '../../components/AppTextField';
 import { responsiveHeight } from 'react-native-responsive-dimensions';
 import { updateProfilePicture, updateUserDetails } from '../../api/apis';
 import { UpdatePayload } from '../../types/Payload/updatePayload';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import {
+	setUserDetails,
+	updateReduxUserDetails,
+} from '../../redux/slices/UserDetailsSlice';
 import { setToken } from '../../redux/slices/authSlice';
 import CustomAlertDialog from '../../components/CustomAlertDialog';
 
@@ -43,7 +46,6 @@ export default function EditProfile({ navigation }) {
 	const [about, setAbout] = useState(userData?.about);
 	const [headline, setHeadline] = useState(userData?.headline);
 	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
-	const [isModalVisible, setModalVisible] = useState(false);
 
 	const chooseImage = () => {
 		setImageModalVisible(false);
@@ -59,7 +61,6 @@ export default function EditProfile({ navigation }) {
 	};
 
 	const handleUpdate = async () => {
-		setLoader(true);
 		if (firstName.length < 1) {
 			Toast.show('Firstname is required', Toast.SHORT);
 			setLoader(false);
@@ -71,7 +72,6 @@ export default function EditProfile({ navigation }) {
 			return;
 		}
 		const payload: Partial<UpdatePayload> = {};
-
 		const fieldsToUpdate = {
 			username: userName,
 			firstName: firstName,
@@ -85,17 +85,19 @@ export default function EditProfile({ navigation }) {
 				payload[key] = value;
 			}
 		});
+		const prevUserDetail = userData;
 		try {
-			const response = await updateUserDetails(payload);
+			console.log(payload);
+			dispatch(updateReduxUserDetails(payload));
 			Toast.show('Updated successfully', Toast.SHORT);
-			setLoader(false);
+			const response = await updateUserDetails(payload);
+			console.log(response);
 			if (response?.token != null) {
 				dispatch(setToken(response?.token));
 			}
-			dispatch(setUserDetails(response));
 		} catch (err) {
-			Toast.show(err.message, Toast.SHORT);
-			setLoader(false);
+			dispatch(setUserDetails(prevUserDetail));
+			Toast.show('Something went wrong', Toast.SHORT);
 			console.error(err);
 		}
 	};
@@ -131,7 +133,9 @@ export default function EditProfile({ navigation }) {
 		setLoader(true);
 		try {
 			const response = await updateProfilePicture(uri);
-			dispatch(setUserDetails(response));
+			if(response){
+				dispatch(updateReduxUserDetails(response));
+			}
 			Toast.show('Updated successfully', Toast.SHORT);
 			setLoader(false);
 		} catch (err) {
@@ -213,13 +217,19 @@ export default function EditProfile({ navigation }) {
 					label="Headline"
 					value={headline}
 					onChangeText={setHeadline}
+					multiline={true}
 				/>
 				<AppTextField
 					label="Location"
 					value={location}
 					onChangeText={setLocation}
 				/>
-				<AppTextField label="About" value={about} onChangeText={setAbout} />
+				<AppTextField
+					multiline={true}
+					label="About"
+					value={about}
+					onChangeText={setAbout}
+				/>
 			</View>
 			<Modal
 				transparent={true}
@@ -256,7 +266,7 @@ export default function EditProfile({ navigation }) {
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors: any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,

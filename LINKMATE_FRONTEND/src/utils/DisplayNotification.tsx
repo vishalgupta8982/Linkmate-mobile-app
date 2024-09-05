@@ -32,7 +32,7 @@ export const displayNotification = async (remoteMessage: any) => {
 	const androidConfig = {
 		channelId,
 		importance: AndroidImportance.HIGH,
-			sound: 'default',  
+		sound: 'default',
 	};
 	if (remoteMessage.image) {
 		androidConfig.largeIcon = remoteMessage.image;

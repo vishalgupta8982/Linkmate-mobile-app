@@ -1,14 +1,14 @@
  
 export interface Post {
 	post: {
-		postId: String;
-		userId: String;
-		content: String | null;
-		fileUrl: String | null;
-		fileType: String | null;
-		createdAt: String;
-		comments: String[];
-		likedBy: String[];
+		postId: string;
+		userId: string;
+		content: string ;
+		fileUrl: string ;
+		fileType: string ;
+		createdAt: string;
+		comments: string[];
+		likedBy: string[];
 	},
 	postUserDetail: {
 		userId: String;

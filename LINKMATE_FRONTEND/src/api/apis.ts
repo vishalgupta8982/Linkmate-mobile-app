@@ -14,9 +14,9 @@ import { Post } from '../types/Response/PostResponse';
 import { PostDataResponse } from '../types/Response/GetPostResponse';
 import { CommentPayload } from '../types/Payload/CommentPayload';
 import { chatInteraction } from '../types/Response/ChatInteractionResponse';
-import { chatHistoryResponse } from '../types/Response/ChatHistoryResponse';
+import { ChatHistoryResponse } from '../types/Response/ChatHistoryResponse';
 import { CommentResponse } from '../types/Response/CommentResponse';
-
+import { Notification } from '../types/Response/NotificationResponse';
 export const userLogin = async (
 	payload: LoginPayload
 ): Promise<verifyOtpResponse> => {
@@ -48,7 +48,7 @@ export const userDetails = async () => {
 };
 export const updateUserDetails = async (payload: UpdatePayload) => {
 	const url = '/users/update';
-	return await put<User>(url, payload);
+	return await put<String>(url, payload);
 };
 export const updateProfilePicture = async (payload: any) => {
 	const formData = new FormData();
@@ -129,8 +129,8 @@ export const getSearchUserDetail = async (username: string) => {
 	const url = `/users/search-user-details?username=${username}`;
 	return await get<User>(url);
 };
-export const getMyConnections = async () => {
-	const url = `/connections/my-connections`;
+export const getMyConnections = async (userId:string) => {
+	const url = `/connections/my-connections/${userId}`;
 	return await get<Search>(url);
 };
 export const sendConnectionRequest = async (recieverId: String) => {
@@ -141,26 +141,26 @@ export const getAllConnectionRequest = async () => {
 	const url = `/connections/received`;
 	return await get<Search>(url);
 };
-export const acceptConnectionRequest = async (senderId: String) => {
+export const acceptConnectionRequest = async (senderId: stringtring) => {
 	const url = `/connections/${senderId}/accept`;
 	return await post<Search>(url);
 };
-export const rejectConnectionRequest = async (senderId: String) => {
+export const rejectConnectionRequest = async (senderId: string) => {
 	const url = `/connections/${senderId}/decline`;
 	return await post<Search>(url);
 };
-export const revertConnectionRequest = async (senderId: String) => {
+export const revertConnectionRequest = async (senderId: string) => {
 	const url = `/connections/${senderId}/cancel`;
 	return await post<Search>(url);
 };
-export const removeConnection = async (removerId: String) => {
+export const removeConnection = async (removerId: string) => {
 	const url = `/connections/${removerId}/remove`;
 	return await post<Search>(url);
 };
 export const createPost = async (
 	file: Object[],
 	content: String,
-	fileType: String
+	fileType: String,
 ) => {
 	const formData = new FormData();
 	if (fileType == 'image') {
@@ -192,7 +192,6 @@ export const createPost = async (
 		return await post<Post>(url, formData, config);
 	}
 };
-
 export const getFeed = async (page: number) => {
 	const url = `/posts/feed?page=${page}&size=5`;
 	return await get<PostDataResponse>(url);
@@ -213,8 +212,8 @@ export const deleteComment = async (postId: String, commentId: String) => {
 	const url = `/posts/comment/delete?postId=${postId}&commentId=${commentId}`;
 	return await del<CommentResponse>(url);
 };
-export const getUserPost = async (page: number) => {
-	const url = `/posts/userPosts?page=${page}&size=5`;
+export const getUserPost = async (userId:string,page: number) => {
+	const url = `/posts/userPosts/${userId}?page=${page}&size=5`;
 	return await get<PostDataResponse>(url);
 };
 export const deletePost = async (postId: String) => {
@@ -231,9 +230,25 @@ export const getChatInteraction = async () => {
 };
 export const getChatHistory = async (userId: String, page: number) => {
 	const url = `/chat/history?connectionUserId=${userId}&page=${page}&size=10`;
-	return await get<chatHistoryResponse>(url);
+	return await get<ChatHistoryResponse>(url);
 };
 export const deleteMessageForEveryOne = async (messageId: String) => {
 	const url = `/chat/delete/${messageId}`;
 	return await del<String>(url);
+};
+export const getNotifications = async () => {
+	const url = `/notification`;
+	return await get<Notification>(url);
+};
+export const deleteNotifications = async (id:string) => {
+	const url = `/notification/${id}`;
+	return await del<string>(url);
+};
+export const markReadNotifications = async () => {
+	const url = `/notification/read`;
+	return await put<string>(url);
+};
+export const countUnreadNotifications = async () => {
+	const url = `/notification/count/unread`;
+	return await get<string>(url);
 };

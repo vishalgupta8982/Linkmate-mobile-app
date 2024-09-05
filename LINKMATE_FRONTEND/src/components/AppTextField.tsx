@@ -4,7 +4,7 @@ import {
 	TextInput,
 	Animated,
 	StyleSheet,
-	TouchableOpacity
+	TouchableOpacity,
 } from 'react-native';
 import { useCustomTheme } from '../config/Theme';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
@@ -17,11 +17,24 @@ const AppTextField = ({
 	onChangeText,
 	Width,
 	readOnly,
+	secureTextEntry,
+	marginBottom,
+	multiline = false,
 	...props
+}: {
+	label: string;
+	value?: string;
+	onChangeText: any;
+	readOnly?: boolean;
+	multiline?: boolean;
+	Width?: number;
+	secureTextEntry?: boolean;
+	marginBottom?: number;
+	props?: { onFocus: () => void };
 }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
-	const styles = getStyles(colors, width);
+	const styles = getStyles(colors);
 	const [isFocused, setIsFocused] = useState(false);
 	const [inputValue, setInputValue] = useState(value || '');
 	const animatedIsFocused = useRef(new Animated.Value(value ? 1 : 0)).current;
@@ -37,7 +50,7 @@ const AppTextField = ({
 	const handleFocus = () => {
 		setIsFocused(true);
 		if (props.onFocus) {
-			props.onFocus(); // Ensure external onFocus handler is called
+			props.onFocus();
 		}
 	};
 
@@ -45,7 +58,7 @@ const AppTextField = ({
 		setIsFocused(false);
 	};
 
-	const handleChangeText = (text) => {
+	const handleChangeText = (text: string) => {
 		setInputValue(text);
 		if (onChangeText) {
 			onChangeText(text);
@@ -73,10 +86,10 @@ const AppTextField = ({
 	};
 
 	return (
-		<View style={styles.container}>
+		<View style={{ marginBottom: marginBottom ? marginBottom : 0 }}>
 			<TouchableOpacity activeOpacity={0.4} onPress={handleFocus}>
 				<Animated.Text style={labelStyle}>{label}</Animated.Text>
-			</TouchableOpacity >
+			</TouchableOpacity>
 			<TextInput
 				{...props}
 				style={[
@@ -89,18 +102,18 @@ const AppTextField = ({
 				editable={!readOnly}
 				value={inputValue}
 				selectionColor={colors.APP_PRIMARY_LIGHT}
-				multiline
-				numOfLine={20}
-				
+				secureTextEntry={secureTextEntry}
+				multiline={multiline}
+				numberOfLines={
+					multiline ? Math.min(inputValue.split('\n').length, 20) : 1
+				}
 			/>
 		</View>
 	);
 };
-const getStyles = (colors, width) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
-		container: {
-			// Preserved original styling if any
-		},
+		 
 		input: {
 			fontSize: 14,
 			color: colors.TEXT,
@@ -108,7 +121,7 @@ const getStyles = (colors, width) =>
 			borderBottomColor: colors.PRIMARY,
 			fontFamily: fonts.Inter_Regular,
 			paddingBottom: -10,
-			lineHeight:22
+			lineHeight: 22,
 		},
 		label: {
 			marginTop: 20,

@@ -12,21 +12,32 @@
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import themeReducer from './slices/ThemeSlice';
 // import authReducer from './slices/authSlice';
-// import userDetailsReducer from './slices/UserDetailsSlice'
+// import userDetailsReducer from './slices/UserDetailsSlice';
+// import connectionRequestReducer from './slices/ConnectionRequestSlice';
+// import postsReducer from './slices/PostSlice';
+// import chatReducer from './slices/ChatSlice'
+
+// // Persist config
 // const persistConfig = {
 // 	key: 'root',
 // 	storage: AsyncStorage,
-// 	whitelist: ['theme','auth','userDetails'],
+// 	whitelist: ['theme', 'auth', 'userDetails'],
 // };
 
-// const reducers = combineReducers({
+// // Combine reducers
+// const rootReducer = combineReducers({
 // 	theme: themeReducer,
 // 	auth: authReducer,
 // 	userDetails: userDetailsReducer,
+// 	connectionRqst: connectionRequestReducer,
+// 	posts: postsReducer,
+// 	chats:chatReducer
 // });
 
-// const persistedReducer = persistReducer(persistConfig, reducers);
+// // Create persisted reducer
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+// // Configure store
 // export const store = configureStore({
 // 	reducer: persistedReducer,
 // 	devTools: process.env.NODE_ENV !== 'production',
@@ -38,9 +49,11 @@
 // 		}),
 // });
 
+// // Create persistor
+// export const persistor = persistStore(store);
+
 // export type RootState = ReturnType<typeof store.getState>;
 // export type AppDispatch = typeof store.dispatch;
-
 
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
@@ -59,7 +72,8 @@ import authReducer from './slices/authSlice';
 import userDetailsReducer from './slices/UserDetailsSlice';
 import connectionRequestReducer from './slices/ConnectionRequestSlice';
 import postsReducer from './slices/PostSlice';
-import chatReducer from './slices/ChatSlice'
+import chatReducer from './slices/ChatSlice';
+
 // Persist config
 const persistConfig = {
 	key: 'root',
@@ -68,14 +82,22 @@ const persistConfig = {
 };
 
 // Combine reducers
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
 	theme: themeReducer,
 	auth: authReducer,
 	userDetails: userDetailsReducer,
 	connectionRqst: connectionRequestReducer,
 	posts: postsReducer,
-	chats:chatReducer
+	chats: chatReducer,
 });
+
+// Root reducer that resets state on logout
+const rootReducer = (state, action) => {
+	if (action.type === 'RESET') {
+		state = undefined;
+	}
+	return appReducer(state, action);
+};
 
 // Create persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);

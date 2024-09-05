@@ -6,38 +6,37 @@ import {
 	responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import { globalStyles } from '../StylesSheet';
-import { AppButton } from './AppButton';
-import { fonts } from '../config/Fonts';
 import OutlineButton from './OutlineButton';
 import { revertConnectionRequest, sendConnectionRequest } from '../api/apis';
 import Toast from 'react-native-simple-toast';
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import Feather from 'react-native-vector-icons/Feather'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-export default function UserCard({ userData, navigation }) {
+import { User } from '../types/compoundTypes';
+import { NavigationProp } from '@react-navigation/native';
+export default function UserCard({ userData, navigation }:{userData:User,navigation:NavigationProp<any>}) {
 	const data = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
-	const [request,setRequest]=useState(false)
-	const [loading,setLoading]=useState(false)
-	const handleSendRqst=async(id:string)=>{
-		setLoading(true)
-		try{
-			const response=await sendConnectionRequest(id);
-			if(response){
-			setRequest(true)
-			Toast.show('Connection request sent', Toast.SHORT);
+	const [request, setRequest] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const handleSendRqst = async (id: string) => {
+		setLoading(true);
+		try {
+			const response = await sendConnectionRequest(id);
+			if (response) {
+				setRequest(true);
+				Toast.show('Connection request sent', Toast.SHORT);
 			}
-		}catch(err){
-			console.error(err)
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setLoading(false);
 		}
-		finally{
-			setLoading(false)
-		}
-	}
+	};
 
 	const handleCancelRequest = async (id: string) => {
 		setLoading(true);
@@ -99,6 +98,7 @@ export default function UserCard({ userData, navigation }) {
 			)}
 			{data?.connections.includes(userData.userId) && (
 				<OutlineButton
+				onPress={()=>navigation.navigate("userChatDetail",{userDetails:userData})}
 					title={'Message'}
 					icon={<Feather name="send" color={colors.TEXT} size={12} />}
 				/>
@@ -107,7 +107,7 @@ export default function UserCard({ userData, navigation }) {
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		card: {
 			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
@@ -130,5 +130,4 @@ const getStyles = (colors) =>
 			borderRadius: 50,
 			marginBottom: 10,
 		},
-		 
 	});

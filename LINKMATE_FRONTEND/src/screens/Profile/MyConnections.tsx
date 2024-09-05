@@ -20,18 +20,25 @@ import StackHeader from '../../components/StackHeader';
 import { globalStyles } from '../../StylesSheet';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import CustomAlertDialog from '../../components/CustomAlertDialog';
+import { useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import {  removeConnections } from '../../redux/slices/UserDetailsSlice';
 export default function MyConnections({ navigation }) {
+	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
+	const dispatch=useDispatch()
+	const route=useRoute()
+	const {userId}=route.params
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
 	const [myConnection, setMyConnnection] = useState([]);
 	const [loader, setLoader] = useState(false);
 	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
-	const [removeConnectionId, setRemoveConnectionId] = useState();
+	const [removeConnectionId, setRemoveConnectionId] = useState('');
 	const fetchConnection = async () => {
 		try {
-			const response = await getMyConnections();
+			const response = await getMyConnections(userId);
 			setMyConnnection(response);
 		} catch (err) {
 			console.error(err);
@@ -44,16 +51,23 @@ export default function MyConnections({ navigation }) {
 		fetchConnection();
 	}, []);
 	const handleRemoveConnection = async () => {
-		setLoader(true);
 		setAlertDialogVisible(false);
+		const previousConnections = [...myConnection];
+		const updatedConnections = myConnection.filter(
+			(conn) => conn.userId !== removeConnectionId
+		);
+		setMyConnnection(updatedConnections);
 		try {
 			const response = await removeConnection(removeConnectionId);
-			if (response) {
-				Toast.show('Connection removed', Toast.SHORT);
-				fetchConnection();
+			if(response){
+				dispatch(removeConnections({userId:removeConnectionId}))
 			}
-		} catch (err) {}
+		} catch (err) {
+			setMyConnnection(previousConnections);
+			Toast.show('Something went wrong', Toast.SHORT);
+		}
 	};
+
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
 			activeOpacity={0.4}
@@ -77,21 +91,30 @@ export default function MyConnections({ navigation }) {
 						{item.headline}
 					</Text>
 				</View>
+				{userData.userId == userId && (
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => {
+							setRemoveConnectionId(item.userId);
+							setAlertDialogVisible(true);
+						}}
+					>
+						<MaterialCommunityIcon
+							name="dots-vertical"
+							size={24}
+							color={colors.TEXT}
+							marginRight={10}
+						/>
+					</TouchableOpacity>
+				)}
 				<TouchableOpacity
 					activeOpacity={0.4}
-					onPress={() => {
-						setRemoveConnectionId(item.userId);
-						setAlertDialogVisible(true);
-					}}
+					onPress={() =>
+						navigation.navigate('userChatDetail', { userId: item.userId })
+					}
 				>
-					<MaterialCommunityIcon
-						name="dots-vertical"
-						size={24}
-						color={colors.TEXT}
-						marginRight={10}
-					/>
+					<Feather name="send" size={20} color={colors.TEXT} />
 				</TouchableOpacity>
-				<Feather name="send" size={20} color={colors.TEXT} />
 			</View>
 			<CustomAlertDialog
 				isOpen={alertDialogVisible}

@@ -16,24 +16,19 @@ const postsSlice = createSlice({
 	initialState,
 	reducers: {
 		setUserPosts: (state, action: PayloadAction<Post[]>) => {
-			const newPosts = action.payload;
-			const existingPostIds = new Set(
-				state.userPosts.map((post) => post.post.postId)
-			);
-			state.userPosts = [
-				...state.userPosts,
-				...newPosts.filter((post) => !existingPostIds.has(post.post.postId)),
-			];
+			 state.userPosts=action.payload
 		},
 		setFeedPosts: (state, action: PayloadAction<Post[]>) => {
-			const newPosts = action.payload;
+			state.feedPosts = action.payload;
+		},
+		setCreatePost: (state, action: PayloadAction<Post>) => {
+			const newPost = action.payload;
 			const existingPostIds = new Set(
 				state.feedPosts.map((post) => post.post.postId)
 			);
-			state.feedPosts = [
-				...state.feedPosts,
-				...newPosts.filter((post) => !existingPostIds.has(post.post.postId)),
-			];
+			if (!existingPostIds.has(newPost.post.postId)) {
+				state.feedPosts = [newPost, ...state.feedPosts];
+			}
 		},
 		toggleLike: (
 			state,
@@ -119,15 +114,24 @@ const postsSlice = createSlice({
 				(post) => post.post.postId !== postId
 			);
 		},
+		clearFeedPosts: (state) => {
+			state.feedPosts = [];
+		},
+		clearUserPosts: (state) => {
+			state.userPosts = [];
+		},
 	},
 });
 
 export const {
 	setUserPosts,
 	setFeedPosts,
+	setCreatePost,
 	toggleLike,
 	addCommentToPost,
 	removeCommentFromPost,
 	removePost,
+	clearFeedPosts,
+	clearUserPosts,
 } = postsSlice.actions;
 export default postsSlice.reducer;

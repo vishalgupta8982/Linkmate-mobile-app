@@ -25,9 +25,6 @@ import { LoginPayload } from '../../types/Payload/LoginPayload';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectToken, setToken } from '../../redux/slices/authSlice';
 import Loader from '../../components/Loader';
-import { persistor, RootState } from '../../redux/store';
-import { clearUserDetail, setUserDetails } from '../../redux/slices/UserDetailsSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Login({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -39,17 +36,10 @@ export default function Login({ navigation }) {
 	const globalStylesSheet = globalStyles(colors);
 	const handleLogin = async () => {
 		setLoading(true);
-		dispatch(clearUserDetail());
 		const payload: LoginPayload = {
 			email: email.trim(),
 			password: password.trim(),
 		};
-		if (payload.password.length < 8) {
-			Toast.show('Password must be a 8 character', Toast.SHORT);
-			setLoading(false);
-			return;
-		}
-
 		try {
 			const response = await userLogin(payload);
 			if (response?.token) {
@@ -59,7 +49,7 @@ export default function Login({ navigation }) {
 				navigation.replace('BottomNavigation');
 			}
 		} catch (err) {
-			Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
+			Toast.show('Incorrect email or password', Toast.SHORT);
 		} finally {
 			setLoading(false);
 		}
@@ -93,8 +83,13 @@ export default function Login({ navigation }) {
 						secureTextEntry={true}
 						value={password}
 						onChangeText={setPassword}
+						marginBottom={10}
 					/>
-					<AppButton title="Login" onPress={handleLogin} />
+					<AppButton
+						title="Login"
+						onPress={handleLogin}
+						disabled={email.length < 1 || password.length < 1}
+					/>
 					<View style={styles.registerCont}>
 						<Text style={styles.not}>Don't have a account? </Text>
 						<TouchableOpacity onPress={() => navigation.replace('SignUp')}>
@@ -106,7 +101,7 @@ export default function Login({ navigation }) {
 		</View>
 	);
 }
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,

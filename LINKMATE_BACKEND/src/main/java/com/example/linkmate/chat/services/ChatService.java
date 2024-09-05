@@ -57,7 +57,7 @@ public class ChatService {
         return chatHistory;
     }
 
-    public String deleteMessageForEveryone(String token, ObjectId messageId) {
+    public String deleteMessageForEveryone(ObjectId messageId) {
         if (chatRepository.existsById(messageId)) {
             chatRepository.deleteById(messageId);
             return "Message deleted";

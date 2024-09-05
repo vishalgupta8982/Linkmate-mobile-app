@@ -1,14 +1,16 @@
 import { Alert } from 'react-native';
 import { updateConnectionRequests } from '../redux/slices/ConnectionRequestSlice';
-import { addWebSocketMessages, markMessagesAsRead } from '../redux/slices/ChatSlice';
- 
- 
-
+import {
+	addWebSocketMessages,
+	deleteStoreMessage,
+	markMessagesAsRead,
+	updateMessageWithId,
+} from '../redux/slices/ChatSlice';
 const WebSocketService = {
 	chatSocket: null,
 	connectionSocket: null,
 
-	connectChat(url, token, dispatch, userId) {
+	connectChat(url:string, token:string, dispatch:any, userId:string) {
 		this.chatSocket = new WebSocket(`${url}?token=${token}`);
 
 		this.chatSocket.onopen = () => {
@@ -18,21 +20,47 @@ const WebSocketService = {
 		this.chatSocket.onmessage = (event) => {
 			try {
 				const data = JSON.parse(event.data);
-				if (data.messageType == 'MESSAGE_READ') {
-					console.log(data)
-					 dispatch(
-							markMessagesAsRead({ userId: data.userId })
+				switch (data.messageType) {
+					case 'MESSAGE_READ':
+						dispatch(
+							markMessagesAsRead({ userId: data.userId, newMessageCall: false })
 						);
-				} else if (data.messageType == 'MESSAGE_TYPE_CHAT') {
-					dispatch(
-						addWebSocketMessages({
-							userId:
-								userId == data.chat.senderId
-									? data.chat.receiverId
-									: data.chat.senderId,
-							messages: [data.chat],
-						})
-					);
+						break;
+
+					case 'MESSAGE_TYPE_CHAT':
+						if (userId !== data.chat.senderId) {
+							dispatch(
+								addWebSocketMessages({
+									userId: data.chat.senderId,
+									messages: [data.chat],
+								})
+							);
+						} else {
+							dispatch(
+								updateMessageWithId({
+									userId: data.chat.receiverId,
+									messages: [data.chat],
+									tempMessageId: data.tempId,
+								})
+							);
+						}
+						break;
+
+					case 'DELETE_MESSAGE_FOR_EVERYONE':
+						if (data.status === 'Message deleted') {
+							dispatch(
+								deleteStoreMessage({
+									userId:
+										userId === data.messageRemover
+											? data.messageNonRemover
+											: data.messageRemover,
+									messageId: data.messageId,
+								})
+							);
+						}
+						break;
+					default:
+						console.warn('Unknown message type:', data.messageType);
 				}
 			} catch (error) {
 				console.error('Error parsing chat message:', error);
@@ -86,7 +114,7 @@ const WebSocketService = {
 	reconnectChat(url, token, dispatch) {
 		setTimeout(() => {
 			this.connectChat(url, token, dispatch);
-		}, 5000); // Adjust the delay as needed
+		}, 5000); 
 	},
 
 	reconnectConnection(url, token, dispatch) {

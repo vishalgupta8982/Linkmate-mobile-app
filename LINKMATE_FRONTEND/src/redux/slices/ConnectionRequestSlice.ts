@@ -29,7 +29,7 @@ export const connectionRequestSlice = createSlice({
 					(req) => req.userId === newRequest.userId
 				);
 				if (existingRequestIndex === -1) {
-					state.connectionRequests.push(newRequest); // Add new request to the array
+					state.connectionRequests.push(newRequest); 
 				}
 			});
 		},

@@ -173,8 +173,8 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
                 case "MESSAGE_TYPE_READ":
                     handleMessageRead(messageData);
                     break;
-                case "MESSAGE_READ":
-                    // handleMessageRead(messageData);
+                case "DELETE_MESSAGE_FOR_EVERYONE":
+                    handleDeleteMessage(messageData);
                     break;
                 default:
                     System.out.println("Unknown message type: " + messageType);
@@ -183,6 +183,33 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
         } catch (Exception e) {
             e.printStackTrace();
             session.sendMessage(new TextMessage("Error processing message: " + e.getMessage()));
+        }
+    }
+
+    private void handleDeleteMessage(Map<String, Object> messageData) throws IOException {
+        ObjectId connectionUserId = new ObjectId((String) messageData.get("messageNonRemover"));
+        ObjectId userId = new ObjectId((String) messageData.get("messageRemover"));
+        ObjectId messageId = new ObjectId((String) messageData.get("messageId"));
+        String responseMessage = chatService.deleteMessageForEveryone(messageId);
+        Map<String, String> response = new HashMap<>();
+        response.put("status", responseMessage);
+        response.put("messageType", "DELETE_MESSAGE_FOR_EVERYONE");
+        response.put("messageId", messageId.toString());
+        response.put("messageRemover", userId.toString());
+        response.put("messageNonRemover", connectionUserId.toString());
+        String responsePayload = new ObjectMapper().writeValueAsString(response);
+        sendDeleterMessageResponseToUser(userId, responsePayload);
+        sendDeleterMessageResponseToUser(connectionUserId, responsePayload);
+    }
+
+    private void sendDeleterMessageResponseToUser(ObjectId userId, String responsePayload) throws IOException {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            String userToken = userOpt.get().getToken();
+            WebSocketSession userSession = sessions.get(userToken);
+            if (userSession != null) {
+                userSession.sendMessage(new TextMessage(responsePayload));
+            }
         }
     }
 
@@ -208,7 +235,6 @@ public class MyChatWebSocketHandler extends TextWebSocketHandler {
             System.out.println("User not found for ID: " + connectionUserId);
         }
     }
-
     private void handleChatMessage(Map<String, Object> messageData) throws IOException {
 
         try {

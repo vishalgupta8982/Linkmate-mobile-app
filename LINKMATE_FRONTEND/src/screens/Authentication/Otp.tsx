@@ -50,8 +50,8 @@ export default function Otp({ navigation, route }: Tprops) {
 		};
 		try {
 			const response = await verifyOtp(payload);
-			if (response?.data?.token) {
-				dispatch(setToken(response.data.token));
+			if (response?.token) {
+				dispatch(setToken(response.token));
 				const fcmToken = await messaging().getToken();
 				await saveFcmToken(fcmToken);
 				Toast.show('Account created successfull', Toast.SHORT);
@@ -172,7 +172,7 @@ const getStyles = (colors) =>
 			paddingVertical: 2,
 			fontSize: 24,
 			fontFamily: fonts.Inter_Medium,
-			color:colors.TEXT,
+			color: colors.TEXT,
 		},
 		smallText: {
 			fontSize: 14,

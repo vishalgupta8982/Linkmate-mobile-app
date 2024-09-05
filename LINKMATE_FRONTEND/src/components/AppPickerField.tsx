@@ -14,7 +14,19 @@ import { width } from '../config/Dimension';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { fonts } from '../config/Fonts';
 
-const AppPickerField = ({ label, value, Width, onPress, icon }) => {
+const AppPickerField = ({
+	label,
+	value,
+	Width,
+	onPress,
+	icon,
+}: {
+	onPress: () => void;
+	label:string;
+	value:string;
+	Width:number;
+	icon:any;
+}) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
@@ -36,18 +48,17 @@ const AppPickerField = ({ label, value, Width, onPress, icon }) => {
 					<Text style={styles.value}>{inputValue}</Text>
 					<AntDesign name={icon} color={colors.APP_PRIMARY_LIGHT} size={16} />
 				</View>
-			</TouchableOpacity >
+			</TouchableOpacity>
 		</View>
 	);
 };
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		container: {
 			marginTop: 20,
 		},
 		input: {
-			height: 40,
 			color: colors.TEXT,
 			flexDirection: 'row',
 			alignItems: 'center',

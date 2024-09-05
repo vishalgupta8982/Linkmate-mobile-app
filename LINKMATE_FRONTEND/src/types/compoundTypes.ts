@@ -17,6 +17,7 @@ export interface Education {
 	description: string;
 }
 export interface Project{
+	projectId:string;
 	name: string;
 	startDate: string;
 	endDate: string;
@@ -34,13 +35,15 @@ export interface User {
 	profilePicture: string;
 	headline: string;
 	location: string;
-	about: string | null;
-	connections: any[];
+	about: string ;
+	connections: string[];
+	posts: string[];
 	experiences: Experience[];
 	educations: Education[];
 	projects: Project[];
 	skills: string[];
+	connectionsRequest:string[];
 	sendConnectionsRequest: string[];
 	createdAt: string ;
-	updatedAt: string | null;
+	updatedAt: string ;
 }

@@ -20,10 +20,13 @@ import { useRoute } from '@react-navigation/native';
 import { useCustomTheme } from '../config/Theme';
 import { globalStyles } from '../StylesSheet';
 import { getPostLikedUserDetail } from '../api/apis';
-export default function Likes({ navigation }) {
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/MainStackNav';
+type Tprops = NativeStackScreenProps<RootStackParamList, 'likes'>;
+export default function Likes({ navigation }: Tprops) {
 	const theme = useCustomTheme();
 	const route = useRoute();
-	const { postId } = route.params || {};
+	const { postId } = route.params;
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
@@ -82,7 +85,7 @@ export default function Likes({ navigation }) {
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,

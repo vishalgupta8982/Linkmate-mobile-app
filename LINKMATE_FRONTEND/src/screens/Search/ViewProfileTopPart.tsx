@@ -7,7 +7,7 @@ import {
 	Animated,
 	TouchableOpacity,
 } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AppButton } from '../../components/AppButton';
 import { clearToken } from '../../redux/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,41 +23,54 @@ import {
 } from 'react-native-responsive-dimensions';
 import ViewProfilePicSection from './ViewProfilePicSection';
 import ProfileTabBar from './ProfileTabBar';
-export default function ViewProfileTopPart({ navigation, searchUserData }) {
+import { getSearchUserDetail } from '../../api/apis';
+export default function ViewProfileTopPart({ navigation, userName }) {
 	const dispatch = useDispatch();
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
-	const handleLogout = () => {
-		navigation.replace('Login');
-		dispatch(clearToken());
-	};
+	const[userDetails,setUserDetail]=useState([])
+	const[loader,setLoader]=useState(true)
+	const searchUserDetail=async()=>{
+		try{
+			const response=await getSearchUserDetail(userName)
+			setUserDetail(response)
+		}catch(err){
+			console.error(err)
+		}
+		finally{
+			setLoader(false)
+		}
+	}
+	useEffect(() => {
+		searchUserDetail();
+	}, [userName]);
 	return (
 		<View style={styles.mainCont}>
-			{searchUserData ? (
-				<View>
-					<View style={styles.header}>
-						<TouchableOpacity
-							activeOpacity={0.4}
-							onPress={() => navigation.goBack()}
-						>
-							<AntDesign
-								name="arrowleft"
-								padding={3}
-								size={22}
-								color={colors.TEXT}
-							/>
-						</TouchableOpacity>
-						<Text style={styles.username}> {searchUserData.username}</Text>
-					</View>
+			<View>
+				<View style={styles.header}>
+					<TouchableOpacity
+						activeOpacity={0.4}
+						onPress={() => navigation.goBack()}
+					>
+						<AntDesign
+							name="arrowleft"
+							padding={3}
+							size={22}
+							color={colors.TEXT}
+						/>
+					</TouchableOpacity>
+					<Text style={styles.username}> {userName}</Text>
+				</View>
+				{!loader ? (
 					<ViewProfilePicSection
-						searchUserData={searchUserData}
+						searchUserData={userDetails}
 						navigation={navigation}
 					/>
-				</View>
-			) : (
-				<Loader />
-			)}
+				) : (
+					<Loader />
+				)}
+			</View>
 		</View>
 	);
 }

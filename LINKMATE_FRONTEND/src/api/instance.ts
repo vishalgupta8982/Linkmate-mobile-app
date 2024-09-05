@@ -3,12 +3,12 @@ import { store } from '../redux/store';
 import { selectToken } from '../redux/slices/authSlice';
 
 const baseURL = 'https://linkmate.onrender.com/api/';
-// export const connectionSocketUrl =
-// 	'wss://linkmate.onrender.com/ws/connection-requests';
-// export const chatSocketUrl = 'wss://linkmate.onrender.com/ws/chat';
 export const connectionSocketUrl =
-	'ws://192.168.205.101:8083/ws/connection-requests';
-export const chatSocketUrl = 'ws://192.168.205.101:8083/ws/chat';
+	'wss://linkmate.onrender.com/ws/connection-requests';
+export const chatSocketUrl = 'wss://linkmate.onrender.com/ws/chat';
+// export const connectionSocketUrl =
+// 	'ws://192.168.205.101:8083/ws/connection-requests';
+// export const chatSocketUrl = 'ws://192.168.205.101:8083/ws/chat';
 // const baseURL = 'http://192.168.205.101:8083';
 
 const axiosInstance = axios.create({

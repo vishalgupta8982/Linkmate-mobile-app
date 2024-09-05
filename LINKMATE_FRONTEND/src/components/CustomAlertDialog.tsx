@@ -11,6 +11,13 @@ const CustomAlertDialog = ({
 	message,
 	onConfirm,
 	ButtonText,
+}: {
+	isOpen:boolean;
+	onClose:any;
+	title:string;
+	message:string;
+	onConfirm:any;
+	ButtonText:string;
 }) => {
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -36,12 +43,12 @@ const CustomAlertDialog = ({
 							<Text style={[styles.buttonText, { color: '#ff0000' }]}>
 								Cancel
 							</Text>
-						</TouchableOpacity >
+						</TouchableOpacity>
 						<TouchableOpacity activeOpacity={0.4} onPress={onConfirm}>
 							<Text style={[styles.buttonText, { color: colors.PRIMARY }]}>
 								{ButtonText}
 							</Text>
-						</TouchableOpacity >
+						</TouchableOpacity>
 					</View>
 				</View>
 			</View>
@@ -49,13 +56,13 @@ const CustomAlertDialog = ({
 	);
 };
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		overlay: {
 			flex: 1,
 			justifyContent: 'center',
 			alignItems: 'center',
-			backgroundColor: 'rgba(0, 0, 0, 0.5)',  
+			backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		},
 		mainCont: {
 			width: width - 60,
@@ -87,6 +94,7 @@ const getStyles = (colors) =>
 			fontSize: 16,
 			fontWeight: '500',
 			marginHorizontal: 10,
+			padding: 2,
 		},
 	});
 

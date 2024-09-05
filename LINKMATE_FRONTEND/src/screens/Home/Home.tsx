@@ -5,12 +5,13 @@ import {
 	ScrollView,
 	FlatList,
 	ActivityIndicator,
+	RefreshControl,
 } from 'react-native';
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, store } from '../../redux/store';
-import { getFeed, userDetails } from '../../api/apis';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { countUnreadNotifications, getFeed, userDetails } from '../../api/apis';
+import {  useRoute } from '@react-navigation/native';
 import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 import { useEffect } from 'react';
 import Loader from '../../components/Loader';
@@ -21,14 +22,14 @@ import { selectToken } from '../../redux/slices/authSlice';
 import {
 	chatSocketUrl,
 	connectionSocketUrl,
-	socketUrl,
 } from '../../api/instance';
 import PostCard from '../../components/PostCard';
-import { setFeedPosts, setPosts } from '../../redux/slices/PostSlice';
+import {
+	setFeedPosts,
+} from '../../redux/slices/PostSlice';
 
 export default function Home({ navigation }) {
 	const route = useRoute();
-	const { fromCreatePost } = route.params || false;
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -37,7 +38,7 @@ export default function Home({ navigation }) {
 	const [loading, setLoading] = useState(true);
 	const [page, setPage] = useState(0);
 	const [hasMore, setHasMore] = useState(true);
-
+	 
 	const token = selectToken(store.getState());
 	const feedData = useSelector((state: RootState) => state.posts.feedPosts);
 	useEffect(() => {
@@ -69,30 +70,37 @@ export default function Home({ navigation }) {
 			setLoading(false);
 		}
 	};
-	const fetchFeed = async () => {
+	const fetchFeed = async (page: number, hasMore: boolean) => {
 		if (loading || !hasMore) return;
 		try {
 			const response = await getFeed(page);
 			const newFeedData = response.content;
-			dispatch(setFeedPosts([...feedData, ...newFeedData]));
-			setPage(page + 1);
-			setHasMore(newFeedData.length > 0);
+			if (newFeedData) {
+				if (page == 0) {
+					dispatch(setFeedPosts([...newFeedData]));
+				} else {
+					dispatch(setFeedPosts([...feedData, ...newFeedData]));
+				}
+				setPage(page + 1);
+				setHasMore(newFeedData.length > 0);
+			}
 		} catch (err) {
 			console.error(err);
 		} finally {
 			setLoading(false);
 		}
 	};
-
+	 
+ 
 	useEffect(() => {
 		fetchUserDetails();
-		fetchFeed();
+		fetchFeed(page, hasMore);
 	}, []);
 
 	return (
 		<View style={styles.mainCont}>
-			{loading&&(<Loader/>)}
-			<HomePageHeader navigation={navigation} />
+			{loading && <Loader />}
+			<HomePageHeader  navigation={navigation} />
 			{!loading && userData && (
 				<FlatList
 					data={feedData}
@@ -100,7 +108,13 @@ export default function Home({ navigation }) {
 					renderItem={({ item }) => (
 						<PostCard navigation={navigation} data={item} />
 					)}
-					onEndReached={fetchFeed}
+					refreshControl={
+						<RefreshControl
+							refreshing={loading}
+							onRefresh={() => fetchFeed(0, true)}
+						/>
+					}
+					onEndReached={() => fetchFeed(page, hasMore)}
 					onEndReachedThreshold={0.5}
 					ListFooterComponent={
 						hasMore && <ActivityIndicator size={32} color={colors.PRIMARY} />

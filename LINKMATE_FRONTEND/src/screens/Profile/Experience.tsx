@@ -24,7 +24,11 @@ import {
 	updateExperience,
 } from '../../api/apis';
 import Toast from 'react-native-simple-toast';
-import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
+import {
+	addOrUpdateExperience,
+	removeExperience,
+	setUserDetails,
+} from '../../redux/slices/UserDetailsSlice';
 import { useState } from 'react';
 import {
 	responsiveFontSize,
@@ -90,16 +94,13 @@ export default function Experience({ navigation }) {
 		}));
 	};
 	const handleDltExp = async (id: string) => {
+		const prevData = userData;
+		dispatch(removeExperience(id));
 		try {
-			setLoader(true);
 			const response = await deleteExperience(id);
-			if (response) {
-				dispatch(setUserDetails(response));
-				Toast.show('Deleted successfully', Toast.SHORT);
-				setLoader(false);
-			}
 		} catch (err) {
-			setLoader(false);
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
 			console.error(err);
 		}
 	};
@@ -150,7 +151,7 @@ export default function Experience({ navigation }) {
 		try {
 			const response = await addExperience(payload);
 			if (response) {
-				dispatch(setUserDetails(response));
+				dispatch(addOrUpdateExperience(response[0]));
 				setLoader(false);
 				Toast.show('Experience added successfully', Toast.SHORT);
 			}
@@ -166,28 +167,23 @@ export default function Experience({ navigation }) {
 			...newExperience,
 			experienceId: editingExperienceId,
 		};
-
-		setLoader(true);
 		if (
 			payload.company.length < 1 ||
 			payload.position.length < 1 ||
 			payload.description.length < 1
 		) {
-			setLoader(false);
 			Toast.show('All fields are required', Toast.SHORT);
 			return;
 		}
 		toggleModal();
+		const prevData = userData;
+		dispatch(addOrUpdateExperience(payload));
 		try {
 			const response = await updateExperience(editingExperienceId, payload);
-			if (response) {
-				dispatch(setUserDetails(response));
-				setLoader(false);
-				Toast.show('Experience updated successfully', Toast.SHORT);
-			}
 		} catch (err) {
 			console.error(err);
-			setLoader(false);
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
 		} finally {
 			setNewExperience({
 				institution: '',
@@ -552,9 +548,9 @@ const getStyles = (colors) =>
 			fontSize: responsiveFontSize(2),
 			color: colors.TEXT,
 		},
-		locationTypeText:{
-			color:colors.PRIMARY,
-			fontFamily:fonts.Inter_Regular,
-			fontSize:14
-		}
+		locationTypeText: {
+			color: colors.PRIMARY,
+			fontFamily: fonts.Inter_Regular,
+			fontSize: 14,
+		},
 	});

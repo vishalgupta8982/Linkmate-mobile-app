@@ -30,14 +30,14 @@ export default function ProfilePicSection({ navigation, data }) {
 				<Image
 					style={styles.pic}
 					source={{
-						uri: data?.profilePicture.length > 0 ? data?.profilePicture : null,
+						uri: data?.profilePicture,
 					}}
 				/>
 
 				<View style={styles.countMainCont}>
 					<TouchableOpacity
 						activeOpacity={0.4}
-						onPress={() => navigation.navigate('userPosts')}
+						onPress={() => navigation.navigate('userPosts',{userId:data.userId})}
 					>
 						<View style={styles.count}>
 							<Text style={styles.countText}>{data.posts.length}</Text>
@@ -46,11 +46,9 @@ export default function ProfilePicSection({ navigation, data }) {
 					</TouchableOpacity>
 					<TouchableOpacity
 						activeOpacity={0.4}
-						onPress={() => navigation.navigate('myConnection')}
-					></TouchableOpacity>
-					<TouchableOpacity
-						activeOpacity={0.4}
-						onPress={() => navigation.navigate('myConnection')}
+						onPress={() =>
+							navigation.navigate('myConnection', { userId: data.userId })
+						}
 					>
 						<View style={styles.count}>
 							<Text style={styles.countText}>{data.connections?.length}</Text>
@@ -70,7 +68,7 @@ export default function ProfilePicSection({ navigation, data }) {
 			</View>
 
 			<View style={styles.buttonCont}>
-				<TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
+				<TouchableOpacity activeOpacity={0.4} onPress={() => navigation.navigate('EditProfile')}>
 					<Text style={styles.button}>
 						<MaterialCommunityIcon
 							name="account-edit-outline"
