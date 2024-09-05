@@ -20,8 +20,9 @@ public class AllInteractionDto {
     private String firstName;
     private String lastName;
     private String profilePicture;
-    private String lastMessage;
+    private String headline;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date createdAt=new Date();
     private long numberOfUnreadMessage;
+    private Chat lastMessage;
 }
