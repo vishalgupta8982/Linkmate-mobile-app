@@ -112,7 +112,6 @@ public class ChatService {
                 }
             }
         }
-        Collections.reverse(allInteractions);
         return allInteractions;
        
     }

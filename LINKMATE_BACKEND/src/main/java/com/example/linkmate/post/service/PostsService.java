@@ -45,8 +45,8 @@ public class PostsService {
     @Autowired
     private UserRepository userRepository;
 
-     @Autowired
-     private NotificationService notificationService;
+    @Autowired
+    private NotificationService notificationService;
 
     public PostResponse createPost(String content, String fileType, MultipartFile file, String token) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
@@ -111,7 +111,7 @@ public class PostsService {
         }
         return false;
     }
-    
+
     public List<PostUserDetail> getLikedPostUserDetail(String token, ObjectId postId) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
 
@@ -138,7 +138,7 @@ public class PostsService {
 
     public String likePost(String token, ObjectId postId) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        Optional<User> user=userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
         Optional<Post> optionalPost = findPost(postId);
         if (!optionalPost.isPresent()) {
             return "Post not found";
@@ -152,15 +152,16 @@ public class PostsService {
                     post.getUserId(), NotificationType.LIKE, user.get().getUsername());
         } else {
             likedBy.add(userId);
-            if(!post.getUserId().equals(userId)){
-                notificationService.sendNotification(post.getUserId(),userId,"Liked your post");
+            if (!post.getUserId().equals(userId)) {
+                notificationService.sendNotification(post.getUserId(), userId, "Liked your post");
             }
             notificationService.createNotification(
-                    post.getUserId(),user.get().getProfilePicture(),user.get().getUsername(),post.getFileUrl(),NotificationType.LIKE);
+                    post.getUserId(), user.get().getProfilePicture(), user.get().getUsername(), post.getFileUrl(),
+                    NotificationType.LIKE);
         }
         post.setLikedBy(likedBy);
         postRepository.save(post);
- 
+
         return "Post updated successfully";
     }
 
@@ -170,7 +171,7 @@ public class PostsService {
         }
 
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));  
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -193,7 +194,7 @@ public class PostsService {
 
             return new PostResponse(post, postUserDetail);
         }).collect(Collectors.toList());
- 
+
         Collections.shuffle(postResponses);
         return new PageImpl<>(postResponses, pageable, postsPage.getTotalElements());
     }
