@@ -11,4 +11,6 @@ public interface UserRepository extends MongoRepository<User, ObjectId> {
   @Query(value = "{ '_id': ?0 }", fields = "{ 'connections': 1 }")
 List<ObjectId> findConnectionIdsByUserId(ObjectId userId);
 
+ 
+
 }

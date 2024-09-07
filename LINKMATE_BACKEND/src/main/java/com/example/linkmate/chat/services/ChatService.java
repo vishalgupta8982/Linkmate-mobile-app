@@ -36,7 +36,8 @@ public class ChatService {
     public Chat saveChatMessage(Chat chatMessage) {
         chatMessage.setStatus("sent");
         Chat chat = chatRepository.save(chatMessage);
-        notificationService.sendNotification(chat.getReceiverId(), chat.getSenderId(), chat.getMessageContent(),"CHAT");
+        notificationService.sendNotification(chat.getReceiverId(), chat.getSenderId(), chat.getMessageContent(),
+                "CHAT");
         return chat;
 
     }
@@ -81,39 +82,53 @@ public class ChatService {
     public long getUnreadMessageCount(ObjectId userId, ObjectId connectionId) {
         return chatRepository.countByReceiverIdAndSenderIdAndIsRead(userId, connectionId, false);
     }
+ 
 
     public List<AllInteractionDto> getAllInteractions(String token) {
-        ObjectId myUserId = jwtUtil.getUserIdFromToken(token);
-        Optional<User> userOpt = userRepository.findById(myUserId);
+        ObjectId myUserId = jwtUtil.getUserIdFromToken(token);  
+        Optional<User> userOpt = userRepository.findById(myUserId);  
         List<AllInteractionDto> allInteractions = new ArrayList<>();
-
         if (userOpt.isPresent()) {
-            List<ObjectId> connectionIds = userOpt.get().getConnections();
-
-            for (ObjectId connectionId : connectionIds) {
-                Pageable pageable = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdAt"));
-                List<Chat> chats = chatRepository.findLatestMessageBetween(myUserId, connectionId, pageable);
-                Chat lastChat = chats.isEmpty() ? null : chats.get(0);
-                Optional<User> connectionOpt = userRepository.findById(connectionId);
-
-                if (lastChat != null && connectionOpt.isPresent()) {
-                    User connection = connectionOpt.get();
-                    AllInteractionDto dto = new AllInteractionDto();
-                    dto.setUserId(connection.getUserId());
-                    dto.setUsername(connection.getUsername());
-                    dto.setFirstName(connection.getFirstName());
-                    dto.setLastName(connection.getLastName());
-                    dto.setProfilePicture(connection.getProfilePicture());
-                    dto.setHeadline(connection.getHeadline());
-                    dto.setLastMessage(lastChat);
-                    long unreadMessageCount = getUnreadMessageCount(myUserId, connectionId);
-                    dto.setNumberOfUnreadMessage(unreadMessageCount);
-                    allInteractions.add(dto);
+            List<Chat> userChats = chatRepository.findBySenderIdOrReceiverId(myUserId);
+            Set<ObjectId> interactedUserIds = new HashSet<>();
+            for (Chat chat : userChats) {
+                ObjectId otherUserId = chat.getSenderId().equals(myUserId) ? chat.getReceiverId() : chat.getSenderId();
+                if (!interactedUserIds.contains(otherUserId)) {
+                    interactedUserIds.add(otherUserId);
+                    Pageable pageable = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdAt"));
+                    List<Chat> latestChat = chatRepository.findLatestMessageBetween(myUserId, otherUserId, pageable);
+                    Chat lastChat = latestChat.isEmpty() ? null : latestChat.get(0);
+                    Optional<User> otherUserOpt = userRepository.findById(otherUserId);
+                    if (lastChat != null && otherUserOpt.isPresent()) {
+                        User otherUser = otherUserOpt.get();
+                        AllInteractionDto dto = new AllInteractionDto();
+                        dto.setUserId(otherUser.getUserId());
+                        dto.setUsername(otherUser.getUsername());
+                        dto.setFirstName(otherUser.getFirstName());
+                        dto.setLastName(otherUser.getLastName());
+                        dto.setProfilePicture(otherUser.getProfilePicture());
+                        dto.setHeadline(otherUser.getHeadline());
+                        dto.setLastMessage(lastChat);
+                        long unreadMessageCount = getUnreadMessageCount(myUserId, otherUserId);
+                        dto.setNumberOfUnreadMessage(unreadMessageCount);
+                        allInteractions.add(dto);
+                    }
                 }
             }
         }
+        allInteractions.sort((a, b) -> {
+            if (a.getLastMessage() != null && b.getLastMessage() != null) {
+                return b.getLastMessage().getCreatedAt().compareTo(a.getLastMessage().getCreatedAt());
+            } else if (a.getLastMessage() != null) {
+                return -1;
+            } else if (b.getLastMessage() != null) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        
         return allInteractions;
-       
     }
 
 }

@@ -19,5 +19,8 @@ public interface ChatRepository extends MongoRepository<Chat,ObjectId> {
     List<Chat> findLatestMessageBetween(ObjectId senderId, ObjectId receiverId, Pageable pageable);
 
     long countByReceiverIdAndSenderIdAndIsRead(ObjectId userId,ObjectId connectedId,boolean isRead);
+
+    @Query("{ $or: [ { 'senderId': ?0 }, { 'receiverId': ?0 } ] }")
+    List<Chat> findBySenderIdOrReceiverId(ObjectId userId);
     
 }  
