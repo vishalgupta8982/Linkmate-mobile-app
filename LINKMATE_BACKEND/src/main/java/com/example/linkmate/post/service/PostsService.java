@@ -153,7 +153,7 @@ public class PostsService {
         } else {
             likedBy.add(userId);
             if (!post.getUserId().equals(userId)) {
-                notificationService.sendNotification(post.getUserId(), userId, "Liked your post");
+                notificationService.sendNotification(post.getUserId(), userId, "Liked your post","NOTIFICATION_PAGE");
             }
             notificationService.createNotification(
                     post.getUserId(), user.get().getProfilePicture(), user.get().getUsername(), post.getFileUrl(),

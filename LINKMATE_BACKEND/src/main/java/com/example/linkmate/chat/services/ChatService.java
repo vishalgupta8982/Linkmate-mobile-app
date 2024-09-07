@@ -36,7 +36,7 @@ public class ChatService {
     public Chat saveChatMessage(Chat chatMessage) {
         chatMessage.setStatus("sent");
         Chat chat = chatRepository.save(chatMessage);
-        notificationService.sendNotification(chat.getReceiverId(), chat.getSenderId(), chat.getMessageContent());
+        notificationService.sendNotification(chat.getReceiverId(), chat.getSenderId(), chat.getMessageContent(),"CHAT");
         return chat;
 
     }

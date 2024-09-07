@@ -83,7 +83,7 @@ public class NotificationService {
     }
 
     @Async
-    public void sendNotification(ObjectId notificationReciverId, ObjectId notificationSenderId, String body) {
+    public void sendNotification(ObjectId notificationReciverId, ObjectId notificationSenderId, String body,String type) {
         try {
             Optional<User> sender = userRepository.findById(notificationSenderId);
             if (sender.isPresent()) {
@@ -93,7 +93,7 @@ public class NotificationService {
                                 fcmToken.getFcmToken(),
                                 sender.get().getFirstName() + " " + sender.get().getLastName(),
                                 body,
-                                sender.get().getProfilePicture());
+                                sender.get().getProfilePicture(),type);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

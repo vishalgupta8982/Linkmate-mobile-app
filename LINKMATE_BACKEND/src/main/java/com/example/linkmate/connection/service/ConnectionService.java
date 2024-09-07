@@ -81,7 +81,7 @@ public class ConnectionService {
                 myConnectionRequestWebSocketHandler.sendConnectionRequestUpdate(
                                 connectedUser.getToken(),
                                 detail);
-                notificationService.sendNotification(connectedUserId, userId, "Sent you a connection request");
+                notificationService.sendNotification(connectedUserId, userId, "Sent you a connection request","NOTIFICATION_PAGE");
                 return connectionRepository.save(connection);
         }
 
@@ -107,7 +107,7 @@ public class ConnectionService {
                 userRepository.save(user);
                 userRepository.save(connectedUser);
                 notificationService.createNotification(connectedUserId,user.getProfilePicture(),user.getUsername(),null,NotificationType.CONNECTED);
-                notificationService.sendNotification(connectedUserId, userId, "Accepted your invite");
+                notificationService.sendNotification(connectedUserId, userId, "Accepted your invite","NOTIFICATION_PAGE");
                 return connection;
         }
 

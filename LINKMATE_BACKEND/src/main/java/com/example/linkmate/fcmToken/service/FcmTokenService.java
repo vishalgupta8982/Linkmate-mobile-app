@@ -60,7 +60,7 @@ public class FcmTokenService {
         }
     }
 
-    public void sendNotification(String token, String title, String body, String imageUrl) throws IOException {
+    public void sendNotification(String token, String title, String body, String imageUrl,String type) throws IOException {
         String accessToken = firebaseAuthService.getAccessToken();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
@@ -71,6 +71,7 @@ public class FcmTokenService {
                 + "\"data\": {"
                 + "\"title\": \"" + title + "\","
                 + "\"body\": \"" + body + "\","
+                + "\"type\": \"" + type + "\","
                 + "\"image\": \"" + imageUrl + "\","
                 + "\"key1\": \"value1\","
                 + "\"key2\": \"value2\""
