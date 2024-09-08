@@ -3,7 +3,8 @@ import notifee, {
 	AndroidStyle,
 } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
-import { saveFcmToken } from '../api/apis';
+import { setNotificationCount } from '../redux/slices/CountNotificationMessage';
+import { store } from '../redux/store';
 
 export const initMessaging = async () => {
 	try {
@@ -21,7 +22,9 @@ export const initMessaging = async () => {
 };
 
 export const displayNotification = async (remoteMessage: any) => {
-	console.log('remoteMessage', remoteMessage);
+	if (remoteMessage.type == 'NOTIFICATION_PAGE'){
+		store.dispatch(setNotificationCount(1));
+	}
 	const channelId = await notifee.createChannel({
 		id: 'default',
 		name: 'Default Channel',
@@ -38,6 +41,7 @@ export const displayNotification = async (remoteMessage: any) => {
 		androidConfig.largeIcon = remoteMessage.image;
 	}
 	await notifee.displayNotification({
+		id:remoteMessage.type,
 		title: remoteMessage.title,
 		body: remoteMessage.body,
 		android: androidConfig,

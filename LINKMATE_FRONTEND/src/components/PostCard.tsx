@@ -55,7 +55,6 @@ export default function PostCard({
 	const [pageNumber, setPageNumber] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
 	const [alertDialogVisible, setAlertDialogVisible] = useState(false);
-	const [commentModalVisible, setCommentModalVisible] = useState(false);
 	useEffect(() => {
 		if (data.post.fileType == 'image') {
 			Image.getSize(data.post.fileUrl, (width, height) => {
@@ -129,7 +128,7 @@ export default function PostCard({
 							? 'Profile'
 							: 'viewUserProfile',
 						{
-							username: data.username,
+							username: data.postUserDetail.username,
 						}
 					)
 				}

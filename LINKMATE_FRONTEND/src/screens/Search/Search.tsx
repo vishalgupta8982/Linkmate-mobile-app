@@ -7,20 +7,22 @@ import {
 	RefreshControl,
 } from 'react-native';
 import React from 'react';
-import { searchUser } from '../../api/apis';
+import { searchUser, userDetails } from '../../api/apis';
 import { useEffect } from 'react';
 import { useCustomTheme } from '../../config/Theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { fonts } from '../../config/Fonts';
 import UserCard from '../../components/UserCard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useState } from 'react';
 import Loader from '../../components/Loader';
+import { setUserDetails } from '../../redux/slices/UserDetailsSlice';
 
 export default function Search({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
+	const dispatch=useDispatch()
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const [suggestion, setSuggestion] = useState([]);
@@ -37,6 +39,14 @@ export default function Search({ navigation }) {
 		} finally {
 			setLoader(false);
 		}
+	};
+	const fetchUserDetails = async () => {
+		try {
+			const response = await userDetails();
+			dispatch(setUserDetails(response));
+		} catch (err) {
+			console.error('User detail', err);
+		}  
 	};
 	useEffect(() => {
 		getSuggestion();
@@ -59,7 +69,7 @@ export default function Search({ navigation }) {
 					refreshControl={
 						<RefreshControl
 							refreshing={loader}
-							onRefresh={() => getSuggestion()}
+							onRefresh={() => {fetchUserDetails();getSuggestion()}}
 						/>
 					}
 				>

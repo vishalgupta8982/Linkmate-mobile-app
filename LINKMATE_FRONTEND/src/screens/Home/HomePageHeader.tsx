@@ -1,23 +1,31 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useCustomTheme } from '../../config/Theme';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, store } from '../../redux/store';
 import Feather from 'react-native-vector-icons/Feather';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import { fonts } from '../../config/Fonts';
 import { countUnreadNotifications } from '../../api/apis';
+import {
+	selectNotificationCount,
+	setNotificationCount,
+} from '../../redux/slices/CountNotificationMessage';
+import { selectChatPageByUser } from '../../redux/slices/ChatSlice';
 export default function HomePageHeader({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
+	const dispatch = useDispatch();
 	const { colors } = theme;
 	const styles = getStyles(colors);
-	const [countUnreadNotification, setCountUnreadNotification] = useState(null);
+	const count = useSelector((state: RootState) => state.count.notificationCount);
 	const getUnreadNotification = async () => {
+		
 		try {
 			const response = await countUnreadNotifications();
-			console.log(response,"hlo")
-	setCountUnreadNotification(response);
+			if (response) {
+				dispatch(setNotificationCount(parseInt(response)));
+			}
 		} catch (err) {
 			console.error(err);
 		}
@@ -25,7 +33,6 @@ export default function HomePageHeader({ navigation }) {
 	useEffect(() => {
 		getUnreadNotification();
 	}, []);
-	console.log(countUnreadNotification)
 	return (
 		<View style={styles.header}>
 			<TouchableOpacity
@@ -39,8 +46,8 @@ export default function HomePageHeader({ navigation }) {
 					onPress={() => navigation.navigate('notification')}
 					activeOpacity={0.4}
 				>
-					{countUnreadNotification != 0 && countUnreadNotification!=null  && (
-						<Text style={styles.count}>{countUnreadNotification}</Text>
+					{count != '0' && count != null && (
+						<Text style={styles.count}>{count}</Text>
 					)}
 					<Feather name="bell" size={24} color={colors.TEXT} />
 				</TouchableOpacity>
@@ -75,12 +82,14 @@ const getStyles = (colors) =>
 			fontFamily: fonts.Inter_Medium,
 			textAlign: 'center',
 			borderRadius: 10,
-			color: colors.TEXT,
+			color: colors.WHITE,
 			position: 'absolute',
 			zIndex: 4,
 			width: 16,
 			height: 16,
 			left: 15,
 			top: -8,
+			justifyContent: 'center',
+			alignItems: 'center',
 		},
 	});

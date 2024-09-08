@@ -11,46 +11,52 @@ import { revertConnectionRequest, sendConnectionRequest } from '../api/apis';
 import Toast from 'react-native-simple-toast';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { User } from '../types/compoundTypes';
 import { NavigationProp } from '@react-navigation/native';
-export default function UserCard({ userData, navigation }:{userData:User,navigation:NavigationProp<any>}) {
+import { addConnectionRequests } from '../redux/slices/ConnectionRequestSlice';
+import {
+	addSendConnectionRequest,
+	removeSendConnectionRequest,
+	setUserDetails,
+} from '../redux/slices/UserDetailsSlice';
+export default function UserCard({
+	userData,
+	navigation,
+}: {
+	userData: User;
+	navigation: NavigationProp<any>;
+}) {
 	const data = useSelector((state: RootState) => state.userDetails.user);
 	const theme = useCustomTheme();
 	const { colors } = theme;
+	const dispatch = useDispatch();
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
-	const [request, setRequest] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const handleSendRqst = async (id: string) => {
-		setLoading(true);
+		const prevData = data;
+		dispatch(addSendConnectionRequest(id));
 		try {
 			const response = await sendConnectionRequest(id);
-			if (response) {
-				setRequest(true);
-				Toast.show('Connection request sent', Toast.SHORT);
-			}
 		} catch (err) {
 			console.error(err);
-		} finally {
-			setLoading(false);
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
 		}
 	};
 
 	const handleCancelRequest = async (id: string) => {
-		setLoading(true);
+		const prevData=data
+		dispatch(removeSendConnectionRequest(id))
 		try {
 			const response = await revertConnectionRequest(id);
-			if (response) {
-				setRequest(false);
-				Toast.show('Connection request cancelled', Toast.SHORT);
-			}
 		} catch (err) {
 			console.error(err);
-		} finally {
-			setLoading(false);
-		}
+			Toast.show('Something went wrong', Toast.SHORT);
+			dispatch(setUserDetails(prevData));
+		}  
 	};
 	return (
 		<TouchableOpacity
@@ -69,28 +75,25 @@ export default function UserCard({ userData, navigation }:{userData:User,navigat
 			<Text
 				numberOfLines={2}
 				ellipsizeMode="tail"
-				style={globalStyleSheet.description}
+				style={[globalStyleSheet.description, { height: 40, lineHeight: 20 }]}
 			>
 				{userData.headline}
 			</Text>
-			{(request ||
-				data?.sendConnectionsRequest.includes(userData.userId) ||
+			{(data?.sendConnectionsRequest.includes(userData.userId) ||
 				!data?.connections.includes(userData.userId)) && (
 				<OutlineButton
 					onPress={() =>
-						request || data?.sendConnectionsRequest.includes(userData.userId)
+						data?.sendConnectionsRequest.includes(userData.userId)
 							? handleCancelRequest(userData.userId)
 							: handleSendRqst(userData.userId)
 					}
 					title={
-						request || data?.sendConnectionsRequest.includes(userData.userId)
+						data?.sendConnectionsRequest.includes(userData.userId)
 							? 'Pending'
 							: 'Connect'
 					}
 					icon={
-						(request ||
-							data?.sendConnectionsRequest.includes(userData.userId) ||
-							loading) && (
+						(data?.sendConnectionsRequest.includes(userData.userId)) && (
 							<AntDesign name="clockcircleo" color={colors.TEXT} size={12} />
 						)
 					}
@@ -98,7 +101,9 @@ export default function UserCard({ userData, navigation }:{userData:User,navigat
 			)}
 			{data?.connections.includes(userData.userId) && (
 				<OutlineButton
-				onPress={()=>navigation.navigate("userChatDetail",{userDetails:userData})}
+					onPress={() =>
+						navigation.navigate('userChatDetail', { userDetails: userData })
+					}
 					title={'Message'}
 					icon={<Feather name="send" color={colors.TEXT} size={12} />}
 				/>
@@ -107,7 +112,7 @@ export default function UserCard({ userData, navigation }:{userData:User,navigat
 	);
 }
 
-const getStyles = (colors:any) =>
+const getStyles = (colors: any) =>
 	StyleSheet.create({
 		card: {
 			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,

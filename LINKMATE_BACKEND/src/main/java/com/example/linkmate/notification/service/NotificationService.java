@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.*;
+
+import com.example.linkmate.chat.repository.ChatRepository;
 import com.example.linkmate.fcmToken.repository.FcmTokenRepository;
 import com.example.linkmate.fcmToken.service.FcmTokenService;
 import com.example.linkmate.notification.model.Notification;
@@ -35,6 +37,9 @@ public class NotificationService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private ChatRepository chatRepository;
 
     public Notification createNotification(ObjectId userId,
             String userProfilePicture, String username, String post, NotificationType notificationType) {
@@ -77,9 +82,12 @@ public class NotificationService {
         }
     }
 
-    public long countUnreadNotifications(String token) {
+    public Map<String,Long> countUnreadNotifications(String token) {
         ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        return notificationRepository.countByUserIdAndRead(userId, false);
+        Map<String,Long> count=new HashMap();
+        count.put("unreadMessage",chatRepository.countByReceiverIdAndIsRead(userId, false));
+         count.put("unreadNotification",notificationRepository.countByUserIdAndRead(userId, false));
+         return count;
     }
 
     @Async

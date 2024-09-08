@@ -56,7 +56,7 @@ export default function CreatePost({ navigation }) {
 			setFilePath(response);
 		} catch (err) {
 			if (DocumentPicker.isCancel(err)) {
-				console.log('User cancelled the picker');
+				console.error('User cancelled the picker');
 			} else {
 				throw err;
 			}
@@ -142,7 +142,7 @@ export default function CreatePost({ navigation }) {
 							size={18}
 							style={{ marginRight: 5 }}
 						/>
-						<Text numberOfLines={1} ellipsizeMode="tail">
+						<Text style={styles.docName} numberOfLines={1} ellipsizeMode="tail">
 							{filePath[0]?.name}
 						</Text>
 					</View>
@@ -248,5 +248,10 @@ const getStyles = (colors: any) =>
 			width: '80%',
 			margin: 20,
 			borderRadius: 10,
+		},
+		docName: {
+			fontSize: 16,
+			color: colors.TEXT,
+			fontFamily: fonts.Inter_Regular,
 		},
 	});

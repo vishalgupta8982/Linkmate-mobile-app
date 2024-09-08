@@ -51,7 +51,6 @@ export default function ViewProfilePicSection({ navigation, searchUserData }) {
 			console.error(err);
 		}
 	};
-	console.log(searchUserData)
 	return (
 		<View style={styles.mainCont}>
 			<View style={styles.profile}>
@@ -59,9 +58,7 @@ export default function ViewProfilePicSection({ navigation, searchUserData }) {
 					style={styles.pic}
 					source={{
 						uri:
-							searchUserData?.profilePicture?.length > 0
-								? searchUserData?.profilePicture
-								: null,
+							searchUserData.profilePicture ,
 					}}
 				/>
 				<View style={styles.countMainCont}>
@@ -75,7 +72,7 @@ export default function ViewProfilePicSection({ navigation, searchUserData }) {
 					>
 						<View style={styles.count}>
 							<Text style={styles.countText}>
-								{searchUserData.posts.length}
+								{searchUserData.posts?.length}
 							</Text>
 							<Text style={styles.countHead}>Posts</Text>
 						</View>

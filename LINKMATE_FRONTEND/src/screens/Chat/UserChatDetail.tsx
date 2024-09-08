@@ -113,7 +113,7 @@ export default function UserChatDetail({ navigation, route }: Tprops) {
 	useEffect(() => {
 		const unsubscribe = navigation.addListener('focus', async () => {
 			try {
-				await notifee.cancelAllNotifications();
+				await notifee.cancelNotification('CHAT');
 			} catch (error) {
 				console.error('Error canceling notifications:', error);
 			}

@@ -20,6 +20,17 @@ export default function SplashScreen({ navigation }) {
 				navigation.replace(initialRouteName)
 			}, 1000)
 	}, []);
+	const fetchUserDetails = async () => {
+		try {
+			const response = await userDetails();
+			dispatch(setUserDetails(response));
+		} catch (err) {
+			console.error('User detail', err);
+		} finally {
+			setLoading(false);
+		}
+	};
+	
 	const globalStylesSheet = globalStyles(colors);
 	return (
 		<View style={[styles.mainCont, { backgroundColor: colors.BACKGROUND }]}>

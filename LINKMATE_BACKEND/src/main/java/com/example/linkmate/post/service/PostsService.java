@@ -16,9 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.linkmate.fcmToken.model.FcmToken;
-import com.example.linkmate.fcmToken.repository.FcmTokenRepository;
-import com.example.linkmate.fcmToken.service.FcmTokenService;
 import com.example.linkmate.notification.model.NotificationType;
 import com.example.linkmate.notification.service.NotificationService;
 import com.example.linkmate.post.model.Post;
@@ -153,11 +150,11 @@ public class PostsService {
         } else {
             likedBy.add(userId);
             if (!post.getUserId().equals(userId)) {
-                notificationService.sendNotification(post.getUserId(), userId, "Liked your post","NOTIFICATION_PAGE");
+                notificationService.sendNotification(post.getUserId(), userId, "Liked your post", "NOTIFICATION_PAGE");
+                notificationService.createNotification(
+                        post.getUserId(), user.get().getProfilePicture(), user.get().getUsername(), post.getFileUrl(),
+                        NotificationType.LIKE);
             }
-            notificationService.createNotification(
-                    post.getUserId(), user.get().getProfilePicture(), user.get().getUsername(), post.getFileUrl(),
-                    NotificationType.LIKE);
         }
         post.setLikedBy(likedBy);
         postRepository.save(post);

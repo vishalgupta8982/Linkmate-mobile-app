@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { Education, Experience, Project, User } from '../../types/compoundTypes';
+import {
+	Education,
+	Experience,
+	Project,
+	User,
+} from '../../types/compoundTypes';
 
 interface UserDetailsState {
 	user: User | null;
@@ -131,6 +136,21 @@ const userDetailsSlice = createSlice({
 				);
 			}
 		},
+		addSendConnectionRequest(state, action: PayloadAction<string>) {
+			if (state.user) {
+				state.user.sendConnectionsRequest =
+					state.user.sendConnectionsRequest || [];
+				state.user.sendConnectionsRequest.push(action.payload);
+			}
+		},
+		removeSendConnectionRequest(state, action: PayloadAction<string>) {
+			if (state.user) {
+				state.user.sendConnectionsRequest =
+					state.user.sendConnectionsRequest.filter(
+						(request) => request !== action.payload
+					);
+			}
+		},
 		clearUserDetail(state) {
 			state.user = null;
 		},
@@ -153,6 +173,8 @@ export const {
 	removeExperience,
 	storePostId,
 	removePostId,
+	addSendConnectionRequest,
+	removeSendConnectionRequest,
 } = userDetailsSlice.actions;
 
 export const selectUser = (state: RootState) => state.userDetails.user;

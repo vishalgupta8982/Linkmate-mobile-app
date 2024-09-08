@@ -34,7 +34,6 @@ export const verifyOtp = async (payload: OtpPayload) => {
 	return await post<verifyOtpResponse>(url, payload);
 };
 export const saveFcmToken = async (fcmToken: string) => {
-	console.log(fcmToken)
 	const url = `/fcmToken/save?fcmToken=${fcmToken}`;
 	return await post<string>(url);
 };

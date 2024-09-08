@@ -4,6 +4,8 @@ import { useCustomTheme } from '../config/Theme';
 import { fonts } from '../config/Fonts';
 import { responsiveWidth } from 'react-native-responsive-dimensions';
 import moment from 'moment';
+import { post } from '../api/instance';
+import { width } from '../config/Dimension';
 export default function NotificationTray({ navigation, data }) {
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -41,13 +43,29 @@ export default function NotificationTray({ navigation, data }) {
 			/>
 			<View>
 				{data.notificationType == 'CONNECTED' && (
-					<Text style={styles.notificationText}>
-						You are now connected with{' '}
-						<Text style={styles.userName}>{data.userName}</Text>
-					</Text>
+					<View style={styles.connectedNotification}>
+						<View>
+							<Text style={styles.notificationText}>
+								You are now connected with{' '}
+								<Text style={styles.userName}>{data.userName}</Text>
+							</Text>
+						</View>
+						<Text style={styles.time}>{formattedTime}</Text>
+					</View>
+				)}
+				{data.notificationType == 'LIKE' && (
+					<View style={styles.likeNotification} >
+						<View>
+							<Text style={styles.notificationText}>
+								<Text style={styles.userName}>{data.userName}</Text> Liked your
+								post
+							</Text>
+							<Text style={styles.time}>{formattedTime}</Text>
+						</View>
+						<Image style={styles.post} source={{ uri: data.post }} />
+					</View>
 				)}
 			</View>
-			<Text style={styles.time}>{formattedTime}</Text>
 		</View>
 	);
 }
@@ -83,4 +101,17 @@ const getStyles = (colors: any) =>
 		icon: {
 			padding: 4,
 		},
+		connectedNotification: {
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+		},
+		likeNotification: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		post:{
+			height:50,
+			width:50,
+			borderRadius:10
+		}
 	});

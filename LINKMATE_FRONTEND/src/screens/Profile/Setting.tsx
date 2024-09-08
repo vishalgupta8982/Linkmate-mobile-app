@@ -17,13 +17,10 @@ import { responsiveFontSize } from 'react-native-responsive-dimensions';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../../redux/slices/ThemeSlice';
 import { useState } from 'react';
-import { clearToken } from '../../redux/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { clearUserDetail } from '../../redux/slices/UserDetailsSlice';
 import WebSocketService from '../../utils/WebSocketService';
 import { deleteFcmToken } from '../../api/apis';
 import Loader from '../../components/Loader';
-import { height } from '../../config/Dimension';
 export default function Setting({ navigation }) {
 	const [loader, setLoader] = useState(false);
 	const dispatch = useDispatch();
@@ -36,13 +33,13 @@ export default function Setting({ navigation }) {
 		dispatch(toggleTheme());
 	};
 	const handleLogout = async () => {
+		setLoader(true);
 		try {
 			setAlertDialogVisible(false);
 			await deleteFcmToken();
 			WebSocketService.disconnect();
 			dispatch({ type: 'RESET' });
 			await AsyncStorage.clear();
-			setLoader(true);
 			setLoader(false);
 			navigation.replace('Login');
 		} catch (err) {
@@ -63,7 +60,6 @@ export default function Setting({ navigation }) {
 						true: colors.PRIMARY,
 						false: colors.APP_PRIMARY,
 					}}
-					ml={'auto'}
 					thumbColor={
 						currentTheme === 'dark' ? colors.PRIMARY : colors.APP_PRIMARY_LIGHT
 					}
@@ -92,7 +88,7 @@ export default function Setting({ navigation }) {
 		</ScrollView>
 	);
 }
-const getStyles = (colors:any) =>
+const getStyles = (colors: any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,

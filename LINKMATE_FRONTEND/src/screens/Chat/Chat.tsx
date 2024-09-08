@@ -9,8 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useCustomTheme } from '../../config/Theme';
 import ChatHeader from './ChatHeader';
-import { getChatInteraction, userDetails } from '../../api/apis';
-import { chatInteraction } from '../../types/Response/ChatInteractionResponse';
+import { getChatInteraction } from '../../api/apis';
 import { globalStyles } from '../../StylesSheet';
 import {
 	responsiveFontSize,
@@ -18,22 +17,23 @@ import {
 } from 'react-native-responsive-dimensions';
 import { fonts } from '../../config/Fonts';
 import moment from 'moment';
-import { width } from '../../config/Dimension';
 import Loader from '../../components/Loader';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { addInteraction, selectInteractions, updateInteraction } from '../../redux/slices/ChatSlice';
 export default function Chat({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
+	 const chatInteraction = useSelector(selectInteractions);
 	const theme = useCustomTheme();
+	const dispatch=useDispatch()
 	const { colors } = theme;
 	const styles = getStyles(colors);
 	const globalStyleSheet = globalStyles(colors);
-	const [chatInteraction, setChatInteraction] = useState<chatInteraction[]>();
-	const [loader, setLoader] = useState(true);
+	const [loader, setLoader] = useState(false);
 	const fetchInteraction = async () => {
 		try {
 			const response = await getChatInteraction();
-			setChatInteraction(response);
+			dispatch(addInteraction(response))
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -41,58 +41,72 @@ export default function Chat({ navigation }) {
 		}
 	};
 	useEffect(() => {
+		if(chatInteraction.length<1){
+			setLoader(true)
 		fetchInteraction();
+		}
 	}, []);
-	console.log(chatInteraction);
 	return (
 		<View style={styles.mainCont}>
 			<ChatHeader navigation={navigation} />
-			{loader && <Loader />}
-			<FlatList
-				data={chatInteraction}
-				kayExtractor={(item) => item.userId}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						activeOpacity={0.4}
-						onPress={() =>
-							navigation.navigate('userChatDetail', { userDetails: item })
-						}
-					>
-						<View style={styles.list}>
-							<Image style={styles.img} source={{ uri: item.profilePicture }} />
-							<View>
-								<View style={styles.time}>
-									<Text style={globalStyleSheet.smallerHead}>
-										{item.firstName + ' ' + item.lastName}
-									</Text>
-									<Text style={globalStyleSheet.smallFontDescription}>
-										{moment(item.lastMessage.createdAt).calendar(null, {
-											sameDay: 'h:mm A',
-											nextDay: '[Tomorrow] ',
-											nextWeek: 'ddd ',
-											lastDay: '[Yesterday] ',
-											lastWeek: 'ddd ',
-											sameElse: 'D MMM',
-										})}
+			{loader ? (
+				<Loader />
+			) : (
+				<FlatList
+					data={chatInteraction}
+					kayExtractor={(item) => item.userId}
+					renderItem={({ item }) => (
+						<TouchableOpacity
+							activeOpacity={0.4}
+							onPress={() =>
+								navigation.navigate('userChatDetail', { userDetails: item })
+							}
+						>
+							<View style={[styles.list,item.lastMessage.senderId != userData.userId &&
+												item.numberOfUnreadMessage > 0 && styles.unreadList]}>
+								<Image
+									style={styles.img}
+									source={{ uri: item.profilePicture }}
+								/>
+								<View>
+									<View style={styles.time}>
+										<Text style={globalStyleSheet.smallerHead}>
+											{item.firstName + ' ' + item.lastName}
+										</Text>
+										<Text style={globalStyleSheet.smallFontDescription}>
+											{moment(item.lastMessage.createdAt).calendar(null, {
+												sameDay: 'h:mm A',
+												nextDay: '[Tomorrow] ',
+												nextWeek: 'ddd ',
+												lastDay: '[Yesterday] ',
+												lastWeek: 'ddd ',
+												sameElse: 'D MMM',
+											})}
+										</Text>
+									</View>
+									<Text
+										numberOfLines={1}
+										ellipsizeMode={'tail'}
+										style={[
+											styles.message,
+											item.lastMessage.senderId != userData.userId &&
+												item.numberOfUnreadMessage > 0 && styles.unread,
+										]}
+									>
+										{item.lastMessage.senderId === userData.userId
+											? item.lastMessage.read
+												? 'seen'
+												: 'sent'
+											: item.numberOfUnreadMessage > 0
+											? `${item.numberOfUnreadMessage} New messages`
+											: item.lastMessage.messageContent}
 									</Text>
 								</View>
-								<Text
-									numberOfLines={1}
-									ellipsizeMode={'tail'}
-									style={styles.message}
-								>
-									{item.lastMessage.senderId == userData.userId
-										? item.lastMessage.read
-											? 'seen'
-											: 'sent'
-										: item.lastMessage.messageContent}
-									 
-								</Text>
 							</View>
-						</View>
-					</TouchableOpacity>
-				)}
-			/>
+						</TouchableOpacity>
+					)}
+				/>
+			)}
 		</View>
 	);
 }
@@ -131,5 +145,11 @@ const getStyles = (colors) =>
 			alignItems: 'center',
 			justifyContent: 'space-between',
 			width: responsiveWidth(75),
+		},
+		unreadList: {
+			backgroundColor: colors.LIGHT_MAIN_BACKGROUND,
+		},
+		unread: {
+			color: colors.PRIMARY,
 		},
 	});

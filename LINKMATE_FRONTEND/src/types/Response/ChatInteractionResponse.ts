@@ -17,3 +17,6 @@ export interface chatInteraction {
 		read: boolean;
 	};
 }
+export interface chatUser{
+	interaction:chatInteraction[]
+}

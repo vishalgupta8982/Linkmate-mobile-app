@@ -67,7 +67,6 @@ export default function MyConnections({ navigation }) {
 			Toast.show('Something went wrong', Toast.SHORT);
 		}
 	};
-
 	const renderItem = ({ item }) => (
 		<TouchableOpacity
 			activeOpacity={0.4}
@@ -110,7 +109,7 @@ export default function MyConnections({ navigation }) {
 				<TouchableOpacity
 					activeOpacity={0.4}
 					onPress={() =>
-						navigation.navigate('userChatDetail', { userId: item.userId })
+						navigation.navigate('userChatDetail', { userDetails: item })
 					}
 				>
 					<Feather name="send" size={20} color={colors.TEXT} />

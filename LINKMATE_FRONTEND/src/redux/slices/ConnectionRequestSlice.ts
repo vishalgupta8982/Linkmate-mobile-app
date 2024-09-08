@@ -29,7 +29,7 @@ export const connectionRequestSlice = createSlice({
 					(req) => req.userId === newRequest.userId
 				);
 				if (existingRequestIndex === -1) {
-					state.connectionRequests.push(newRequest); 
+					state.connectionRequests.push(newRequest);
 				}
 			});
 		},
@@ -38,10 +38,14 @@ export const connectionRequestSlice = createSlice({
 			action: PayloadAction<ConnectionRequest[]>
 		) {
 			const newRequests = action.payload;
-			state.connectionRequests.push(...newRequests);
+			newRequests.forEach((newRequestId) => {
+				if (!state.connectionRequests.includes(newRequestId)) {
+					state.connectionRequests.push(newRequestId);
+				}
+			});
 		},
 		clearConnectionRequests(state) {
-			state.connectionRequests = []; // Clear the array
+			state.connectionRequests = [];  
 		},
 	},
 });

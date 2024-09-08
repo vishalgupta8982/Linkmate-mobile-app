@@ -87,11 +87,9 @@ export default function EditProfile({ navigation }) {
 		});
 		const prevUserDetail = userData;
 		try {
-			console.log(payload);
 			dispatch(updateReduxUserDetails(payload));
 			Toast.show('Updated successfully', Toast.SHORT);
 			const response = await updateUserDetails(payload);
-			console.log(response);
 			if (response?.token != null) {
 				dispatch(setToken(response?.token));
 			}
@@ -133,7 +131,7 @@ export default function EditProfile({ navigation }) {
 		setLoader(true);
 		try {
 			const response = await updateProfilePicture(uri);
-			if(response){
+			if (response) {
 				dispatch(updateReduxUserDetails(response));
 			}
 			Toast.show('Updated successfully', Toast.SHORT);

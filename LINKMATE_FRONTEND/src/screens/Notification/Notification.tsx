@@ -22,10 +22,14 @@ import Loader from '../../components/Loader';
 import NotificationTray from '../../components/NotificationTray';
 import CustomAlertDialog from '../../components/CustomAlertDialog';
 import Toast from 'react-native-simple-toast';
+import { useDispatch } from 'react-redux';
+import { resetNotificationCount, setNotificationCount } from '../../redux/slices/CountNotificationMessage';
+import notifee from '@notifee/react-native';
 export default function Notification({ navigation }) {
 	const theme = useCustomTheme();
 	const { colors } = theme;
 	const styles = getStyles(colors);
+	const dispatch=useDispatch()
 	const globalStyleSheet = globalStyles(colors);
 	const [notification, setNotification] = useState<Notification>();
 	const [loader, setLoader] = useState(false);
@@ -42,6 +46,9 @@ export default function Notification({ navigation }) {
 			setLoader(false);
 		}
 	};
+	useEffect(() => {
+		fetchNotification();
+	}, []);
 	const markRead=async()=>{
 		try{
 			await markReadNotifications();
@@ -51,9 +58,13 @@ export default function Notification({ navigation }) {
 		}
 	}
 	useEffect(() => {
-		fetchNotification();
-		markRead()
-	}, []);
+		const unsubscribe = navigation.addListener('beforeRemove', async() => {
+			markRead()
+			 await notifee.cancelAllNotifications();
+			dispatch(resetNotificationCount(0));
+		});
+		return unsubscribe;
+	}, [navigation, dispatch]);
 	 const handleDelete = async () => {
 		setAlertDialogVisible(false)
 		const prevData=notification

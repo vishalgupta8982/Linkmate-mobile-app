@@ -23,4 +23,6 @@ public interface ChatRepository extends MongoRepository<Chat,ObjectId> {
     @Query("{ $or: [ { 'senderId': ?0 }, { 'receiverId': ?0 } ] }")
     List<Chat> findBySenderIdOrReceiverId(ObjectId userId);
     
+    long countByReceiverIdAndIsRead(ObjectId receiverId, boolean isRead);
+
 }  

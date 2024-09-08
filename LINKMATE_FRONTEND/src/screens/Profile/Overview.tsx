@@ -5,8 +5,6 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	Modal,
-	TextInput,
-	Button,
 } from 'react-native';
 import React, { useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -19,7 +17,11 @@ import { responsiveFontSize } from 'react-native-responsive-dimensions';
 import { fonts } from '../../config/Fonts';
 import Loader from '../../components/Loader';
 import Toast from 'react-native-simple-toast';
-import {  removeSkill, setUserDetails, storeSkill } from '../../redux/slices/UserDetailsSlice';
+import {
+	removeSkill,
+	setUserDetails,
+	storeSkill,
+} from '../../redux/slices/UserDetailsSlice';
 import { addSkill, deleteSkill } from '../../api/apis';
 import CustomAlertDialog from '../../components/CustomAlertDialog';
 import AppTextField from '../../components/AppTextField';
@@ -40,11 +42,10 @@ export default function Overview({ navigation }) {
 
 	const handleDltSkill = async () => {
 		setAlertDialogVisible(false);
-		const prevData=userData;
-		dispatch(removeSkill(skill))
+		const prevData = userData;
+		dispatch(removeSkill(skill));
 		try {
 			const response = await deleteSkill(skill);
-			console.log(response)
 		} catch (err) {
 			Toast.show('Something went wrong', Toast.SHORT);
 			dispatch(setUserDetails(prevData));
@@ -66,23 +67,22 @@ export default function Overview({ navigation }) {
 		setIsModalVisible(!isModalVisible);
 	};
 
-	const handleAddSkill = async() => {
+	const handleAddSkill = async () => {
 		if (newSkill.trim() === '') {
 			Toast.show('Please enter a skill', Toast.SHORT);
 			return;
 		}
-			const prevUserData = userData;
+		const prevUserData = userData;
 		dispatch(storeSkill(newSkill.trim()));
 		toggleModal();
-		try{
+		try {
 			const response = await addSkill([newSkill.trim()]);
-		}catch(err){
+		} catch (err) {
 			Toast.show('Something went wrong', Toast.SHORT);
-			dispatch(setUserDetails(prevUserData))
-			console.error(err)
-		}
-		finally{
-			setNewSkill('')
+			dispatch(setUserDetails(prevUserData));
+			console.error(err);
+		} finally {
+			setNewSkill('');
 		}
 	};
 
@@ -112,7 +112,11 @@ export default function Overview({ navigation }) {
 					</View>
 				</View>
 			) : (
-				<TouchableOpacity style={styles.addSkill} activeOpacity={0.4} onPress={toggleModal}>
+				<TouchableOpacity
+					style={styles.addSkill}
+					activeOpacity={0.4}
+					onPress={toggleModal}
+				>
 					<Text style={styles.modalTitle}>Add Skills</Text>
 					<View style={styles.plus}>
 						<AntDesign name="plus" size={16} color={colors.WHITE} />
@@ -172,7 +176,7 @@ export default function Overview({ navigation }) {
 	);
 }
 
-const getStyles = (colors) =>
+const getStyles = (colors:any) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,
@@ -234,13 +238,12 @@ const getStyles = (colors) =>
 			borderRadius: 10,
 			padding: 20,
 			elevation: 5,
-			width:'100%'
+			width: '100%',
 		},
 		modalTitle: {
 			fontSize: responsiveFontSize(2.5),
 			fontFamily: fonts.Inter_Medium,
 			color: colors.TEXT,
-
 		},
 		input: {
 			borderWidth: 1,
@@ -250,9 +253,10 @@ const getStyles = (colors) =>
 			marginBottom: 20,
 			color: colors.TEXT,
 		},
-		addSkill:{
-			flexDirection:'row',
-			alignItems:'center',justifyContent:'space-between',
-			paddingHorizontal:10
-		}
+		addSkill: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			paddingHorizontal: 10,
+		},
 	});

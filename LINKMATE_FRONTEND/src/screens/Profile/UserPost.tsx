@@ -58,7 +58,7 @@ export default function UserPost({ navigation }) {
 
 	return (
 		<View style={styles.mainCont}>
-			<StackHeader title="My Posts" navigation={navigation} />
+			<StackHeader title="Posts" navigation={navigation} />
 			{loading && <Loader />}
 			{!loading && (
 				<FlatList
