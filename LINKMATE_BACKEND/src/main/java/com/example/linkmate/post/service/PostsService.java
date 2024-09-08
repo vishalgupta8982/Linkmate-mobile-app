@@ -162,25 +162,49 @@ public class PostsService {
         return "Post updated successfully";
     }
 
+    // public Page<PostResponse> getFeed(String token, int page, int size) {
+    //     if (page < 0 || size <= 0) {
+    //         throw new IllegalArgumentException("Page number must be non-negative and size must be positive.");
+    //     }
+
+    //     ObjectId userId = jwtUtil.getUserIdFromToken(token);
+    //     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+    //     User user = userRepository.findById(userId)
+    //             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+    //     List<ObjectId> connections = user.getConnections();
+    //     connections.add(userId);
+
+    //     Page<Post> postsPage = postRepository.findByUserIdIn(connections, pageable);
+
+    //     List<PostResponse> postResponses = postsPage.stream().map(post -> {
+    //         User postUser = userRepository.findById(post.getUserId())
+    //                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+    //         PostUserDetail postUserDetail = new PostUserDetail();
+    //         postUserDetail.setUserId(post.getUserId());
+    //         postUserDetail.setProfilePicture(postUser.getProfilePicture());
+    //         postUserDetail.setFirstName(postUser.getFirstName());
+    //         postUserDetail.setLastName(postUser.getLastName());
+    //         postUserDetail.setHeadline(postUser.getHeadline());
+    //         postUserDetail.setUsername(postUser.getUsername());
+
+    //         return new PostResponse(post, postUserDetail);
+    //     }).collect(Collectors.toList());
+
+    //     Collections.shuffle(postResponses);
+    //     return new PageImpl<>(postResponses, pageable, postsPage.getTotalElements());
+    // }
     public Page<PostResponse> getFeed(String token, int page, int size) {
         if (page < 0 || size <= 0) {
             throw new IllegalArgumentException("Page number must be non-negative and size must be positive.");
         }
-
-        ObjectId userId = jwtUtil.getUserIdFromToken(token);
+        ObjectId userId = jwtUtil.getUserIdFromToken(token);  
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        List<ObjectId> connections = user.getConnections();
-        connections.add(userId);
-
-        Page<Post> postsPage = postRepository.findByUserIdIn(connections, pageable);
-
+        Page<Post> postsPage = postRepository.findAll(pageable);
         List<PostResponse> postResponses = postsPage.stream().map(post -> {
             User postUser = userRepository.findById(post.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-
             PostUserDetail postUserDetail = new PostUserDetail();
             postUserDetail.setUserId(post.getUserId());
             postUserDetail.setProfilePicture(postUser.getProfilePicture());
@@ -192,7 +216,7 @@ public class PostsService {
             return new PostResponse(post, postUserDetail);
         }).collect(Collectors.toList());
 
-        Collections.shuffle(postResponses);
+        Collections.shuffle(postResponses);  
         return new PageImpl<>(postResponses, pageable, postsPage.getTotalElements());
     }
 
