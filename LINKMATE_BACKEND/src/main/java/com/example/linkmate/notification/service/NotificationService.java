@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.example.linkmate.chat.repository.ChatRepository;
 import com.example.linkmate.fcmToken.repository.FcmTokenRepository;
@@ -82,16 +83,25 @@ public class NotificationService {
         }
     }
 
-    public Map<String,Long> countUnreadNotifications(String token) {
-        ObjectId userId = jwtUtil.getUserIdFromToken(token);
-        Map<String,Long> count=new HashMap();
-        count.put("unreadMessage",chatRepository.countByReceiverIdAndIsRead(userId, false));
-         count.put("unreadNotification",notificationRepository.countByUserIdAndRead(userId, false));
-         return count;
+    public Map<String, Long> countUnreadNotifications(String token) {
+         ObjectId userId = jwtUtil.getUserIdFromToken(token);
+
+        List<ObjectId> senderIds = chatRepository.findDistinctSenderIdsByReceiverIdAndIsRead(userId, false);
+
+        List<ObjectId> distinctSenderIds = senderIds.stream().distinct().collect(Collectors.toList());
+        long numberOfUnreadSenders = distinctSenderIds.size();
+
+        long unreadNotificationCount = notificationRepository.countByUserIdAndRead(userId, false);
+
+        Map<String, Long> count = new HashMap<>();
+        count.put("unreadMessage", numberOfUnreadSenders);
+        count.put("unreadNotification", unreadNotificationCount);
+        return count;
     }
 
     @Async
-    public void sendNotification(ObjectId notificationReciverId, ObjectId notificationSenderId, String body,String type) {
+    public void sendNotification(ObjectId notificationReciverId, ObjectId notificationSenderId, String body,
+            String type) {
         try {
             Optional<User> sender = userRepository.findById(notificationSenderId);
             if (sender.isPresent()) {
@@ -101,7 +111,7 @@ public class NotificationService {
                                 fcmToken.getFcmToken(),
                                 sender.get().getFirstName() + " " + sender.get().getLastName(),
                                 body,
-                                sender.get().getProfilePicture(),type);
+                                sender.get().getProfilePicture(), type);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

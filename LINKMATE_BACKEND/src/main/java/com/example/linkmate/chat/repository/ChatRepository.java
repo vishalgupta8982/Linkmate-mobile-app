@@ -3,6 +3,7 @@ import java.util.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -23,6 +24,10 @@ public interface ChatRepository extends MongoRepository<Chat,ObjectId> {
     @Query("{ $or: [ { 'senderId': ?0 }, { 'receiverId': ?0 } ] }")
     List<Chat> findBySenderIdOrReceiverId(ObjectId userId);
     
-    long countByReceiverIdAndIsRead(ObjectId receiverId, boolean isRead);
+      @Aggregation(pipeline = {
+        "{ '$match': { 'receiverId': ?0, 'isRead': false } }",
+        "{ '$group': { '_id': '$senderId' } }"
+    })
+    List<ObjectId> findDistinctSenderIdsByReceiverIdAndIsRead(ObjectId receiverId, boolean isRead);
 
 }  
