@@ -7,10 +7,12 @@ import {
 	updateInteraction,
 	updateMessageWithId,
 } from '../redux/slices/ChatSlice';
+import { setUnreadMessageCount } from '../redux/slices/CountNotificationMessage';
 export const handleWebSocketChatMessage = (data: any, userId: string) => {
 	return async (dispatch: any, getState: any) => {
 		const state = getState();
 		const { interactions } = state.chats;
+
 		try {
 			switch (data.messageType) {
 				case 'MESSAGE_READ':
@@ -40,8 +42,14 @@ export const handleWebSocketChatMessage = (data: any, userId: string) => {
 								})
 							);
 						} else {
-							const response = await fetchAndAddInteraction();
+							const response = await fetchAndAddInteraction(data.chat.senderId);
 							dispatch(response);
+						}
+						if (
+							existingInteraction &&
+							existingInteraction.numberOfUnreadMessage < 1
+						) {
+							dispatch(setUnreadMessageCount(1));
 						}
 					} else {
 						dispatch(
@@ -83,11 +91,15 @@ export const handleWebSocketChatMessage = (data: any, userId: string) => {
 	};
 };
 
-const fetchAndAddInteraction = () => {
+const fetchAndAddInteraction = (id) => {
 	return async (dispatch) => {
 		try {
 			const response = await getChatInteraction();
 			dispatch(addInteraction(response));
+		const interaction=response.find((item) => item.userId === id);
+		if(interaction.numberOfUnreadMessage>0){
+			dispatch(setUnreadMessageCount(1))
+		}
 		} catch (error) {
 			console.error('Error fetching interaction:', error);
 		}

@@ -21,6 +21,7 @@ import Loader from '../../components/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { addInteraction, selectInteractions, updateInteraction } from '../../redux/slices/ChatSlice';
+import { resetUnreadMessageCount } from '../../redux/slices/CountNotificationMessage';
 export default function Chat({ navigation }) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
 	 const chatInteraction = useSelector(selectInteractions);

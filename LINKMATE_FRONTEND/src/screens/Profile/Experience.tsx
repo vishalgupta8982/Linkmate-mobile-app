@@ -6,6 +6,8 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	Modal,
+	KeyboardAvoidingView,
+	Platform,
 } from 'react-native';
 import Loader from '../../components/Loader';
 import React from 'react';
@@ -287,167 +289,176 @@ export default function Experience({ navigation }) {
 					}}
 				>
 					<View style={styles.modalOverlay}>
-						<TouchableWithoutFeedback>
-							<View style={styles.modalContainer}>
-								<ScrollView style={styles.scroll}>
-									<Text style={styles.modalTitle}>Add Experience</Text>
-									<AppTextField
-										label="Company"
-										value={newExperience.company}
-										onChangeText={(text) =>
-											setNewExperience({ ...newExperience, company: text })
-										}
-									/>
-									<AppTextField
-										label="Position"
-										value={newExperience.position}
-										onChangeText={(text) =>
-											setNewExperience({ ...newExperience, position: text })
-										}
-									/>
+						 
+							<TouchableWithoutFeedback>
+								<View style={styles.modalContainer}>
+									<ScrollView style={styles.scroll}>
+										<Text style={styles.modalTitle}>Add Experience</Text>
+										<AppTextField
+											label="Company"
+											value={newExperience.company}
+											onChangeText={(text) =>
+												setNewExperience({ ...newExperience, company: text })
+											}
+										/>
+										<AppTextField
+											label="Position"
+											value={newExperience.position}
+											onChangeText={(text) =>
+												setNewExperience({ ...newExperience, position: text })
+											}
+										/>
 
-									<AppPickerField
-										label="Location Type"
-										value={
-											locationTypeOptions.find(
-												(option) => option.value === newExperience.locationType
-											)?.label || 'Select Location Type'
-										}
-										onPress={() => setLocationTypeDropdownVisible(true)}
-										icon={'down'}
-									/>
-									<Modal
-										visible={isLocationTypeDropdownVisible}
-										transparent={true}
-										animationType="slide"
-										onRequestClose={() => setLocationTypeDropdownVisible(false)}
-									>
-										<TouchableWithoutFeedback
-											onPress={() => setLocationTypeDropdownVisible(false)}
-										>
-											<View style={styles.modalOverlay}>
-												<View style={styles.dropdownContainer}>
-													{locationTypeOptions.map((option) => (
-														<TouchableOpacity
-															key={option}
-															style={styles.dropdownItem}
-															onPress={() => {
-																setNewExperience((prevState) => ({
-																	...prevState,
-																	locationType: option.value,
-																}));
-																setLocationTypeDropdownVisible(false);
-															}}
-														>
-															<Text style={styles.dropdownText}>
-																<MaterialCommunityIcon
-																	name="arrow-top-right"
-																	color={colors.TEXT}
-																	size={16}
-																/>{' '}
-																{option.label}
-															</Text>
-														</TouchableOpacity>
-													))}
-												</View>
-											</View>
-										</TouchableWithoutFeedback>
-									</Modal>
-									<AppPickerField
-										label="Employment Type"
-										value={
-											employmentTypeOptions.find(
-												(option) =>
-													option.value === newExperience.employmentType
-											)?.label || 'Select Employment Type'
-										}
-										onPress={() => setEmploymentTypeDropdownVisible(true)}
-										icon={'down'}
-									/>
-									<Modal
-										visible={isEmploymentTypeDropdownVisible}
-										transparent={true}
-										animationType="slide"
-										onRequestClose={() =>
-											setEmploymentTypeDropdownVisible(false)
-										}
-									>
-										<TouchableWithoutFeedback
-											onPress={() => setEmploymentTypeDropdownVisible(false)}
-										>
-											<View style={styles.modalOverlay}>
-												<View style={styles.dropdownContainer}>
-													{employmentTypeOptions.map((option) => (
-														<TouchableOpacity
-															key={option}
-															style={styles.dropdownItem}
-															onPress={() => {
-																setNewExperience((prevState) => ({
-																	...prevState,
-																	employmentType: option.value,
-																}));
-																setEmploymentTypeDropdownVisible(false);
-															}}
-														>
-															<Text style={styles.dropdownText}>
-																<MaterialCommunityIcon
-																	name="arrow-top-right"
-																	color={colors.TEXT}
-																	size={16}
-																/>{' '}
-																{option.label}
-															</Text>
-														</TouchableOpacity>
-													))}
-												</View>
-											</View>
-										</TouchableWithoutFeedback>
-									</Modal>
-									<AppPickerField
-										label="Start Date (DD/MM/YYYY)"
-										value={moment(newExperience.startDate).format('DD/MM/YYYY')}
-										onPress={() => setStartDateDpShow(true)}
-										icon={'calendar'}
-									/>
-									<AppPickerField
-										label="End Date (DD/MM/YYYY) - Leave blank if employed"
-										value={moment(newExperience.endDate).format('DD/MM/YYYY')}
-										onPress={() => setEndDateDpShow(true)}
-										icon={'calendar'}
-									/>
-									<AppTextField
-										label="Description"
-										value={newExperience.description}
-										onChangeText={(text) =>
-											setNewExperience({ ...newExperience, description: text })
-										}
-									/>
-									{startDateDpShow && (
-										<DateTimePicker
-											value={newExperience.startDate}
-											mode={'date'}
-											display="default"
-											onChange={handleStartDate}
+										<AppPickerField
+											label="Location Type"
+											value={
+												locationTypeOptions.find(
+													(option) =>
+														option.value === newExperience.locationType
+												)?.label || 'Select Location Type'
+											}
+											onPress={() => setLocationTypeDropdownVisible(true)}
+											icon={'down'}
 										/>
-									)}
-									{endDateDpShow && (
-										<DateTimePicker
-											value={newExperience.endDate}
-											mode={'date'}
-											display="default"
-											onChange={handleEndDate}
+										<Modal
+											visible={isLocationTypeDropdownVisible}
+											transparent={true}
+											animationType="slide"
+											onRequestClose={() =>
+												setLocationTypeDropdownVisible(false)
+											}
+										>
+											<TouchableWithoutFeedback
+												onPress={() => setLocationTypeDropdownVisible(false)}
+											>
+												<View style={styles.modalOverlay}>
+													<View style={styles.dropdownContainer}>
+														{locationTypeOptions.map((option) => (
+															<TouchableOpacity
+																key={option}
+																style={styles.dropdownItem}
+																onPress={() => {
+																	setNewExperience((prevState) => ({
+																		...prevState,
+																		locationType: option.value,
+																	}));
+																	setLocationTypeDropdownVisible(false);
+																}}
+															>
+																<Text style={styles.dropdownText}>
+																	<MaterialCommunityIcon
+																		name="arrow-top-right"
+																		color={colors.TEXT}
+																		size={16}
+																	/>{' '}
+																	{option.label}
+																</Text>
+															</TouchableOpacity>
+														))}
+													</View>
+												</View>
+											</TouchableWithoutFeedback>
+										</Modal>
+										<AppPickerField
+											label="Employment Type"
+											value={
+												employmentTypeOptions.find(
+													(option) =>
+														option.value === newExperience.employmentType
+												)?.label || 'Select Employment Type'
+											}
+											onPress={() => setEmploymentTypeDropdownVisible(true)}
+											icon={'down'}
 										/>
-									)}
-									<AppButton
-										marginBottom={30}
-										title={isEditing ? 'Update Experience' : 'Add Experience'}
-										onPress={
-											isEditing ? handleUpdateExperience : handleAddExperience
-										}
-									/>
-								</ScrollView>
-							</View>
-						</TouchableWithoutFeedback>
+										<Modal
+											visible={isEmploymentTypeDropdownVisible}
+											transparent={true}
+											animationType="slide"
+											onRequestClose={() =>
+												setEmploymentTypeDropdownVisible(false)
+											}
+										>
+											<TouchableWithoutFeedback
+												onPress={() => setEmploymentTypeDropdownVisible(false)}
+											>
+												<View style={styles.modalOverlay}>
+													<View style={styles.dropdownContainer}>
+														{employmentTypeOptions.map((option) => (
+															<TouchableOpacity
+																key={option}
+																style={styles.dropdownItem}
+																onPress={() => {
+																	setNewExperience((prevState) => ({
+																		...prevState,
+																		employmentType: option.value,
+																	}));
+																	setEmploymentTypeDropdownVisible(false);
+																}}
+															>
+																<Text style={styles.dropdownText}>
+																	<MaterialCommunityIcon
+																		name="arrow-top-right"
+																		color={colors.TEXT}
+																		size={16}
+																	/>{' '}
+																	{option.label}
+																</Text>
+															</TouchableOpacity>
+														))}
+													</View>
+												</View>
+											</TouchableWithoutFeedback>
+										</Modal>
+										<AppPickerField
+											label="Start Date (DD/MM/YYYY)"
+											value={moment(newExperience.startDate).format(
+												'DD/MM/YYYY'
+											)}
+											onPress={() => setStartDateDpShow(true)}
+											icon={'calendar'}
+										/>
+										<AppPickerField
+											label="End Date (DD/MM/YYYY) - Leave blank if employed"
+											value={moment(newExperience.endDate).format('DD/MM/YYYY')}
+											onPress={() => setEndDateDpShow(true)}
+											icon={'calendar'}
+										/>
+										<AppTextField
+											label="Description"
+											value={newExperience.description}
+											onChangeText={(text) =>
+												setNewExperience({
+													...newExperience,
+													description: text,
+												})
+											}
+										/>
+										{startDateDpShow && (
+											<DateTimePicker
+												value={newExperience.startDate}
+												mode={'date'}
+												display="default"
+												onChange={handleStartDate}
+											/>
+										)}
+										{endDateDpShow && (
+											<DateTimePicker
+												value={newExperience.endDate}
+												mode={'date'}
+												display="default"
+												onChange={handleEndDate}
+											/>
+										)}
+										<AppButton
+											marginBottom={30}
+											title={isEditing ? 'Update Experience' : 'Add Experience'}
+											onPress={
+												isEditing ? handleUpdateExperience : handleAddExperience
+											}
+										/>
+									</ScrollView>
+								</View>
+							</TouchableWithoutFeedback>
 					</View>
 				</TouchableWithoutFeedback>
 			</Modal>

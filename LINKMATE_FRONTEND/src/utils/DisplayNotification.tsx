@@ -3,7 +3,7 @@ import notifee, {
 	AndroidStyle,
 } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
-import { setNotificationCount } from '../redux/slices/CountNotificationMessage';
+import { setUnreadNotificationCount } from '../redux/slices/CountNotificationMessage';
 import { store } from '../redux/store';
 
 export const initMessaging = async () => {
@@ -23,7 +23,7 @@ export const initMessaging = async () => {
 
 export const displayNotification = async (remoteMessage: any) => {
 	if (remoteMessage.type == 'NOTIFICATION_PAGE'){
-		store.dispatch(setNotificationCount(1));
+		store.dispatch(setUnreadNotificationCount(1));
 	}
 	const channelId = await notifee.createChannel({
 		id: 'default',

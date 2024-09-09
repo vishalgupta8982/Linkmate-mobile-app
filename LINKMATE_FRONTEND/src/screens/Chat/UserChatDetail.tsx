@@ -41,6 +41,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MainHeader from './MainHeader';
 import CustomAlertDialog from '../../components/CustomAlertDialog';
 import { RootStackParamList } from '../../navigation/MainStackNav';
+import { setUnreadMessageCount } from '../../redux/slices/CountNotificationMessage';
 type Tprops = NativeStackScreenProps<RootStackParamList, 'userChatDetail'>;
 export default function UserChatDetail({ navigation, route }: Tprops) {
 	const userData = useSelector((state: RootState) => state.userDetails.user);
@@ -107,6 +108,9 @@ export default function UserChatDetail({ navigation, route }: Tprops) {
 	useEffect(() => {
 		const unsubscribe = navigation.addListener('beforeRemove', () => {
 			dispatch(markMessagesAsRead({ userId: userId, newMessageCall: true }));
+			if (userDetails.numberOfUnreadMessage > 0) {
+				dispatch(setUnreadMessageCount(-1));
+			}
 		});
 		return unsubscribe;
 	}, [navigation, dispatch]);
@@ -120,11 +124,13 @@ export default function UserChatDetail({ navigation, route }: Tprops) {
 		});
 		return unsubscribe;
 	}, [navigation]);
+	console.log(userDetails)
 	useEffect(() => {
 		if (!userExists) {
 			setInitialLoad(true);
 			fetchChat();
 		}
+		 
 	}, []);
 	const deleteMessage = async () => {
 		setAlertDialogVisible(false);

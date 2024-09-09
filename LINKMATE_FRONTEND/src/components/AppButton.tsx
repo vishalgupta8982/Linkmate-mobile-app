@@ -5,6 +5,7 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
+	KeyboardAvoidingView
 } from 'react-native';
 import { fonts } from '../config/Fonts';
 import { useCustomTheme } from '../config/Theme';
@@ -38,23 +39,24 @@ export const AppButton = ({
 		? bg 
 		: colors.PRIMARY;
 	return (
-		<TouchableOpacity
-			onPress={onPress}
-			activeOpacity={0.4}
-			disabled={disabled}
-			style={[
-				styles.appButtonContainer,
-				{
-					width: width ? responsiveWidth(width) : responsiveWidth(90),
-					marginBottom: marginBottom ? marginBottom : 10,
-					backgroundColor: backgroundColor,
-				},
-			]}
-		>
-			{icon && <View style={styles.icon}>{icon}</View>}
-			<Text style={styles.appButtonText}>{title}</Text>
-			{loading && <ActivityIndicator size="large" color="white" />}
-		</TouchableOpacity>
+		 
+			<TouchableOpacity
+				onPress={onPress}
+				activeOpacity={0.4}
+				disabled={disabled}
+				style={[
+					styles.appButtonContainer,
+					{
+						width: width ? responsiveWidth(width) : responsiveWidth(90),
+						marginBottom: marginBottom ? marginBottom : 10,
+						backgroundColor: backgroundColor,
+					},
+				]}
+			>
+				{icon && <View style={styles.icon}>{icon}</View>}
+				<Text style={styles.appButtonText}>{title}</Text>
+				{loading && <ActivityIndicator size="large" color="white" />}
+			</TouchableOpacity>
 	);
 };
 const getStyles = (colors:any) =>

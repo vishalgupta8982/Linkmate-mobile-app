@@ -7,6 +7,7 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	ScrollView,
+	KeyboardAvoidingView,
 } from 'react-native';
 import { useCustomTheme } from '../../config/Theme';
 import { globalStyles } from '../../StylesSheet';
@@ -259,75 +260,78 @@ export default function Education({ navigation }) {
 					}}
 				>
 					<View style={styles.modalOverlay}>
-						<TouchableWithoutFeedback>
-							<View style={styles.modalContainer}>
-								<ScrollView style={styles.scroll}>
-									<Text style={styles.modalTitle}>Add Education</Text>
-									<AppTextField
-										label="Institution"
-										value={newEducation.institution}
-										onChangeText={(text) =>
-											setNewEducation({ ...newEducation, institution: text })
-										}
-									/>
-									<AppTextField
-										label="Degree"
-										value={newEducation.degree}
-										onChangeText={(text) =>
-											setNewEducation({ ...newEducation, degree: text })
-										}
-									/>
-									<AppTextField
-										label="Field of study"
-										value={newEducation.field}
-										onChangeText={(text) =>
-											setNewEducation({ ...newEducation, field: text })
-										}
-									/>
-									<AppPickerField
-										label="Start Date (DD/MM/YYYY)"
-										value={moment(newEducation.startDate).format('DD/MM/YYYY')}
-										onPress={() => setStartDateDpShow(true)}
-										icon={'calendar'}
-									/>
-									<AppPickerField
-										label="End Date or expected (DD/MM/YYYY)"
-										value={moment(newEducation.endDate).format('DD/MM/YYYY')}
-										onPress={() => setEndDateDpShow(true)}
-										icon={'calendar'}
-									/>
-									<AppTextField
-										label="Description"
-										value={newEducation.description}
-										onChangeText={(text) =>
-											setNewEducation({ ...newEducation, description: text })
-										}
-									/>
-									{startDateDpShow && (
-										<DateTimePicker
-											value={newEducation.startDate}
-											mode={'date'}
-											display="default"
-											onChange={handleStartDate}
+						 
+							<TouchableWithoutFeedback>
+								<View style={styles.modalContainer}>
+									<ScrollView style={styles.scroll}>
+										<Text style={styles.modalTitle}>Add Education</Text>
+										<AppTextField
+											label="Institution"
+											value={newEducation.institution}
+											onChangeText={(text) =>
+												setNewEducation({ ...newEducation, institution: text })
+											}
 										/>
-									)}
-									{endDateDpShow && (
-										<DateTimePicker
-											value={newEducation.endDate}
-											mode={'date'}
-											display="default"
-											onChange={handleEndDate}
+										<AppTextField
+											label="Degree"
+											value={newEducation.degree}
+											onChangeText={(text) =>
+												setNewEducation({ ...newEducation, degree: text })
+											}
 										/>
-									)}
-									<AppButton
-										title={isEditing ? 'Update Education' : 'Add Education'}
-										onPress={
-											isEditing ? handleUpdateEducation : handleAddEducation
-										}
-									/>
-								</ScrollView>
-							</View>
-						</TouchableWithoutFeedback>
+										<AppTextField
+											label="Field of study"
+											value={newEducation.field}
+											onChangeText={(text) =>
+												setNewEducation({ ...newEducation, field: text })
+											}
+										/>
+										<AppPickerField
+											label="Start Date (DD/MM/YYYY)"
+											value={moment(newEducation.startDate).format(
+												'DD/MM/YYYY'
+											)}
+											onPress={() => setStartDateDpShow(true)}
+											icon={'calendar'}
+										/>
+										<AppPickerField
+											label="End Date or expected (DD/MM/YYYY)"
+											value={moment(newEducation.endDate).format('DD/MM/YYYY')}
+											onPress={() => setEndDateDpShow(true)}
+											icon={'calendar'}
+										/>
+										<AppTextField
+											label="Description"
+											value={newEducation.description}
+											onChangeText={(text) =>
+												setNewEducation({ ...newEducation, description: text })
+											}
+										/>
+										{startDateDpShow && (
+											<DateTimePicker
+												value={newEducation.startDate}
+												mode={'date'}
+												display="default"
+												onChange={handleStartDate}
+											/>
+										)}
+										{endDateDpShow && (
+											<DateTimePicker
+												value={newEducation.endDate}
+												mode={'date'}
+												display="default"
+												onChange={handleEndDate}
+											/>
+										)}
+										<AppButton
+											title={isEditing ? 'Update Education' : 'Add Education'}
+											onPress={
+												isEditing ? handleUpdateEducation : handleAddEducation
+											}
+										/>
+									</ScrollView>
+								</View>
+							</TouchableWithoutFeedback>
 					</View>
 				</TouchableWithoutFeedback>
 			</Modal>
@@ -369,6 +373,7 @@ const getStyles = (colors) =>
 			paddingVertical: 10,
 			marginBottom: 7,
 		},
+	 
 		position: {
 			flexDirection: 'row',
 			alignItems: 'center',

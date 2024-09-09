@@ -17,6 +17,7 @@ import { chatInteraction } from '../types/Response/ChatInteractionResponse';
 import { ChatHistoryResponse } from '../types/Response/ChatHistoryResponse';
 import { CommentResponse } from '../types/Response/CommentResponse';
 import { Notification } from '../types/Response/NotificationResponse';
+import { countResponse } from '../types/Response/CountResponse';
 export const userLogin = async (
 	payload: LoginPayload
 ): Promise<verifyOtpResponse> => {
@@ -249,5 +250,5 @@ export const markReadNotifications = async () => {
 };
 export const countUnreadNotifications = async () => {
 	const url = `/notification/count/unread`;
-	return await get<string>(url);
+	return await get<countResponse>(url);
 };

@@ -23,7 +23,7 @@ import NotificationTray from '../../components/NotificationTray';
 import CustomAlertDialog from '../../components/CustomAlertDialog';
 import Toast from 'react-native-simple-toast';
 import { useDispatch } from 'react-redux';
-import { resetNotificationCount, setNotificationCount } from '../../redux/slices/CountNotificationMessage';
+import { resetUnreadNotificationCount, setUnreadNotificationCount } from '../../redux/slices/CountNotificationMessage';
 import notifee from '@notifee/react-native';
 export default function Notification({ navigation }) {
 	const theme = useCustomTheme();
@@ -61,7 +61,7 @@ export default function Notification({ navigation }) {
 		const unsubscribe = navigation.addListener('beforeRemove', async() => {
 			markRead()
 			 await notifee.cancelAllNotifications();
-			dispatch(resetNotificationCount(0));
+			dispatch(resetUnreadNotificationCount());
 		});
 		return unsubscribe;
 	}, [navigation, dispatch]);

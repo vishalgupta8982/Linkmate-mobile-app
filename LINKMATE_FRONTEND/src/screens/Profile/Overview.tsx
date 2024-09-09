@@ -5,6 +5,7 @@ import {
 	TouchableOpacity,
 	TouchableWithoutFeedback,
 	Modal,
+	KeyboardAvoidingView,
 } from 'react-native';
 import React, { useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -160,15 +161,16 @@ export default function Overview({ navigation }) {
 			>
 				<TouchableWithoutFeedback onPress={toggleModal}>
 					<View style={styles.modalOverlay}>
-						<View style={styles.modalContainer}>
-							<Text style={styles.modalTitle}>Add Skill</Text>
-							<AppTextField
-								label="Skill"
-								value={newSkill}
-								onChangeText={setNewSkill}
-							/>
-							<AppButton onPress={handleAddSkill} title="Save" />
-						</View>
+						 
+							<View style={styles.modalContainer}>
+								<Text style={styles.modalTitle}>Add Skill</Text>
+								<AppTextField
+									label="Skill"
+									value={newSkill}
+									onChangeText={setNewSkill}
+								/>
+								<AppButton onPress={handleAddSkill} title="Save" />
+							</View>
 					</View>
 				</TouchableWithoutFeedback>
 			</Modal>

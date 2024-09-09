@@ -8,6 +8,7 @@ import {
 	TouchableWithoutFeedback,
 	ScrollView,
 	Linking,
+	KeyboardAvoidingView,
 } from 'react-native';
 import { useCustomTheme } from '../../config/Theme';
 import { globalStyles } from '../../StylesSheet';
@@ -280,75 +281,80 @@ export default function Projects({ navigation }) {
 					}}
 				>
 					<View style={styles.modalOverlay}>
-						<TouchableWithoutFeedback>
-							<View style={styles.modalContainer}>
-								<ScrollView style={styles.scroll}>
-									<Text style={styles.modalTitle}> Add Project </Text>
-									<AppTextField
-										label="Project Name"
-										value={newProject.name}
-										onChangeText={(text) =>
-											setNewProject({ ...newProject, name: text })
-										}
-									/>
-									<AppTextField
-										label="Project Link"
-										value={newProject.link}
-										onChangeText={(text) =>
-											setNewProject({ ...newProject, link: text })
-										}
-									/>
+						 
+							<TouchableWithoutFeedback>
+								<View style={styles.modalContainer}>
+									 
+									<ScrollView style={styles.scroll}>
+										<Text style={styles.modalTitle}> Add Project </Text>
+										<AppTextField
+											label="Project Name"
+											value={newProject.name}
+											onChangeText={(text) =>
+												setNewProject({ ...newProject, name: text })
+											}
+										/>
+										<AppTextField
+											label="Project Link"
+											value={newProject.link}
+											onChangeText={(text) =>
+												setNewProject({ ...newProject, link: text })
+											}
+										/>
 
-									<AppPickerField
-										label="Start Date (DD/MM/YYYY)"
-										value={moment(newProject.startDate).format('DD/MM/YYYY')}
-										onPress={() => setStartDateDpShow(true)}
-										icon={'calendar'}
-									/>
-									<AppPickerField
-										label="End Date or expected (DD/MM/YYYY)"
-										value={moment(newProject.endDate).format('DD/MM/YYYY')}
-										onPress={() => setEndDateDpShow(true)}
-										icon={'calendar'}
-									/>
-									<AppTextField
-										label="Skills(used in project)"
-										value={newProject.skills}
-										onChangeText={(text) =>
-											setNewProject({ ...newProject, skills: text })
-										}
-									/>
-									<AppTextField
-										label="Description"
-										value={newProject.description}
-										onChangeText={(text) =>
-											setNewProject({ ...newProject, description: text })
-										}
-									/>
-									{startDateDpShow && (
-										<DateTimePicker
-											value={newProject.startDate}
-											mode={'date'}
-											display="default"
-											onChange={handleStartDate}
+										<AppPickerField
+											label="Start Date (DD/MM/YYYY)"
+											value={moment(newProject.startDate).format('DD/MM/YYYY')}
+											onPress={() => setStartDateDpShow(true)}
+											icon={'calendar'}
 										/>
-									)}
-									{endDateDpShow && (
-										<DateTimePicker
-											value={newProject.endDate}
-											mode={'date'}
-											display="default"
-											onChange={handleEndDate}
+										<AppPickerField
+											label="End Date or expected (DD/MM/YYYY)"
+											value={moment(newProject.endDate).format('DD/MM/YYYY')}
+											onPress={() => setEndDateDpShow(true)}
+											icon={'calendar'}
 										/>
-									)}
-									<AppButton
-										marginBottom={30}
-										title={isEditing ? 'Update Project' : 'Add Project'}
-										onPress={isEditing ? handleUpdateProject : handleAddProject}
-									/>
-								</ScrollView>
-							</View>
-						</TouchableWithoutFeedback>
+										<AppTextField
+											label="Skills(used in project)"
+											value={newProject.skills}
+											onChangeText={(text) =>
+												setNewProject({ ...newProject, skills: text })
+											}
+										/>
+										<AppTextField
+											label="Description"
+											value={newProject.description}
+											onChangeText={(text) =>
+												setNewProject({ ...newProject, description: text })
+											}
+										/>
+										{startDateDpShow && (
+											<DateTimePicker
+												value={newProject.startDate}
+												mode={'date'}
+												display="default"
+												onChange={handleStartDate}
+											/>
+										)}
+										{endDateDpShow && (
+											<DateTimePicker
+												value={newProject.endDate}
+												mode={'date'}
+												display="default"
+												onChange={handleEndDate}
+											/>
+										)}
+										<AppButton
+											marginBottom={30}
+											title={isEditing ? 'Update Project' : 'Add Project'}
+											onPress={
+												isEditing ? handleUpdateProject : handleAddProject
+											}
+										/>
+									</ScrollView>
+								</View>
+							</TouchableWithoutFeedback>
+						 
 					</View>
 				</TouchableWithoutFeedback>
 			</Modal>

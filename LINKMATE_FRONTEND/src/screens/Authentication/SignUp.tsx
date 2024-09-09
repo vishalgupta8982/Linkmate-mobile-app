@@ -5,8 +5,10 @@ import {
 	Image,
 	TouchableOpacity,
 	ScrollView,
+	KeyboardAvoidingView,
+	Platform,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useCustomTheme } from '../../config/Theme';
 import {
 	responsiveHeight,
@@ -17,11 +19,11 @@ import { globalStyles } from '../../StylesSheet';
 import AppTextField from '../../components/AppTextField';
 import { AppButton } from '../../components/AppButton';
 import { fonts } from '../../config/Fonts';
-import { useState } from 'react';
 import Toast from 'react-native-simple-toast';
 import { SignUpPayload } from '../../types/Payload/SignUpPayload';
 import { userRegister } from '../../api/apis';
 import Loader from '../../components/Loader';
+
 export default function SignUp({ navigation }) {
 	const theme = useCustomTheme();
 	const { colors } = theme;
@@ -32,10 +34,11 @@ export default function SignUp({ navigation }) {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [loading, setLoading] = useState(false);
+
 	const handleSignUp = async () => {
 		setLoading(true);
 		if (password.length < 8) {
-			Toast.show('Password must be a 8 character', Toast.SHORT);
+			Toast.show('Password must be at least 8 characters', Toast.SHORT);
 			setLoading(false);
 			return;
 		}
@@ -57,10 +60,18 @@ export default function SignUp({ navigation }) {
 			setLoading(false);
 		}
 	};
+
 	return (
-		<ScrollView>
-			{loading && <Loader />}
-			<View style={styles.mainCont}>
+		<KeyboardAvoidingView
+			style={styles.mainCont}
+			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+		>
+			<ScrollView
+				style={styles.mainCont}
+				contentContainerStyle={{ flexGrow: 1 }}
+				keyboardShouldPersistTaps="handled"  
+			>
+				{loading && <Loader />}
 				<View>
 					<Image
 						style={styles.logo}
@@ -78,7 +89,6 @@ export default function SignUp({ navigation }) {
 					<AppTextField onChangeText={setEmail} label="Email" />
 					<AppTextField
 						label="Password"
-						readOnly={false}
 						secureTextEntry={true}
 						value={password}
 						onChangeText={setPassword}
@@ -86,29 +96,33 @@ export default function SignUp({ navigation }) {
 					/>
 					<AppButton
 						onPress={handleSignUp}
-						disabled={email.length < 1 || password.length < 1 || firstName.length<1 || lastName.length<1}
+						disabled={
+							email.length < 1 ||
+							password.length < 1 ||
+							firstName.length < 1 ||
+							lastName.length < 1
+						}
 						title="Signup"
 					/>
 					<View style={styles.registerCont}>
-						<Text style={styles.not}>Already have a account? </Text>
+						<Text style={styles.not}>Already have an account? </Text>
 						<TouchableOpacity onPress={() => navigation.replace('Login')}>
 							<Text style={styles.register}>Login</Text>
 						</TouchableOpacity>
 					</View>
 				</View>
-			</View>
-		</ScrollView>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	);
 }
+
 const getStyles = (colors) =>
 	StyleSheet.create({
 		mainCont: {
 			flex: 1,
 			backgroundColor: colors.BACKGROUND,
-			padding: responsiveWidth(5),
-			height: responsiveHeight(100),
+			padding: responsiveWidth(2),
 		},
-
 		logo: {
 			height: responsiveHeight(20),
 			width: responsiveWidth(40),
@@ -131,6 +145,7 @@ const getStyles = (colors) =>
 			flexDirection: 'row',
 			alignContent: 'center',
 			alignSelf: 'center',
+			marginBottom:40
 		},
 		not: {
 			fontFamily: fonts.Inter_Regular,

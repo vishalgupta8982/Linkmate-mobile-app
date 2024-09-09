@@ -9,7 +9,8 @@ import { fonts } from '../../config/Fonts';
 import { countUnreadNotifications } from '../../api/apis';
 import {
 	selectNotificationCount,
-	setNotificationCount,
+	setUnreadMessageCount,
+	setUnreadNotificationCount,
 } from '../../redux/slices/CountNotificationMessage';
 import { selectChatPageByUser } from '../../redux/slices/ChatSlice';
 export default function HomePageHeader({ navigation }) {
@@ -18,13 +19,18 @@ export default function HomePageHeader({ navigation }) {
 	const dispatch = useDispatch();
 	const { colors } = theme;
 	const styles = getStyles(colors);
-	const count = useSelector((state: RootState) => state.count.notificationCount);
+	const count = useSelector(
+		(state: RootState) => state.count.unreadNotificationCount
+	);
 	const getUnreadNotification = async () => {
 		
 		try {
 			const response = await countUnreadNotifications();
 			if (response) {
-				dispatch(setNotificationCount(parseInt(response)));
+				dispatch(
+					setUnreadNotificationCount(parseInt(response.unreadNotification))
+				);
+				dispatch(setUnreadMessageCount(parseInt(response.unreadMessage)));
 			}
 		} catch (err) {
 			console.error(err);
@@ -46,7 +52,7 @@ export default function HomePageHeader({ navigation }) {
 					onPress={() => navigation.navigate('notification')}
 					activeOpacity={0.4}
 				>
-					{count != '0' && count != null && (
+					{count != 0 && count != null && (
 						<Text style={styles.count}>{count}</Text>
 					)}
 					<Feather name="bell" size={24} color={colors.TEXT} />

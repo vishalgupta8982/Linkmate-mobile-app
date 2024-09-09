@@ -6,7 +6,7 @@ import {
 	ScrollView,
 	ActivityIndicator,
 } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
 	responsiveHeight,
 	responsiveWidth,
@@ -14,13 +14,9 @@ import {
 } from 'react-native-responsive-dimensions';
 import { useCustomTheme } from '../../config/Theme';
 import { fonts } from '../../config/Fonts';
-import { useState } from 'react';
 import { OtpInput } from 'react-native-otp-entry';
 import Toast from 'react-native-simple-toast';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect } from 'react';
-import { RootStackParamList } from '../../navigation/MainStackNav';
-import { useRef } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import { OtpPayload } from '../../types/Payload/OtpPayload';
 import { saveFcmToken, userRegister, verifyOtp } from '../../api/apis';
@@ -29,7 +25,9 @@ import { useDispatch } from 'react-redux';
 import Loader from '../../components/Loader';
 import { AppButton } from '../../components/AppButton';
 import { SignUpPayload } from '../../types/Payload/SignUpPayload';
+
 type Tprops = NativeStackScreenProps<RootStackParamList, 'Otp'>;
+
 export default function Otp({ navigation, route }: Tprops) {
 	const theme = useCustomTheme();
 	const dispatch = useDispatch();
@@ -39,6 +37,7 @@ export default function Otp({ navigation, route }: Tprops) {
 	const [timer, setTimer] = useState(30);
 	const [otp, setOtp] = useState('');
 	const [loading, setLoading] = useState(false);
+
 	const submitOtp = async () => {
 		setLoading(true);
 		const payload: OtpPayload = {
@@ -54,7 +53,7 @@ export default function Otp({ navigation, route }: Tprops) {
 				dispatch(setToken(response.token));
 				const fcmToken = await messaging().getToken();
 				await saveFcmToken(fcmToken);
-				Toast.show('Account created successfull', Toast.SHORT);
+				Toast.show('Account created successfully', Toast.SHORT);
 				navigation.replace('BottomNavigation');
 			}
 		} catch (err) {
@@ -63,13 +62,9 @@ export default function Otp({ navigation, route }: Tprops) {
 			setLoading(false);
 		}
 	};
+
 	const resendCode = async () => {
 		setLoading(true);
-		if (password.length < 8) {
-			Toast.show('Password must be a 8 character', Toast.SHORT);
-			setLoading(false);
-			return;
-		}
 		const payload: SignUpPayload = {
 			firstName: firstName.trim(),
 			lastName: lastName.trim(),
@@ -79,7 +74,7 @@ export default function Otp({ navigation, route }: Tprops) {
 		try {
 			const response = await userRegister(payload);
 			if (response) {
-				Toast.show('Resend code successfully', Toast.SHORT);
+				Toast.show('Resent code successfully', Toast.SHORT);
 			}
 		} catch (err) {
 			Toast.show(err.message || 'An unexpected error occurred', Toast.SHORT);
@@ -87,6 +82,7 @@ export default function Otp({ navigation, route }: Tprops) {
 			setLoading(false);
 		}
 	};
+
 	useEffect(() => {
 		if (timer > 0) {
 			const intervalId = setInterval(() => {
@@ -96,17 +92,19 @@ export default function Otp({ navigation, route }: Tprops) {
 			return () => clearInterval(intervalId);
 		}
 	}, [timer]);
+
 	const handleResendCode = () => {
 		setTimer(30);
 		resendCode();
 	};
-	const otpRef = useRef(null);
 
+	const otpRef = useRef(null);
 	useEffect(() => {
 		if (otpRef.current) {
 			otpRef.current.setValue(otp);
 		}
 	}, [otp]);
+
 	return (
 		<ScrollView style={[styles.container]}>
 			<View style={styles.textCont}>
@@ -155,6 +153,7 @@ export default function Otp({ navigation, route }: Tprops) {
 		</ScrollView>
 	);
 }
+
 const getStyles = (colors) =>
 	StyleSheet.create({
 		container: {

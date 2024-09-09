@@ -41,7 +41,10 @@ export default function Setting({ navigation }) {
 			dispatch({ type: 'RESET' });
 			await AsyncStorage.clear();
 			setLoader(false);
-			navigation.replace('Login');
+			navigation.reset({
+				index: 0,
+				routes: [{ name: 'Login' }],
+			});
 		} catch (err) {
 			console.error('logout', err);
 		}
