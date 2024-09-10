@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "864200372357",
+    "firebase_url": "https://linkmate-87eab-default-rtdb.firebaseio.com",
+    "project_id": "linkmate-87eab",
+    "storage_bucket": "linkmate-87eab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864200372357:android:86a4fe5fdab418dfb439ec",
+        "android_client_info": {
+          "package_name": "com.linkmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAErrbUwh2MMa9jrmhf5umy7d6iRbkVUdo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
