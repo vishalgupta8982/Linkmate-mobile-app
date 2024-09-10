@@ -29,6 +29,7 @@ local.properties
 # .gitignore
 application.properties
 application.yml
+firebase-service-account.json
 # External tool builders
 .externalToolBuilders/
 

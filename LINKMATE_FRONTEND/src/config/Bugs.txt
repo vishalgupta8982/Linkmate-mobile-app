@@ -1,1 +1,0 @@
-userData complete only sendConnectionRequest, connection, connectionRequest remain
