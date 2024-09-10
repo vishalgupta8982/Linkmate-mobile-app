@@ -30,6 +30,8 @@ local.properties
 application.properties
 application.yml
 firebase-service-account.json
+help.md
+
 # External tool builders
 .externalToolBuilders/
 

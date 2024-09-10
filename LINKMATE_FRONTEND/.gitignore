@@ -37,6 +37,7 @@ local.properties
 # .gitignore
 application.properties
 application.yml
+instance.ts
 # node.js
 #
 node_modules/
